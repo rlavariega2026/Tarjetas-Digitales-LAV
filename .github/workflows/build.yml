@@ -28,7 +28,7 @@ jobs:
       - name: Construir aplicacion
         run: npm run build
         env:
-          VITE_BASE_PATH: /tarjetas-digitales/
+          VITE_BASE_PATH: "/App%20Tarjetas/"
 
       - name: Preparar archivos para descargar
         uses: actions/upload-artifact@v4
