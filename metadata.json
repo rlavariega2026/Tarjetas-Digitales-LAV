@@ -1,0 +1,6 @@
+{
+  "name": "LAV Digital Marketing — Tarjetas Digitales Profesionales",
+  "description": "Aplicación web y móvil para diseñar, personalizar, publicar y administrar tarjetas de presentación digitales e interactivas con QR y NFC.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
