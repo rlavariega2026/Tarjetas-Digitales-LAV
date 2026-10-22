@@ -86,6 +86,33 @@ export function generateStandaloneHtml(card: CardData): string {
       position: relative;
       margin-bottom: 30px;
     }
+
+    /* En teléfonos, la tarjeta ocupa todo el ancho y alto de la pantalla */
+    @media (max-width: 600px) {
+      html, body {
+        width: 100%;
+        min-height: 100%;
+        margin: 0;
+      }
+      body {
+        min-height: 100vh;
+        min-height: 100dvh;
+        padding: 0;
+        align-items: stretch;
+        justify-content: flex-start;
+        overflow-x: hidden;
+      }
+      .card-container {
+        width: 100%;
+        max-width: none;
+        min-height: 100vh;
+        min-height: 100dvh;
+        border-radius: 0;
+        box-shadow: none;
+        margin: 0;
+      }
+    }
+
     /* Premium Animation Keyframes */
     @keyframes shimmer-sweep {
       0% { left: -160%; }
