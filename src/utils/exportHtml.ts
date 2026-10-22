@@ -35,15 +35,27 @@ export function generateStandaloneHtml(card: CardData): string {
     return `${prefix}${cleanHandle(trimmed)}`;
   };
 
+  const socialSvg = (name: string) => {
+    const paths: Record<string, string> = {
+      Instagram: '<rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="18" cy="6" r="1" fill="currentColor" stroke="none"/>',
+      Facebook: '<path d="M14 21v-8h3l.5-4H14V7c0-1.2.4-2 2-2h2V1.5C17.3 1.3 16.3 1.2 15 1.2 11.8 1.2 10 3.1 10 6.7V9H7v4h3v8z" fill="currentColor" stroke="none"/>',
+      YouTube: '<rect x="2" y="5" width="20" height="14" rx="4"/><path d="m10 9 5 3-5 3z" fill="currentColor" stroke="none"/>',
+      'X / Twitter': '<path d="M4 3h4.5l11.5 18h-4.5z" fill="currentColor" stroke="none"/><path d="M20 3 4 21" />',
+      TikTok: '<path d="M14 3v11.2a4.3 4.3 0 1 1-3.5-4.2v3.6a1 1 0 1 0-.5 1V3h4c.3 2.4 1.6 3.8 4 4v3.6c-1.5 0-2.9-.5-4-1.4"/>',
+      LinkedIn: '<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 10v7M7 7v.1M11 17v-7h3v1c.6-1 4-1.5 4 2v4M11 13c0-2 4-2 4 0" />',
+      Telegram: '<path d="m22 2-7 20-4-8-8-4z"/><path d="m11 14 5-5"/>'
+    };
+    return '<svg aria-hidden="true" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' + (paths[name] || '') + '</svg>';
+  };
   const socialLinks = [
-    card.socials.instagram && { name: 'Instagram', url: toUrl(card.socials.instagram, 'https://instagram.com/'), icon: '📷' },
-    card.socials.facebook && { name: 'Facebook', url: toUrl(card.socials.facebook, 'https://facebook.com/'), icon: '👥' },
-    card.socials.youtube && { name: 'YouTube', url: toUrl(card.socials.youtube, 'https://youtube.com/@'), icon: '▶️' },
-    card.socials.twitter && { name: 'X / Twitter', url: toUrl(card.socials.twitter, 'https://x.com/'), icon: '𝕏' },
-    card.socials.tiktok && { name: 'TikTok', url: toUrl(card.socials.tiktok, 'https://tiktok.com/@'), icon: '🎵' },
-    card.socials.linkedin && { name: 'LinkedIn', url: card.socials.linkedin.startsWith('http') ? card.socials.linkedin : `https://linkedin.com/in/${cleanHandle(card.socials.linkedin)}`, icon: '💼' },
-    card.socials.telegram && { name: 'Telegram', url: toUrl(card.socials.telegram, 'https://t.me/'), icon: '✈️' },
-  ].filter(Boolean) as Array<{ name: string; url: string; icon: string }>;
+    card.socials.instagram && { name: 'Instagram', url: toUrl(card.socials.instagram, 'https://instagram.com/') },
+    card.socials.facebook && { name: 'Facebook', url: toUrl(card.socials.facebook, 'https://facebook.com/') },
+    card.socials.youtube && { name: 'YouTube', url: toUrl(card.socials.youtube, 'https://youtube.com/@') },
+    card.socials.twitter && { name: 'X / Twitter', url: toUrl(card.socials.twitter, 'https://x.com/') },
+    card.socials.tiktok && { name: 'TikTok', url: toUrl(card.socials.tiktok, 'https://tiktok.com/@') },
+    card.socials.linkedin && { name: 'LinkedIn', url: card.socials.linkedin.startsWith('http') ? card.socials.linkedin : `https://linkedin.com/in/${cleanHandle(card.socials.linkedin)}` },
+    card.socials.telegram && { name: 'Telegram', url: toUrl(card.socials.telegram, 'https://t.me/') },
+  ].filter(Boolean) as Array<{ name: string; url: string }>;
 
   const isEleganceLuxury = card.design.theme === 'elegance-luxury' || card.design.animationStyle === 'metallic-sheen';
   const isFutureTech = card.design.theme === 'future-tech' || card.design.animationStyle === 'tech-scan';
@@ -87,30 +99,28 @@ export function generateStandaloneHtml(card: CardData): string {
       margin-bottom: 30px;
     }
 
-    /* En teléfonos, la tarjeta ocupa todo el ancho y alto de la pantalla */
+    /* En móviles, presenta una tarjeta premium independiente, no una página a pantalla completa */
     @media (max-width: 600px) {
-      html, body {
-        width: 100%;
-        min-height: 100%;
-        margin: 0;
-      }
+      html, body { width: 100%; min-height: 100%; margin: 0; }
       body {
         min-height: 100vh;
         min-height: 100dvh;
-        padding: 0;
-        align-items: stretch;
-        justify-content: flex-start;
+        padding: 16px 12px;
+        align-items: center;
+        justify-content: center;
         overflow-x: hidden;
+        background: #090d18;
       }
       .card-container {
         width: 100%;
-        max-width: none;
-        min-height: 100vh;
-        min-height: 100dvh;
-        border-radius: 0;
-        box-shadow: none;
-        margin: 0;
+        max-width: 440px;
+        min-height: 0;
+        border-radius: 28px;
+        box-shadow: 0 24px 70px rgba(0,0,0,.42), 0 0 0 1px rgba(255,255,255,.12);
+        margin: 0 auto;
       }
+      .content-body { padding: 0 22px 26px; }
+      .cover-banner { height: ${card.design.coverHeight === 'sm' ? '110px' : card.design.coverHeight === 'lg' ? '170px' : '135px'}; }
     }
 
     /* Premium Animation Keyframes */
@@ -446,18 +456,28 @@ export function generateStandaloneHtml(card: CardData): string {
       flex-wrap: wrap;
     }
     .social-icon-btn {
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.12);
+      width: 48px;
+      height: 48px;
+      border-radius: 16px;
+      background: linear-gradient(145deg, rgba(255,255,255,.12), rgba(255,255,255,.035));
+      border: 1px solid rgba(255,255,255,.16);
       display: flex;
       align-items: center;
       justify-content: center;
       color: white;
       text-decoration: none;
-      font-size: 18px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 8px 20px rgba(0,0,0,.16);
+      transition: transform .18s ease, background .18s ease;
     }
+    .social-icon-btn:active { transform: scale(.94); }
+    .social-icon-btn svg { display: block; }
+    .social-instagram { color: #f4a7c7; }
+    .social-facebook { color: #7db2ff; }
+    .social-youtube { color: #ff7777; }
+    .social-x-twitter { color: #fff; }
+    .social-tiktok { color: #8ef2e9; }
+    .social-linkedin { color: #86c8ff; }
+    .social-telegram { color: #79d2ff; }
     .footer-brand {
       text-align: center;
       font-size: 11px;
@@ -622,7 +642,7 @@ export function generateStandaloneHtml(card: CardData): string {
       ${socialLinks.length > 0 ? `
       <div class="social-row">
         ${socialLinks.map(s => `
-          <a href="${s.url}" target="_blank" class="social-icon-btn" title="${s.name}">${s.icon}</a>
+          <a href="${s.url}" target="_blank" rel="noopener noreferrer" class="social-icon-btn social-${s.name.toLowerCase().replace(/[^a-z]/g, '')}" title="${s.name}" aria-label="${s.name}">${socialSvg(s.name)}</a>
         `).join('')}
       </div>` : ''}
 
