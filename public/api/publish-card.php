@@ -32,8 +32,12 @@ if (!preg_match($validFolder, $clientFolder) || !preg_match($validFolder, $cardF
 $cardsRoot = dirname(__DIR__, 2) . '/tarjetas';
 $dir = $cardsRoot . '/' . $clientFolder . '/' . $cardFolder;
 if (!is_dir($dir) && !mkdir($dir, 0755, true) && !is_dir($dir)) out(500, ['ok'=>false,'error'=>'No se pudo crear la carpeta de la tarjeta']);
+// Ensure web-readable permissions on the published path.
+@chmod($cardsRoot, 0755);
+@chmod(dirname($dir), 0755);
+@chmod($dir, 0755);
 $tmp = tempnam($dir, 'card');
-if (!$tmp || file_put_contents($tmp, $html, LOCK_EX) === false || !rename($tmp, $dir . '/index.html')) {
+if (!$tmp || file_put_contents($tmp, $html, LOCK_EX) === false || !@chmod($tmp, 0644) || !rename($tmp, $dir . '/index.html')) {
     if ($tmp && file_exists($tmp)) @unlink($tmp);
     out(500, ['ok'=>false,'error'=>'No se pudo guardar index.html']);
 }
