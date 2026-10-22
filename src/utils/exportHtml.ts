@@ -35,17 +35,19 @@ export function generateStandaloneHtml(card: CardData): string {
     return `${prefix}${cleanHandle(trimmed)}`;
   };
 
+  // SVG de marca con geometrías simplificadas y consistentes para que los logotipos
+  // se distingan bien en móviles y no dependan de fuentes o librerías externas.
   const socialSvg = (name: string) => {
     const paths: Record<string, string> = {
-      Instagram: '<rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="18" cy="6" r="1" fill="currentColor" stroke="none"/>',
-      Facebook: '<path d="M14 21v-8h3l.5-4H14V7c0-1.2.4-2 2-2h2V1.5C17.3 1.3 16.3 1.2 15 1.2 11.8 1.2 10 3.1 10 6.7V9H7v4h3v8z" fill="currentColor" stroke="none"/>',
-      YouTube: '<rect x="2" y="5" width="20" height="14" rx="4"/><path d="m10 9 5 3-5 3z" fill="currentColor" stroke="none"/>',
-      'X / Twitter': '<path d="M4 3h4.5l11.5 18h-4.5z" fill="currentColor" stroke="none"/><path d="M20 3 4 21" />',
-      TikTok: '<path d="M14 3v11.2a4.3 4.3 0 1 1-3.5-4.2v3.6a1 1 0 1 0-.5 1V3h4c.3 2.4 1.6 3.8 4 4v3.6c-1.5 0-2.9-.5-4-1.4"/>',
-      LinkedIn: '<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 10v7M7 7v.1M11 17v-7h3v1c.6-1 4-1.5 4 2v4M11 13c0-2 4-2 4 0" />',
-      Telegram: '<path d="m22 2-7 20-4-8-8-4z"/><path d="m11 14 5-5"/>'
+      Instagram: '<rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="18" cy="6" r="1.15" fill="currentColor" stroke="none"/>',
+      Facebook: '<path d="M13.5 21v-8h2.8l.45-3.2H13.5V7.75c0-.93.3-1.55 1.65-1.55h1.75V3.35A23 23 0 0 0 14.35 3c-2.55 0-4.3 1.55-4.3 4.4v2.4H7.2V13h2.85v8z" fill="currentColor" stroke="none"/>',
+      YouTube: '<path d="M23 7.1a3 3 0 0 0-2.1-2.12C19.05 4.5 12 4.5 12 4.5s-7.05 0-8.9.48A3 3 0 0 0 1 7.1 31 31 0 0 0 .5 12a31 31 0 0 0 .5 4.9 3 3 0 0 0 2.1 2.12c1.85.48 8.9.48 8.9.48s7.05 0 8.9-.48A3 3 0 0 0 23 16.9a31 31 0 0 0 .5-4.9 31 31 0 0 0-.5-4.9Z" fill="currentColor" stroke="none"/><path d="m10 8.8 5.5 3.2-5.5 3.2z" fill="#090d18" stroke="none"/>',
+      'X / Twitter': '<path d="M18.9 2H22l-6.8 7.8L23.2 22h-6.3L12 14.9 5.8 22H2.7l7.3-8.4L1.8 2h6.5l4.4 6.6zm-1.1 17.8h1.7L7.3 4.1H5.5z" fill="currentColor" stroke="none"/>',
+      TikTok: '<path d="M19.6 8.7a7.4 7.4 0 0 1-4.5-1.5v7.1a6.1 6.1 0 1 1-6.1-6.1c.4 0 .8 0 1.2.1v3.4a2.8 2.8 0 1 0 1.5 2.5V2.2h3.5a4.8 4.8 0 0 0 4.4 4.4z" fill="currentColor" stroke="none"/>',
+      LinkedIn: '<path d="M20.4 3H3.6A.6.6 0 0 0 3 3.6v16.8a.6.6 0 0 0 .6.6h16.8a.6.6 0 0 0 .6-.6V3.6a.6.6 0 0 0-.6-.6ZM8.3 18H5.4V9.4h2.9ZM6.85 8.2a1.68 1.68 0 1 1 0-3.36 1.68 1.68 0 0 1 0 3.36ZM18.6 18h-2.9v-4.2c0-1-.02-2.3-1.4-2.3s-1.6 1.1-1.6 2.2V18H9.8V9.4h2.8v1.17h.04a3.1 3.1 0 0 1 2.8-1.54c3 0 3.55 1.97 3.55 4.53z" fill="currentColor" stroke="none"/>',
+      Telegram: '<path d="M21.7 3.2 18.5 20c-.24 1.2-.87 1.5-1.77.94l-4.9-3.62-2.36 2.27c-.26.26-.48.48-.98.48l.35-4.98 9.07-8.2c.4-.35-.09-.55-.62-.2L6.1 13.7l-4.77-1.5c-1.04-.33-1.06-1.04.22-1.55L20.2 3.3c.87-.32 1.63.2 1.5-.1Z" fill="currentColor" stroke="none"/>'
     };
-    return '<svg aria-hidden="true" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' + (paths[name] || '') + '</svg>';
+    return '<svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' + (paths[name] || '') + '</svg>';
   };
   const socialLinks = [
     card.socials.instagram && { name: 'Instagram', url: toUrl(card.socials.instagram, 'https://instagram.com/') },
@@ -116,9 +118,21 @@ export function generateStandaloneHtml(card: CardData): string {
         max-width: 440px;
         min-height: 0;
         border-radius: 28px;
+        background: ${card.design.backgroundColor};
         box-shadow: 0 24px 70px rgba(0,0,0,.42), 0 0 0 1px rgba(255,255,255,.12);
         margin: 0 auto;
+        isolation: isolate;
       }
+      .social-row { gap: 10px; margin: 20px 0; }
+      .social-icon-btn {
+        width: 46px;
+        height: 46px;
+        border-radius: 15px;
+        flex: 0 0 46px;
+        -webkit-tap-highlight-color: transparent;
+      }
+      .social-icon-btn svg { width: 23px; height: 23px; }
+      .save-contact-btn, .quick-btn, .custom-link-btn { -webkit-tap-highlight-color: transparent; }
       .content-body { padding: 0 22px 26px; }
       .cover-banner { height: ${card.design.coverHeight === 'sm' ? '110px' : card.design.coverHeight === 'lg' ? '170px' : '135px'}; }
     }
