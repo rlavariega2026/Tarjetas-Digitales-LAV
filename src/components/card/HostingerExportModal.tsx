@@ -127,101 +127,10 @@ export const HostingerExportModal: React.FC<HostingerExportModalProps> = ({ card
             {publishError && <p role="alert" className="text-xs text-red-300">{publishError}</p>}
             {publishedUrl && <div className="p-3 rounded-xl bg-emerald-950/40 border border-emerald-500/30 text-xs text-emerald-300 space-y-2"><p className="font-bold">Tarjeta publicada</p><a className="underline break-all" href={publishedUrl} target="_blank" rel="noreferrer">{publishedUrl}</a><p>La URL se copió al portapapeles si el navegador lo permitió.</p></div>}
           </div>
-          {/* Download Options */}
-          <div className="space-y-3">
-            <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider">
-              2. Descargar archivo para subir a Hostinger
-            </label>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <button
-                onClick={() => handleDownload('index.html')}
-                className="p-4 rounded-2xl bg-slate-800 hover:bg-slate-750 border border-slate-700 hover:border-purple-500 transition text-left space-y-1.5 group shadow"
-              >
-                <div className="flex items-center justify-between">
-                  <span className="font-bold text-xs text-white group-hover:text-purple-300">
-                    Descargar como index.html
-                  </span>
-                  <FileCode className="w-4 h-4 text-purple-400" />
-                </div>
-                <p className="text-[11px] text-slate-400">
-                  Ideal para crear la carpeta <code>tarjetas/{cleanSlug}/</code> en Hostinger y colocar este archivo dentro. La URL queda limpia sin extensión.
-                </p>
-                <span className="inline-flex items-center gap-1 text-xs font-bold text-purple-400 pt-1">
-                  <Download className="w-3.5 h-3.5" /> Descargar index.html
-                </span>
-              </button>
-
-              <button
-                onClick={() => handleDownload(`${cleanSlug}.html`)}
-                className="p-4 rounded-2xl bg-slate-800 hover:bg-slate-750 border border-slate-700 hover:border-purple-500 transition text-left space-y-1.5 group shadow"
-              >
-                <div className="flex items-center justify-between">
-                  <span className="font-bold text-xs text-white group-hover:text-purple-300">
-                    Descargar como {cleanSlug}.html
-                  </span>
-                  <FileCode className="w-4 h-4 text-emerald-400" />
-                </div>
-                <p className="text-[11px] text-slate-400">
-                  Ideal si prefieres subirlo directo en una sola carpeta sin crear subcarpetas para cada cliente.
-                </p>
-                <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-400 pt-1">
-                  <Download className="w-3.5 h-3.5" /> Descargar {cleanSlug}.html
-                </span>
-              </button>
-            </div>
-          </div>
-
-          {/* Step-by-Step Instructions for Hostinger */}
-          <div className="space-y-3">
-            <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider">
-              3. Pasos exactos en Hostinger (hPanel)
-            </label>
-            <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 text-xs text-slate-300 space-y-2.5">
-              <div className="flex gap-2.5">
-                <span className="w-5 h-5 rounded-full bg-purple-500/20 text-purple-400 flex items-center justify-center font-bold text-[11px] flex-shrink-0">
-                  1
-                </span>
-                <p>
-                  Inicia sesión en <strong>Hostinger (hostinger.com)</strong> y entra a tu <strong>hPanel</strong> en el dominio <code>lavdigitalmkt.com</code>.
-                </p>
-              </div>
-
-              <div className="flex gap-2.5">
-                <span className="w-5 h-5 rounded-full bg-purple-500/20 text-purple-400 flex items-center justify-center font-bold text-[11px] flex-shrink-0">
-                  2
-                </span>
-                <p>
-                  Haz clic en <strong>"Administrador de archivos"</strong> (File Manager) y abre la carpeta <strong>public_html</strong>.
-                </p>
-              </div>
-
-              <div className="flex gap-2.5">
-                <span className="w-5 h-5 rounded-full bg-purple-500/20 text-purple-400 flex items-center justify-center font-bold text-[11px] flex-shrink-0">
-                  3
-                </span>
-                <p>
-                  Si no existe, crea una carpeta llamada <strong>tarjetas</strong>. Dentro de ella, crea una carpeta con el nombre o slug del cliente (ejemplo: <code>{cleanSlug}</code>).
-                </p>
-              </div>
-
-              <div className="flex gap-2.5">
-                <span className="w-5 h-5 rounded-full bg-purple-500/20 text-purple-400 flex items-center justify-center font-bold text-[11px] flex-shrink-0">
-                  4
-                </span>
-                <p>
-                  Entra a esa carpeta y sube el archivo <strong>index.html</strong> que acabas de descargar.
-                </p>
-              </div>
-
-              <div className="flex gap-2.5">
-                <span className="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-[11px] flex-shrink-0">
-                  ✓
-                </span>
-                <p className="text-emerald-300 font-semibold">
-                  ¡Listo! Abre en cualquier celular o navegador <strong>{finalCardUrl}</strong>. La tarjeta funcionará con WhatsApp, llamadas, vCard y código QR de forma autónoma.
-                </p>
-              </div>
-            </div>
+          <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 text-xs text-slate-300 space-y-2">
+            <p className="font-bold text-white">Respaldo manual</p>
+            <p>Si el servidor aún no está configurado, descarga el HTML como alternativa temporal.</p>
+            <button onClick={() => handleDownload(cleanSlug + '.html')} className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold"><Download className="w-4 h-4" /> Descargar HTML</button>
           </div>
         </div>
 
