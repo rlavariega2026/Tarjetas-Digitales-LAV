@@ -7,7 +7,6 @@ import {
   Check,
   Copy,
   X,
-  FileCode,
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
