@@ -1,20 +1,13 @@
 import React, { useState } from 'react';
 import { CardData } from '../../types/card';
 import { generateStandaloneHtml } from '../../utils/exportHtml';
-import { downloadQr, generateQrPng } from '../../utils/qr';
 import {
   Globe,
   Download,
-  FolderPlus,
-  Server,
   Check,
   Copy,
-  ExternalLink,
-  HelpCircle,
   X,
   FileCode,
-  ShieldCheck,
-  Infinity,
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
@@ -24,17 +17,17 @@ interface HostingerExportModalProps {
 }
 
 export const HostingerExportModal: React.FC<HostingerExportModalProps> = ({ card, onClose }) => {
-  const [basePath, setBasePath] = useState('https://lavdigitalmkt.com/tarjetas/');
-  const [folderMode, setFolderMode] = useState<'subfolder' | 'direct-file'>('subfolder');
+  const [basePath, setBasePath] = useState('https://lavdigitalmkt.com/tarjetas-digitales/cards/');
+  const [publishToken, setPublishToken] = useState('');
+  const [publishing, setPublishing] = useState(false);
+  const [publishError, setPublishError] = useState('');
+  const [publishedUrl, setPublishedUrl] = useState('');
   const [copiedUrl, setCopiedUrl] = useState(false);
 
   if (!card) return null;
 
   const cleanSlug = card.slug || card.id;
-  const finalCardUrl =
-    folderMode === 'subfolder'
-      ? `${basePath.endsWith('/') ? basePath : basePath + '/'}${cleanSlug}/`
-      : `${basePath.endsWith('/') ? basePath : basePath + '/'}${cleanSlug}.html`;
+  const finalCardUrl = publishedUrl || `${basePath.replace(/\/+$/, '')}/${encodeURIComponent(cleanSlug)}.html`;
 
   const handleDownload = (filename: string) => {
     // Generate standalone HTML with card website / target URL set to Hostinger URL
@@ -54,6 +47,30 @@ export const HostingerExportModal: React.FC<HostingerExportModalProps> = ({ card
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
     confetti({ particleCount: 30, spread: 60, origin: { y: 0.7 } });
+  };
+
+  const handlePublish = async () => {
+    setPublishing(true);
+    setPublishError('');
+    setPublishedUrl('');
+    try {
+      if (!publishToken.trim()) throw new Error('Escribe el token configurado en Hostinger.');
+      const html = generateStandaloneHtml({ ...card, website: finalCardUrl });
+      const response = await fetch('/tarjetas-digitales/api/publish-card.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + publishToken.trim() },
+        body: JSON.stringify({ slug: cleanSlug, html }),
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok || !result.ok || !result.url) throw new Error(result.error || 'Error al publicar (' + response.status + ').');
+      setPublishedUrl(result.url);
+      await navigator.clipboard.writeText(result.url).catch(() => undefined);
+      confetti({ particleCount: 50, spread: 70, origin: { y: 0.65 } });
+    } catch (error) {
+      setPublishError(error instanceof Error ? error.message : 'No se pudo publicar la tarjeta.');
+    } finally {
+      setPublishing(false);
+    }
   };
 
   const handleCopyUrl = async () => {
@@ -88,68 +105,28 @@ export const HostingerExportModal: React.FC<HostingerExportModalProps> = ({ card
 
         {/* Modal Scrollable Body */}
         <div className="p-6 overflow-y-auto space-y-6">
-          {/* How many cards reassurance */}
-          <div className="p-4 rounded-2xl bg-indigo-950/40 border border-indigo-500/30 flex items-start gap-3">
-            <div className="w-8 h-8 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center flex-shrink-0 mt-0.5">
-              <Infinity className="w-5 h-5" />
-            </div>
-            <div className="text-xs space-y-1">
-              <p className="font-bold text-indigo-300">¿Cuántas tarjetas puedo crear y alojar?</p>
-              <p className="text-slate-300 leading-relaxed">
-                <strong>¡Ilimitadas! No existe ningún límite ni costo mensual por tarjeta.</strong> Cada tarjeta es un archivo HTML estático ultraligero (~25 KB). En tu plan de Hostinger puedes alojar 10, 500 o miles de tarjetas independientes sin pagar licencias adicionales.
-              </p>
-            </div>
+          <div className="p-4 rounded-2xl bg-indigo-950/40 border border-indigo-500/30 text-xs text-slate-300 space-y-2">
+            <p className="font-bold text-indigo-300">Publicación directa</p>
+            <p>La app enviará el HTML a Hostinger y el servidor creará automáticamente la carpeta cards y el archivo de esta tarjeta. Esto requiere instalar una sola vez el endpoint PHP y configurar su token en Hostinger.</p>
+            <label className="block font-bold text-slate-300 pt-1">Token de publicación de Hostinger</label>
+            <input type="password" value={publishToken} onChange={e => setPublishToken(e.target.value)} autoComplete="off" placeholder="Pega el token configurado en el servidor" className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs font-mono focus:ring-2 focus:ring-purple-500 focus:outline-none" />
+            <p className="text-[11px] text-slate-500">No se guarda en la app. No uses la contraseña de tu cuenta; debe ser un token exclusivo para publicar tarjetas.</p>
           </div>
-
-          {/* URL Configuration */}
           <div className="space-y-3">
-            <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider">
-              1. Configura la dirección final en tu sitio web
-            </label>
-            <div className="flex flex-col sm:flex-row gap-2">
-              <input
-                type="text"
-                value={basePath}
-                onChange={(e) => setBasePath(e.target.value)}
-                placeholder="https://lavdigitalmkt.com/tarjetas/"
-                className="flex-1 px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs font-mono focus:ring-2 focus:ring-purple-500 focus:outline-none"
-              />
-              <div className="flex gap-1 bg-slate-800 p-1 rounded-xl">
-                <button
-                  onClick={() => setFolderMode('subfolder')}
-                  className={`px-3 py-1 rounded-lg text-xs font-semibold transition ${
-                    folderMode === 'subfolder'
-                      ? 'bg-purple-600 text-white'
-                      : 'text-slate-400 hover:text-white'
-                  }`}
-                >
-                  Carpeta (/index.html)
-                </button>
-                <button
-                  onClick={() => setFolderMode('direct-file')}
-                  className={`px-3 py-1 rounded-lg text-xs font-semibold transition ${
-                    folderMode === 'direct-file'
-                      ? 'bg-purple-600 text-white'
-                      : 'text-slate-400 hover:text-white'
-                  }`}
-                >
-                  Archivo (.html)
-                </button>
-              </div>
-            </div>
-
+            <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider">URL de la tarjeta</label>
             <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-between text-xs font-mono text-purple-300">
               <span className="truncate mr-2">{finalCardUrl}</span>
-              <button
-                onClick={handleCopyUrl}
-                className="flex items-center gap-1 text-[11px] bg-slate-800 hover:bg-slate-700 text-slate-200 px-2.5 py-1 rounded-lg transition flex-shrink-0"
-              >
+              <button onClick={handleCopyUrl} className="flex items-center gap-1 text-[11px] bg-slate-800 hover:bg-slate-700 text-slate-200 px-2.5 py-1 rounded-lg transition flex-shrink-0">
                 {copiedUrl ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
                 <span>{copiedUrl ? 'Copiada' : 'Copiar URL'}</span>
               </button>
             </div>
+            <button onClick={handlePublish} disabled={publishing} className="w-full p-4 rounded-2xl bg-purple-600 hover:bg-purple-500 disabled:opacity-60 text-white font-bold text-sm transition">
+              {publishing ? 'Publicando tarjeta…' : publishedUrl ? 'Volver a publicar esta tarjeta' : 'Publicar tarjeta directamente en Hostinger'}
+            </button>
+            {publishError && <p role="alert" className="text-xs text-red-300">{publishError}</p>}
+            {publishedUrl && <div className="p-3 rounded-xl bg-emerald-950/40 border border-emerald-500/30 text-xs text-emerald-300 space-y-2"><p className="font-bold">Tarjeta publicada</p><a className="underline break-all" href={publishedUrl} target="_blank" rel="noreferrer">{publishedUrl}</a><p>La URL se copió al portapapeles si el navegador lo permitió.</p></div>}
           </div>
-
           {/* Download Options */}
           <div className="space-y-3">
             <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider">
