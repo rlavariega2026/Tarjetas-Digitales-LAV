@@ -1,8 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { CardTemplate } from '../../data/templates';
 import { CardData } from '../../types/card';
 import { DigitalCardView } from '../card/DigitalCardView';
-import { Sparkles, Eye, ArrowRight, Check, X, Wand2, Search, Zap, Crown } from 'lucide-react';
+import {
+  Sparkles,
+  Eye,
+  ArrowRight,
+  Check,
+  X,
+  Wand2,
+  Search,
+  Zap,
+  Crown,
+  ChevronLeft,
+  ChevronRight,
+  Utensils,
+  Star,
+  Landmark,
+  Layers,
+} from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 interface TemplatesViewProps {
@@ -17,10 +33,15 @@ export const TemplatesView: React.FC<TemplatesViewProps> = ({
   const [selectedFilter, setSelectedFilter] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [previewTemplate, setPreviewTemplate] = useState<CardTemplate | null>(null);
+  const carouselRef = useRef<HTMLDivElement>(null);
 
-  // Group collections
+  // Group collections and specialized packs
   const collectionOptions = [
     { id: 'all', label: 'Todas las Plantillas', icon: Sparkles },
+    { id: 'new-22', label: '🌟 22 Nuevas Plantillas', icon: Sparkles },
+    { id: 'special-restaurant', label: '🍽️ Restaurante & Menú', icon: Utensils },
+    { id: 'special-reviews', label: '⭐ Google Reviews', icon: Star },
+    { id: 'special-banking', label: '🏦 Transferencias SPEI', icon: Landmark },
     { id: 'elegance-luxury', label: 'A. Elegance Luxury', icon: Crown },
     { id: 'future-tech', label: 'B. Future Tech', icon: Zap },
     { id: 'young-creative', label: 'C. Young & Creative', icon: Wand2 },
@@ -32,11 +53,19 @@ export const TemplatesView: React.FC<TemplatesViewProps> = ({
   const categories = Array.from(new Set(templates.map((t) => t.category)));
 
   const filteredTemplates = templates.filter((t) => {
-    // Collection or category match
-    const matchesFilter =
-      selectedFilter === 'all' ||
-      t.collection === selectedFilter ||
-      t.category === selectedFilter;
+    // Specialized filter conditions
+    let matchesFilter = selectedFilter === 'all';
+    if (selectedFilter === 'new-22') {
+      matchesFilter = t.collection === 'new-22' || t.id.startsWith('tpl-');
+    } else if (selectedFilter === 'special-restaurant') {
+      matchesFilter = t.collection === 'special-restaurant' || t.id.includes('gastro') || t.category.toLowerCase().includes('restaur');
+    } else if (selectedFilter === 'special-reviews') {
+      matchesFilter = t.collection === 'special-reviews' || Boolean(t.cardData.googleReviews?.enabled);
+    } else if (selectedFilter === 'special-banking') {
+      matchesFilter = t.collection === 'special-banking' || Boolean(t.cardData.bankTransfer?.enabled);
+    } else if (selectedFilter !== 'all') {
+      matchesFilter = t.collection === selectedFilter || t.category === selectedFilter;
+    }
 
     // Search query match
     const q = searchQuery.toLowerCase().trim();
@@ -56,6 +85,13 @@ export const TemplatesView: React.FC<TemplatesViewProps> = ({
     onSelectTemplate(t);
   };
 
+  const scrollCarousel = (direction: 'left' | 'right') => {
+    if (carouselRef.current) {
+      const scrollAmount = direction === 'left' ? -380 : 380;
+      carouselRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    }
+  };
+
   return (
     <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-7">
       {/* Header */}
@@ -63,13 +99,13 @@ export const TemplatesView: React.FC<TemplatesViewProps> = ({
         <div>
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-amber-500/10 via-pink-500/10 to-indigo-500/10 text-amber-400 border border-amber-500/20 text-xs font-semibold mb-2">
             <Sparkles className="w-3.5 h-3.5" />
-            <span>Biblioteca Premium LAV Digital &bull; 6 Colecciones Exclusivas</span>
+            <span>Biblioteca Premium LAV Digital &bull; 22 Nuevas Plantillas Exclusivas</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
             Plantillas Digitales de Alta Gama
           </h1>
           <p className="text-xs sm:text-sm text-slate-400 max-w-2xl mt-1">
-            Diseños con iluminación activa, animaciones fluidas a 60 FPS y composiciones especializadas para ejecutivos, tecnología, creadores y empresas.
+            20 modelos de composición fotográfica real, 12 animaciones modernas de logotipo, módulos nativos de Google Reviews, transferencias bancarias SPEI y cobros con PayPal.
           </p>
         </div>
 
@@ -91,6 +127,89 @@ export const TemplatesView: React.FC<TemplatesViewProps> = ({
               <X className="w-3.5 h-3.5" />
             </button>
           )}
+        </div>
+      </div>
+
+      {/* Horizontal Spotlight Carousel */}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Layers className="w-4 h-4 text-indigo-400" />
+            <h2 className="text-xs font-bold uppercase tracking-wider text-slate-300">
+              Selector Rápido de Diseños Destacados
+            </h2>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <button
+              type="button"
+              onClick={() => scrollCarousel('left')}
+              className="p-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 transition"
+              title="Desplazar a la izquierda"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+            <button
+              type="button"
+              onClick={() => scrollCarousel('right')}
+              className="p-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 transition"
+              title="Desplazar a la derecha"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+
+        {/* Carousel Container */}
+        <div
+          ref={carouselRef}
+          className="flex gap-4 overflow-x-auto pb-3 pt-1 scroll-smooth snap-x snap-mandatory no-scrollbar"
+        >
+          {templates.slice(0, 12).map((t) => (
+            <div
+              key={`carousel-${t.id}`}
+              className="flex-shrink-0 w-72 sm:w-80 snap-start rounded-2xl bg-slate-900 border border-slate-800 hover:border-indigo-500/50 p-4 transition duration-300 shadow-lg flex flex-col justify-between group"
+            >
+              <div className={`h-24 rounded-xl bg-gradient-to-r ${t.thumbnailGradient} p-3 relative flex flex-col justify-between overflow-hidden mb-3`}>
+                <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]" />
+                <div className="relative z-10 flex items-center justify-between">
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-black/70 text-white">
+                    {t.category}
+                  </span>
+                  {t.badge && (
+                    <span className="text-[9px] font-extrabold px-1.5 py-0.2 rounded bg-amber-400 text-slate-950">
+                      {t.badge}
+                    </span>
+                  )}
+                </div>
+                <p className="relative z-10 text-white font-extrabold text-sm drop-shadow truncate">
+                  {t.name}
+                </p>
+              </div>
+
+              <p className="text-[11px] text-slate-400 line-clamp-2 mb-3">
+                {t.description}
+              </p>
+
+              <div className="flex items-center gap-2 pt-2 border-t border-slate-800/80">
+                <button
+                  type="button"
+                  onClick={() => setPreviewTemplate(t)}
+                  className="flex-1 py-1.5 px-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold flex items-center justify-center gap-1 transition"
+                >
+                  <Eye className="w-3 h-3" />
+                  <span>Previa</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleUseTemplate(t)}
+                  className="flex-1 py-1.5 px-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold flex items-center justify-center gap-1 transition shadow-md"
+                >
+                  <span>Elegir</span>
+                  <ArrowRight className="w-3 h-3" />
+                </button>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 
@@ -194,22 +313,43 @@ export const TemplatesView: React.FC<TemplatesViewProps> = ({
                   {template.description}
                 </p>
 
-                {/* Micro preview features */}
+                {/* Micro preview features & Specialized Tags */}
                 <div className="flex flex-wrap gap-1.5 mb-4">
                   <span className="text-[10px] px-2 py-0.5 rounded-md bg-slate-800 text-slate-300 border border-slate-700/60">
                     Fuente: {template.cardData.design.fontHeadline}
                   </span>
-                  <span className="text-[10px] px-2 py-0.5 rounded-md bg-slate-800 text-slate-300 border border-slate-700/60">
-                    Estilo: {template.cardData.design.theme}
-                  </span>
-                  {template.cardData.design.animationStyle && (
-                    <span className="text-[10px] px-2 py-0.5 rounded-md bg-cyan-950/50 text-cyan-300 border border-cyan-800/50">
-                      FX: {template.cardData.design.animationStyle}
+                  {template.cardData.design.photoComposition && (
+                    <span className="text-[10px] px-2 py-0.5 rounded-md bg-indigo-950/50 text-indigo-300 border border-indigo-800/40 font-medium">
+                      Foto: {template.cardData.design.photoComposition}
                     </span>
                   )}
-                  <span className="text-[10px] px-2 py-0.5 rounded-md bg-slate-800 text-slate-300 border border-slate-700/60">
-                    {template.cardData.catalog.length > 0 ? 'Con catálogo' : 'Tarjeta ejecutiva'}
-                  </span>
+                  {template.cardData.design.logoAnimation && template.cardData.design.logoAnimation !== 'none' && (
+                    <span className="text-[10px] px-2 py-0.5 rounded-md bg-purple-950/50 text-purple-300 border border-purple-800/40">
+                      Logo FX: {template.cardData.design.logoAnimation}
+                    </span>
+                  )}
+                  {template.cardData.googleReviews?.enabled && (
+                    <span className="text-[10px] px-2 py-0.5 rounded-md bg-amber-950/60 text-amber-300 border border-amber-800/50 flex items-center gap-1 font-bold">
+                      <Star className="w-2.5 h-2.5 fill-amber-400" />
+                      <span>Google Reviews</span>
+                    </span>
+                  )}
+                  {template.cardData.bankTransfer?.enabled && (
+                    <span className="text-[10px] px-2 py-0.5 rounded-md bg-emerald-950/60 text-emerald-300 border border-emerald-800/50 flex items-center gap-1 font-bold">
+                      <Landmark className="w-2.5 h-2.5" />
+                      <span>SPEI Bancario</span>
+                    </span>
+                  )}
+                  {template.cardData.paypal?.enabled && (
+                    <span className="text-[10px] px-2 py-0.5 rounded-md bg-blue-950/60 text-blue-300 border border-blue-800/50 font-bold">
+                      PayPal
+                    </span>
+                  )}
+                  {template.cardData.catalog.length > 0 && (
+                    <span className="text-[10px] px-2 py-0.5 rounded-md bg-slate-800 text-slate-300 border border-slate-700/60">
+                      {template.id.includes('gastro') ? 'Menú Digital' : 'Con catálogo'}
+                    </span>
+                  )}
                 </div>
               </div>
 

@@ -148,7 +148,116 @@ Devuelve SOLO el texto mejorado, sin explicaciones ni comillas.`;
   }
 });
 
-// Fallback suggestions if AI API key is pending
+// PayPal Server Endpoints
+app.get('/api/paypal/config', (_req, res) => {
+  const clientId = process.env.PAYPAL_CLIENT_ID || '';
+  const mode = process.env.PAYPAL_MODE || 'sandbox';
+  res.json({
+    configured: Boolean(clientId),
+    clientId: clientId ? clientId.substring(0, 8) + '...' : '',
+    mode,
+  });
+});
+
+app.post('/api/paypal/create-order', async (req, res) => {
+  try {
+    const { amount, currency = 'USD', description = 'Pago de servicio' } = req.body;
+    const clientId = process.env.PAYPAL_CLIENT_ID;
+    const clientSecret = process.env.PAYPAL_CLIENT_SECRET;
+    const mode = process.env.PAYPAL_MODE || 'sandbox';
+
+    if (!clientId || !clientSecret) {
+      return res.status(200).json({
+        success: false,
+        configured: false,
+        message: 'PayPal API no configurado con credenciales de servidor. Utilice enlace directo de pago PayPal.me o enlace personalizado.',
+      });
+    }
+
+    const baseUrl = mode === 'live' ? 'https://api-m.paypal.com' : 'https://api-m.sandbox.paypal.com';
+    const auth = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
+
+    const tokenRes = await fetch(`${baseUrl}/v1/oauth2/token`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Basic ${auth}`,
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: 'grant_type=client_credentials',
+    });
+
+    const tokenData = await tokenRes.json();
+    if (!tokenData.access_token) {
+      return res.status(400).json({ success: false, error: 'No se pudo autenticar con PayPal' });
+    }
+
+    const orderRes = await fetch(`${baseUrl}/v2/checkout/orders`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${tokenData.access_token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        intent: 'CAPTURE',
+        purchase_units: [
+          {
+            description,
+            amount: {
+              currency_code: currency,
+              value: amount ? parseFloat(amount).toFixed(2) : '10.00',
+            },
+          },
+        ],
+      }),
+    });
+
+    const orderData = await orderRes.json();
+    return res.json({ success: true, order: orderData });
+  } catch (error: any) {
+    console.error('Error creating PayPal order:', error);
+    return res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+app.post('/api/paypal/capture-order', async (req, res) => {
+  try {
+    const { orderId } = req.body;
+    const clientId = process.env.PAYPAL_CLIENT_ID;
+    const clientSecret = process.env.PAYPAL_CLIENT_SECRET;
+    const mode = process.env.PAYPAL_MODE || 'sandbox';
+
+    if (!clientId || !clientSecret) {
+      return res.status(400).json({ success: false, message: 'PayPal no configurado en servidor.' });
+    }
+
+    const baseUrl = mode === 'live' ? 'https://api-m.paypal.com' : 'https://api-m.sandbox.paypal.com';
+    const auth = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
+
+    const tokenRes = await fetch(`${baseUrl}/v1/oauth2/token`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Basic ${auth}`,
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: 'grant_type=client_credentials',
+    });
+
+    const tokenData = await tokenRes.json();
+    const captureRes = await fetch(`${baseUrl}/v2/checkout/orders/${orderId}/capture`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${tokenData.access_token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    const captureData = await captureRes.json();
+    return res.json({ success: true, capture: captureData });
+  } catch (error: any) {
+    console.error('Error capturing PayPal order:', error);
+    return res.status(500).json({ success: false, error: error.message });
+  }
+});
 function getLocalDesignSuggestion(category?: string) {
   const cat = (category || '').toLowerCase();
   if (cat.includes('salud') || cat.includes('medic') || cat.includes('dent')) {

@@ -177,6 +177,32 @@ export function generateStandaloneHtml(card: CardData): string {
     @media (prefers-reduced-motion: reduce) {
       *, ::after, ::before { animation: none !important; transition: none !important; }
     }
+    /* Logo Animations */
+    @keyframes logo-cinematic {
+      0% { opacity: 0; transform: scale(0.6) translateY(14px) rotateX(15deg); filter: blur(6px); }
+      70% { transform: scale(1.05) translateY(-2px) rotateX(0deg); filter: blur(0px); }
+      100% { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    @keyframes logo-3d-flip {
+      0%, 100% { transform: perspective(600px) rotateY(0deg); }
+      50% { transform: perspective(600px) rotateY(180deg); }
+    }
+    @keyframes logo-depth-float {
+      0%, 100% { transform: translateY(0) translateZ(0) scale(1); }
+      50% { transform: translateY(-7px) translateZ(20px) scale(1.04); }
+    }
+    @keyframes logo-pulse-glow {
+      0%, 100% { filter: drop-shadow(0 0 2px rgba(255,255,255,0.4)); transform: scale(1); }
+      50% { filter: drop-shadow(0 0 16px rgba(255,255,255,0.9)); transform: scale(1.04); }
+    }
+    .anim-logo-cinematic { animation: logo-cinematic 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    .anim-logo-3d-flip { animation: logo-3d-flip 6s ease-in-out infinite; transform-style: preserve-3d; }
+    .anim-logo-depth-float { animation: logo-depth-float 4s ease-in-out infinite; }
+    .anim-logo-pulse-glow { animation: logo-pulse-glow 3s ease-in-out infinite; }
+    .anim-speed-slow { animation-duration: 7s !important; }
+    .anim-speed-normal { animation-duration: 4s !important; }
+    .anim-speed-fast { animation-duration: 2s !important; }
+
     .cover-banner {
       width: 100%;
       height: ${card.design.coverHeight === 'sm' ? '120px' : card.design.coverHeight === 'lg' ? '200px' : '150px'};
@@ -343,6 +369,48 @@ export function generateStandaloneHtml(card: CardData): string {
       color: ${card.design.accentColor || '#38bdf8'};
       font-size: 14px;
     }
+    .bank-card {
+      background: rgba(16, 185, 129, 0.08);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: 20px;
+      padding: 18px;
+      margin-bottom: 22px;
+    }
+    .bank-field-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 10px;
+      background: rgba(255,255,255,0.04);
+      border-radius: 10px;
+      margin-bottom: 8px;
+      font-size: 13px;
+    }
+    .bank-copy-btn {
+      background: rgba(255,255,255,0.1);
+      border: none;
+      color: #fff;
+      padding: 4px 8px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 11px;
+    }
+    .reviews-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 18px;
+      padding: 16px;
+      margin-bottom: 22px;
+      text-align: center;
+    }
+    .paypal-card {
+      background: rgba(0, 112, 186, 0.15);
+      border: 1px solid rgba(0, 112, 186, 0.4);
+      border-radius: 18px;
+      padding: 16px;
+      margin-bottom: 22px;
+      text-align: center;
+    }
     .social-row {
       display: flex;
       justify-content: center;
@@ -374,6 +442,21 @@ export function generateStandaloneHtml(card: CardData): string {
       color: inherit;
       text-decoration: underline;
     }
+    #toastNotice {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #10b981;
+      color: #ffffff;
+      padding: 10px 20px;
+      border-radius: 25px;
+      font-size: 12px;
+      font-weight: 700;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+      display: none;
+      z-index: 9999;
+    }
   </style>
 </head>
 <body>
@@ -384,7 +467,7 @@ export function generateStandaloneHtml(card: CardData): string {
     <div class="content-body">
       <div class="avatar-wrapper card-stagger-1">
         <img class="avatar" src="${card.design.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300'}" alt="${escapeHtml(card.name)}">
-        ${card.design.logoUrl ? `<img class="business-logo" src="${card.design.logoUrl}" alt="${escapeHtml(card.businessName)}">` : ''}
+        ${card.design.logoUrl ? `<img class="business-logo anim-logo-${card.design.logoAnimation || 'none'} anim-speed-${card.design.logoAnimationSpeed || 'normal'}" src="${card.design.logoUrl}" alt="${escapeHtml(card.businessName)}">` : ''}
       </div>
 
       <div class="company-title headline-font card-stagger-2">${escapeHtml(card.businessName || '')}</div>
@@ -417,6 +500,62 @@ export function generateStandaloneHtml(card: CardData): string {
             <span>➔</span>
           </a>
         `).join('')}
+      </div>` : ''}
+
+      <!-- Google Reviews Module -->
+      ${card.googleReviews?.enabled ? `
+      <div class="reviews-card">
+        <div style="display:flex; justify-content:center; align-items:center; gap:8px; margin-bottom:8px;">
+          <span style="font-weight:700; font-size:14px; color:#fff;">${escapeHtml(card.googleReviews.title || 'Reseñas en Google')}</span>
+          <span style="color:#f59e0b; font-size:16px;">★★★★★</span>
+        </div>
+        <a href="${card.googleReviews.placeUrl || card.googleReviews.url || 'https://search.google.com/local/writereview'}" target="_blank" style="display:inline-block; padding:10px 20px; background:#fff; color:#0f172a; border-radius:12px; font-weight:700; font-size:13px; text-decoration:none;">
+          ${escapeHtml(card.googleReviews.buttonText || 'Calificar en Google')}
+        </a>
+      </div>` : ''}
+
+      <!-- Bank Transfer SPEI Module -->
+      ${card.bankTransfer?.enabled ? `
+      <div class="bank-card">
+        <div style="font-weight:800; font-size:14px; color:#34d399; margin-bottom:10px;">🏦 Transferencia SPEI</div>
+        ${card.bankTransfer.bankName ? `
+        <div class="bank-field-row">
+          <span><strong>Banco:</strong> ${escapeHtml(card.bankTransfer.bankName)}</span>
+          <button class="bank-copy-btn" onclick="copyText('${escapeHtml(card.bankTransfer.bankName)}', 'Banco')">Copiar</button>
+        </div>` : ''}
+        ${card.bankTransfer.accountHolder ? `
+        <div class="bank-field-row">
+          <span><strong>Titular:</strong> ${escapeHtml(card.bankTransfer.accountHolder)}</span>
+          <button class="bank-copy-btn" onclick="copyText('${escapeHtml(card.bankTransfer.accountHolder)}', 'Titular')">Copiar</button>
+        </div>` : ''}
+        ${card.bankTransfer.clabe ? `
+        <div class="bank-field-row">
+          <span><strong>CLABE:</strong> ${escapeHtml(card.bankTransfer.clabe)}</span>
+          <button class="bank-copy-btn" onclick="copyText('${escapeHtml(card.bankTransfer.clabe)}', 'CLABE')">Copiar</button>
+        </div>` : ''}
+        ${card.bankTransfer.accountNumber ? `
+        <div class="bank-field-row">
+          <span><strong>Cuenta:</strong> ${escapeHtml(card.bankTransfer.accountNumber)}</span>
+          <button class="bank-copy-btn" onclick="copyText('${escapeHtml(card.bankTransfer.accountNumber)}', 'Cuenta')">Copiar</button>
+        </div>` : ''}
+        ${card.bankTransfer.cardNumber ? `
+        <div class="bank-field-row">
+          <span><strong>Tarjeta:</strong> ${escapeHtml(card.bankTransfer.cardNumber)}</span>
+          <button class="bank-copy-btn" onclick="copyText('${escapeHtml(card.bankTransfer.cardNumber)}', 'Tarjeta')">Copiar</button>
+        </div>` : ''}
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:10px;">
+          <button onclick="copyAllBank()" style="padding:10px; background:#1e293b; color:#fff; border:none; border-radius:10px; font-weight:700; font-size:12px; cursor:pointer;">Copiar todo</button>
+          <button onclick="shareBankWhatsApp()" style="padding:10px; background:#10b981; color:#fff; border:none; border-radius:10px; font-weight:700; font-size:12px; cursor:pointer;">WhatsApp</button>
+        </div>
+      </div>` : ''}
+
+      <!-- PayPal Module -->
+      ${card.paypal?.enabled ? `
+      <div class="paypal-card">
+        <div style="font-weight:800; font-size:14px; color:#fff; margin-bottom:8px;">💳 Pago con PayPal</div>
+        <a href="${card.paypal.paymentLink || 'https://paypal.me'}" target="_blank" style="display:inline-block; padding:12px 24px; background:#0070ba; color:#fff; border-radius:14px; font-weight:700; font-size:13px; text-decoration:none;">
+          ${escapeHtml(card.paypal.buttonText || card.paypal.buttonLabel || 'Pagar con PayPal')}
+        </a>
       </div>` : ''}
 
       <!-- Embedded Video (YouTube / Shorts) -->
@@ -465,8 +604,61 @@ export function generateStandaloneHtml(card: CardData): string {
       </div>
     </div>
   </div>
+  <div id="toastNotice"></div>
 
   <script>
+    function showToast(msg) {
+      var t = document.getElementById('toastNotice');
+      if (!t) return;
+      t.innerText = msg;
+      t.style.display = 'block';
+      setTimeout(function() { t.style.display = 'none'; }, 2500);
+    }
+
+    function copyText(val, label) {
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(val).then(function() {
+          showToast('¡' + label + ' copiado!');
+        }).catch(function() {
+          showToast('¡' + label + ' copiado!');
+        });
+      }
+    }
+
+    function copyAllBank() {
+      var lines = [
+        'DATOS BANCARIOS PARA TRANSFERENCIA SPEI',
+        CARD_DATA.business ? 'Empresa: ' + CARD_DATA.business : '',
+        ${JSON.stringify(card.bankTransfer?.accountHolder ? `Titular: ${card.bankTransfer.accountHolder}` : '')},
+        ${JSON.stringify(card.bankTransfer?.bankName ? `Banco: ${card.bankTransfer.bankName}` : '')},
+        ${JSON.stringify(card.bankTransfer?.clabe ? `CLABE: ${card.bankTransfer.clabe}` : '')},
+        ${JSON.stringify(card.bankTransfer?.accountNumber ? `Cuenta: ${card.bankTransfer.accountNumber}` : '')},
+        ${JSON.stringify(card.bankTransfer?.cardNumber ? `Tarjeta: ${card.bankTransfer.cardNumber}` : '')},
+        ${JSON.stringify(card.bankTransfer?.reference ? `Referencia: ${card.bankTransfer.reference}` : '')},
+        ${JSON.stringify(card.bankTransfer?.instructions ? `Concepto: ${card.bankTransfer.instructions}` : '')}
+      ].filter(Boolean).join('\\n');
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(lines).then(function() {
+          showToast('¡Todos los datos copiados!');
+        });
+      }
+    }
+
+    function shareBankWhatsApp() {
+      var lines = [
+        '*DATOS BANCARIOS PARA TRANSFERENCIA SPEI*',
+        CARD_DATA.business ? '*Empresa:* ' + CARD_DATA.business : '',
+        ${JSON.stringify(card.bankTransfer?.accountHolder ? `*Titular:* ${card.bankTransfer.accountHolder}` : '')},
+        ${JSON.stringify(card.bankTransfer?.bankName ? `*Banco:* ${card.bankTransfer.bankName}` : '')},
+        ${JSON.stringify(card.bankTransfer?.clabe ? `*CLABE:* ${card.bankTransfer.clabe}` : '')},
+        ${JSON.stringify(card.bankTransfer?.accountNumber ? `*Cuenta:* ${card.bankTransfer.accountNumber}` : '')},
+        ${JSON.stringify(card.bankTransfer?.cardNumber ? `*Tarjeta:* ${card.bankTransfer.cardNumber}` : '')},
+        ${JSON.stringify(card.bankTransfer?.reference ? `*Referencia:* ${card.bankTransfer.reference}` : '')},
+        ${JSON.stringify(card.bankTransfer?.instructions ? `*Concepto:* ${card.bankTransfer.instructions}` : '')}
+      ].filter(Boolean).join('\\n');
+      window.open('https://wa.me/?text=' + encodeURIComponent(lines), '_blank');
+    }
+
     const CARD_DATA = {
       name: ${JSON.stringify(card.name)},
       business: ${JSON.stringify(card.businessName || '')},

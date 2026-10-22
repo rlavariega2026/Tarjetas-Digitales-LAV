@@ -1,0 +1,575 @@
+PROMPT MAESTRO — ACTUALIZACIÓN COMPLETA DE LAV DIGITAL
+
+Actúa como un ingeniero de software senior especializado en desarrollo web, aplicaciones digitales, interfaces premium, diseño UX/UI, animaciones avanzadas, integración de pagos y mantenimiento de aplicaciones existentes.
+
+Debes trabajar sobre el proyecto actual de LAV Digital, una aplicación para crear tarjetas digitales profesionales y personalizadas.
+
+REGLA PRINCIPAL: MODIFICAR EL PROYECTO EXISTENTE
+
+Antes de escribir o modificar código, inspecciona el proyecto completo para identificar:
+
+- Framework, lenguaje y arquitectura utilizados.
+- Componentes, páginas, rutas y estructura del proyecto.
+- Las plantillas existentes y su sistema de selección.
+- El editor de tarjetas y sus controles.
+- Cómo se cargan, recortan y almacenan las fotografías.
+- Cómo se cargan y almacenan los logotipos.
+- Cómo se guardan, editan, publican y comparten las tarjetas.
+- Cómo funcionan los enlaces, botones y códigos QR.
+- Los servicios de almacenamiento, base de datos y configuración.
+- La infraestructura actual de despliegue.
+- Las funciones ya implementadas y las que están incompletas.
+
+Después de la inspección, implementa las mejoras sobre la arquitectura existente.
+
+No reconstruyas la aplicación desde cero. No elimines, sustituyas ni dañes las funciones existentes. No borres plantillas actuales. No crees una demostración aislada que no esté conectada con la aplicación real.
+
+Conserva la compatibilidad con los datos, las tarjetas existentes y los flujos actuales. Si una modificación requiere migraciones de datos, cambios de infraestructura o decisiones que puedan provocar pérdida de información, identifica el riesgo y solicita autorización antes de realizar acciones destructivas.
+
+1. INCORPORAR EXACTAMENTE 22 PLANTILLAS NUEVAS
+
+Agrega 22 plantillas nuevas al catálogo existente, sin contar las plantillas que ya tiene la aplicación.
+
+La distribución debe ser exactamente la siguiente:
+
+A. Diecinueve plantillas generales premium
+
+1. Cyber Chrome: acabado metálico, cromado y tecnológico.
+2. Neon Grid: cuadrículas futuristas, iluminación de neón y profundidad.
+3. Digital Orbit: elementos orbitales, movimiento y composición espacial.
+4. Holographic Future: acabados holográficos, reflejos y transparencias.
+5. Black Gold Signature: combinación elegante de negro y dorado.
+6. Platinum Edition: estética premium en tonos platino y plata.
+7. Liquid Metal: superficies metálicas fluidas y reflejos realistas.
+8. Royal Velvet: apariencia elegante, oscura y sofisticada.
+9. Swiss Minimal: diseño minimalista, ordenado y funcional.
+10. Editorial Cover: composición inspirada en portadas editoriales.
+11. Architectural Lines: líneas geométricas y composición arquitectónica.
+12. Monochrome Studio: estética monocromática de estudio.
+13. Aurora Flow: degradados y luces inspirados en auroras.
+14. Liquid Glass: transparencias y superficies de vidrio.
+15. Prismatic Light: refracciones, prismas y efectos de luz.
+16. Soft Gradient Pro: degradados suaves y acabado profesional.
+17. Asymmetric Flow: distribución asimétrica de imágenes y contenido.
+18. Dynamic Layers: capas visuales, profundidad y superposición.
+19. Bold Creative: diseño expresivo, atrevido y creativo.
+
+Cada una debe tener una identidad visual propia. No se considerará una plantilla diferente si únicamente cambia el color de otra.
+
+B. Una plantilla exclusiva para restaurantes y menús
+
+Debe ser adecuada para restaurantes, cafeterías, pastelerías, bares y negocios de alimentos.
+
+C. Una plantilla exclusiva para reseñas de Google
+
+Debe estar especialmente diseñada para invitar a los clientes a calificar un negocio en Google, con identidad visual propia.
+
+D. Una plantilla exclusiva para transferencias bancarias
+
+Debe estar diseñada para presentar los datos bancarios de manera clara y profesional, facilitar su copia y compartirlos por WhatsApp.
+
+Total obligatorio: 19 + 1 + 1 + 1 = 22 plantillas nuevas.
+
+2. APLICAR LAS MEJORAS A TODAS LAS PLANTILLAS, ANTIGUAS Y NUEVAS
+
+Las funcionalidades descritas en esta sección deben estar disponibles en todas las plantillas existentes y en las 22 nuevas.
+
+No limitar las mejoras al catálogo nuevo.
+
+2.1. Carga y administración del logotipo
+
+Cada tarjeta debe permitir:
+
+- Subir el logotipo del negocio desde el dispositivo.
+- Previsualizarlo antes de guardar.
+- Reemplazarlo por otro.
+- Eliminarlo cuando el usuario lo desee.
+- Mantener su proporción original y evitar deformaciones.
+- Ajustar su tamaño y posición cuando el diseño lo permita.
+- Conservarlo al guardar, editar y publicar la tarjeta.
+- Mostrarlo correctamente en dispositivos móviles y computadoras.
+
+El logotipo del negocio debe ser independiente de los logotipos oficiales de servicios externos, como Google o PayPal.
+
+2.2. Animaciones avanzadas del logotipo
+
+Implementa un selector de animaciones modernas para el logotipo del negocio en todas las plantillas.
+
+Incluye opciones como:
+
+- Entrada cinematográfica.
+- Giro tridimensional.
+- Movimiento suave en profundidad.
+- Reflejo de luz.
+- Barrido luminoso.
+- Destellos y partículas.
+- Efectos holográficos.
+- Pulso de iluminación.
+- Aparición progresiva.
+- Movimiento orbital.
+- Efecto metálico.
+- Parallax sutil.
+
+Las animaciones deben ser elegantes, fluidas y apropiadas para una tarjeta profesional, sin perjudicar la legibilidad ni el rendimiento.
+
+Permite configurar la animación, su intensidad o velocidad cuando sea viable, y desactivarla por completo.
+
+Respeta la preferencia del sistema para reducir movimiento y ofrece una presentación accesible cuando las animaciones estén desactivadas.
+
+No uses animaciones pesadas innecesariamente ni reproduzcas efectos que provoquen parpadeos molestos.
+
+3. VARIEDAD REAL DE COMPOSICIONES FOTOGRÁFICAS EN TODAS LAS PLANTILLAS
+
+Esta es una de las funciones prioritarias.
+
+Todas las plantillas existentes y nuevas deben ofrecer distintas variantes para presentar las fotografías. No basta con cambiar fondos, colores, tipografías o animaciones.
+
+El usuario debe poder seleccionar entre modelos de composición visual realmente diferentes.
+
+3.1. Modelos de distribución que se deben implementar
+
+Incluye, como mínimo, variantes como las siguientes:
+
+1. Fotografía principal grande en la parte superior.
+2. Fotografía principal en la parte inferior.
+3. Fotografía a la izquierda y datos a la derecha.
+4. Fotografía a la derecha y datos a la izquierda.
+5. Retrato circular.
+6. Fotografía panorámica de ancho completo.
+7. Fotografía como fondo de la tarjeta.
+8. Fotografía dentro de un marco elegante.
+9. Fotografía con esquinas redondeadas.
+10. Composición asimétrica.
+11. Varias fotografías en una cuadrícula.
+12. Galería horizontal deslizable.
+13. Fotografía principal acompañada de miniaturas.
+14. Composición editorial con texto e imágenes alternados.
+15. Fotografías superpuestas con profundidad visual.
+16. Varias fotografías en tarjetas independientes.
+17. Composición minimalista con una fotografía pequeña.
+18. Fotografía vertical de gran tamaño.
+19. Fotografía recortada en formas geométricas.
+20. Varias fotografías distribuidas en distintas zonas de la tarjeta.
+
+Estas composiciones son un mínimo de referencia. Puedes desarrollar otras cuando mejoren la experiencia o se adapten mejor a una plantilla.
+
+3.2. Selector de composiciones
+
+Cada plantilla debe ofrecer un selector visual de variantes de diseño.
+
+Debe permitir:
+
+- Ver miniaturas o vistas previas de cada composición.
+- Cambiar entre modelos sin salir del editor.
+- Comparar cómo se ven las fotografías, el logotipo, los textos y los botones.
+- Elegir la composición deseada.
+- Ajustar el encuadre de las imágenes.
+- Cambiar el tamaño y la posición de las fotografías dentro de las opciones permitidas.
+- Guardar la selección y conservarla al editar o publicar la tarjeta.
+
+Las variantes deben mantener la identidad de su plantilla, pero cambiar de verdad la distribución, la escala, la proporción y la ubicación de los elementos.
+
+No generes variantes que sean prácticamente idénticas.
+
+La distribución debe adaptarse a móviles y computadoras, sin que los textos, imágenes, botones o logotipos se superpongan incorrectamente.
+
+4. BOTÓN OPCIONAL DE RESEÑAS DE GOOGLE EN TODAS LAS PLANTILLAS
+
+Implementa la función de reseñas de Google en todas las plantillas existentes y nuevas.
+
+Cada tarjeta debe disponer de una configuración independiente para esta función.
+
+Debe incluir:
+
+- Interruptor para mostrar u ocultar el botón.
+- Campo para introducir el enlace real de reseñas de Google del negocio.
+- Texto configurable para el botón.
+- Opciones de texto como «Califícanos en Google», «Déjanos tu opinión» o «Comparte tu experiencia».
+- Previsualización del botón dentro de la tarjeta.
+- Apertura del enlace proporcionado por el propietario al pulsarlo.
+
+El botón debe poder activarse o desactivarse independientemente para cada tarjeta.
+
+Si no existe un enlace válido o la función está desactivada, no debe mostrarse el botón en la tarjeta publicada.
+
+No inventes enlaces de reseñas. No simules que una reseña se publicó. No inventes puntuaciones, cantidades de reseñas ni testimonios.
+
+Esta función debe coexistir con las demás opciones de la tarjeta y no sustituirlas.
+
+5. PLANTILLA EXCLUSIVA PARA GOOGLE REVIEWS
+
+Además del botón opcional disponible en todas las plantillas, crea una plantilla especializada en conseguir reseñas para negocios.
+
+5.1. Diseño
+
+Debe incluir:
+
+- Logotipo oficial de Google con sus colores y proporciones correctos.
+- Logotipo del negocio, cargado por el propietario.
+- Posibilidad de animar el logotipo del negocio.
+- Diseño visual profesional y claramente enfocado en las reseñas.
+- Textos de invitación configurables.
+- Botón destacado para abrir el enlace real de reseñas.
+- Variantes de composición fotográfica.
+- Diseño adaptable a teléfonos y computadoras.
+
+No deformes el logotipo oficial de Google ni lo combines con el logotipo del negocio como si fueran una sola marca.
+
+5.2. Pagos
+
+Esta plantilla también debe ofrecer la opción de pagos mediante PayPal, conectada con el sistema de pagos de la aplicación.
+
+El propietario debe poder configurar si desea mostrar esa opción.
+
+La función de pagos no debe interferir con el botón de reseñas ni inducir al usuario a creer que pagar es necesario para dejar una opinión.
+
+6. PLANTILLA EXCLUSIVA PARA RESTAURANTES, CAFETERÍAS Y MENÚS
+
+Desarrolla una plantilla completa para mostrar un negocio gastronómico y sus productos.
+
+6.1. Información del establecimiento
+
+Debe permitir configurar:
+
+- Nombre del negocio.
+- Logotipo.
+- Descripción.
+- Dirección.
+- Horarios de atención.
+- Teléfono y datos de contacto.
+- Fotografías del establecimiento cuando corresponda.
+
+El logotipo debe admitir las mismas opciones de animación disponibles en las demás plantillas.
+
+6.2. Menú de productos
+
+Permite administrar productos con:
+
+- Nombre.
+- Descripción.
+- Precio.
+- Fotografía.
+- Categoría.
+- Disponibilidad o estado, cuando corresponda.
+
+Permite organizar el menú en categorías, por ejemplo, entradas, platos principales, bebidas, postres y promociones.
+
+El propietario debe poder agregar, editar, eliminar y ordenar productos desde el sistema existente.
+
+El menú debe verse profesional y ser fácil de consultar desde un teléfono.
+
+Debe permitir presentar las fotografías de los productos mediante distintas composiciones visuales, sin obligar a usar una sola distribución.
+
+6.3. Pagos por transferencia bancaria
+
+La plantilla de restaurante debe incluir una opción para mostrar los datos bancarios del negocio y facilitar los pagos mediante transferencia.
+
+Debe permitir configurar y mostrar los campos bancarios que el propietario decida utilizar, como:
+
+- Banco.
+- Titular de la cuenta.
+- CLABE interbancaria.
+- Número de cuenta.
+- Número de tarjeta, cuando corresponda.
+- Referencia de pago.
+- Instrucciones adicionales.
+
+El propietario debe controlar qué campos aparecen publicados.
+
+Copiar datos bancarios
+
+Implementa dos modalidades obligatorias:
+
+1. Copiar individualmente: cada dato bancario debe tener su propio botón para copiarlo al portapapeles.
+2. Copiar todos los datos: debe existir un botón que copie todos los datos bancarios configurados y visibles en un solo bloque de texto ordenado.
+
+Después de una copia exitosa, muestra una confirmación clara. No afirmes que los datos se copiaron si la operación falló.
+
+Compartir por WhatsApp
+
+Incluye un botón para compartir los datos bancarios mediante WhatsApp.
+
+El mensaje debe prepararse automáticamente con los campos configurados y no vacíos, con etiquetas claras para que el destinatario identifique cada dato.
+
+El usuario debe poder abrir WhatsApp, seleccionar el destinatario y confirmar el envío. No afirmes que el mensaje fue enviado automáticamente.
+
+No incluyas datos que el propietario haya decidido ocultar.
+
+6.4. Pagos mediante PayPal
+
+La plantilla de restaurante debe ofrecer también pagos mediante PayPal.
+
+El propietario debe poder configurar la opción de pago que corresponda a su negocio.
+
+La transferencia bancaria y PayPal deben poder coexistir: activar una modalidad no debe eliminar ni desactivar automáticamente la otra.
+
+6.5. Reseñas de Google
+
+Incluye también el botón opcional de reseñas de Google, sujeto a la configuración individual de la tarjeta y al enlace real que proporcione el negocio.
+
+7. PLANTILLA EXCLUSIVA PARA TRANSFERENCIAS BANCARIAS
+
+Crea una plantilla especializada en presentar los datos para recibir transferencias de forma clara, profesional y fácil de utilizar.
+
+7.1. Datos bancarios configurables
+
+Debe permitir los siguientes campos, todos opcionales según las necesidades del propietario:
+
+- Banco.
+- Nombre del titular.
+- CLABE interbancaria.
+- Número de cuenta.
+- Número de tarjeta, si procede.
+- Referencia.
+- Concepto o instrucciones de pago.
+
+El propietario debe decidir qué campos desea mostrar.
+
+7.2. Logotipo y diseño
+
+Incluye:
+
+- Carga del logotipo del negocio.
+- Variantes de animación.
+- Diferentes composiciones fotográficas.
+- Adaptación a dispositivos móviles.
+- Vista previa antes de publicar.
+- Diseño profesional con datos fáciles de identificar.
+
+7.3. Copiar individualmente o todo junto
+
+Ambas opciones son obligatorias:
+
+- Un botón para copiar cada dato individualmente.
+- Un botón para copiar todos los datos bancarios configurados en un solo bloque ordenado.
+
+La copia debe contener solamente la información habilitada y no vacía.
+
+Muestra una confirmación únicamente cuando la copia se haya completado correctamente.
+
+7.4. Compartir por WhatsApp
+
+Incluye un botón que prepare un mensaje con los datos bancarios configurados y visibles.
+
+El mensaje debe estar ordenado, ser legible y excluir los campos vacíos u ocultos.
+
+Abre WhatsApp con el mensaje preparado para que el usuario elija al destinatario y confirme el envío.
+
+No simules un envío automático.
+
+7.5. Pagos mediante PayPal
+
+Esta plantilla debe ofrecer también una opción de pagos mediante PayPal, además de la transferencia bancaria.
+
+Ambas modalidades deben poder configurarse independientemente.
+
+7.6. Reseñas de Google
+
+También debe contar con la opción general de activar o desactivar el botón de reseñas de Google.
+
+8. INTEGRACIÓN REAL DE PAYPAL EN LAV DIGITAL
+
+La integración de PayPal es una funcionalidad de la aplicación, no solamente un elemento visual de las plantillas.
+
+Debe permitir conectar PayPal mediante los mecanismos oficiales compatibles con la arquitectura actual.
+
+8.1. Configuración
+
+- Incorporar una sección de configuración para PayPal.
+- Permitir configurar la conexión de acuerdo con los requisitos oficiales de PayPal.
+- Permitir configurar las opciones de pago disponibles para cada negocio o tarjeta.
+- Mantener separadas las credenciales y configuraciones de cada cuenta cuando corresponda.
+- Diferenciar entre un enlace de pago proporcionado por el propietario y una integración completa de procesamiento de pagos.
+
+Si se admite un enlace de pago como alternativa, debe quedar claro que ese enlace no equivale por sí solo a una integración completa.
+
+8.2. Seguridad y verificación
+
+- No exponer secretos, claves privadas ni credenciales sensibles en el código del navegador.
+- Utilizar un servidor seguro para las operaciones que requieran credenciales privadas.
+- Verificar los pagos mediante los mecanismos oficiales correspondientes.
+- Utilizar notificaciones o webhooks cuando sean necesarios y compatibles con la integración.
+- No mostrar una transacción como exitosa únicamente porque el usuario regresó de PayPal.
+- No simular pagos, confirmaciones, saldos ni transacciones.
+- No almacenar datos financieros sensibles que no sean necesarios.
+
+8.3. Requisitos de infraestructura
+
+Primero inspecciona si el proyecto ya dispone de backend, funciones de servidor, base de datos y variables de entorno.
+
+Si los requisitos de la integración completa no pueden resolverse únicamente desde el frontend, identifica e implementa los componentes necesarios cuando sea posible dentro de la infraestructura existente.
+
+Si se requieren credenciales, una cuenta de desarrollador, variables de entorno, configuración de producción u otra acción externa, identifica exactamente qué falta. No inventes credenciales ni afirmes que PayPal quedó conectado cuando todavía no se ha completado la configuración.
+
+La integración debe ser funcional y segura, no una simulación de interfaz.
+
+9. SELECTOR HORIZONTAL DE PLANTILLAS Y VISTAS PREVIAS
+
+Mejora el selector de plantillas para que los usuarios puedan explorar visualmente las opciones disponibles.
+
+Debe incluir:
+
+- Navegación horizontal deslizable.
+- Miniaturas claras de las plantillas.
+- Selección de una plantilla.
+- Vista previa de la plantilla elegida.
+- Acceso a las variantes de composición fotográfica.
+- Identificación visual de la plantilla seleccionada.
+- Compatibilidad con pantallas táctiles y computadoras.
+
+Las 22 nuevas plantillas deben aparecer en el catálogo, junto con las plantillas existentes.
+
+El selector no debe ocultar, eliminar ni sustituir las plantillas antiguas.
+
+10. EXPERIENCIA DE EDICIÓN
+
+Integra las nuevas opciones en el editor existente, manteniendo una experiencia clara y coherente.
+
+El usuario debe poder:
+
+1. Seleccionar una plantilla.
+2. Elegir una variante de composición.
+3. Subir y acomodar sus fotografías.
+4. Subir y configurar el logotipo.
+5. Elegir una animación para el logotipo.
+6. Configurar los datos y botones de contacto que admita la aplicación.
+7. Activar o desactivar el botón de reseñas de Google.
+8. Configurar los datos bancarios cuando la plantilla lo permita.
+9. Configurar las opciones de pago disponibles.
+10. Previsualizar la tarjeta.
+11. Guardar los cambios.
+12. Volver a editarla sin perder la configuración.
+13. Publicarla y utilizar sus enlaces o códigos QR según las funciones existentes.
+
+Los controles deben estar conectados con el estado real de la aplicación. No agregues botones decorativos que no ejecuten acciones.
+
+11. CONSERVACIÓN DE DATOS Y COMPATIBILIDAD
+
+Mantén la compatibilidad con las tarjetas existentes.
+
+- Las tarjetas antiguas no deben perder sus imágenes, logotipos, textos, enlaces ni configuraciones.
+- Los nuevos campos deben disponer de valores predeterminados seguros cuando una tarjeta antigua no los tenga.
+- La nueva configuración de las reseñas debe ser opcional.
+- Los campos de transferencia y las opciones de pago deben mostrarse únicamente cuando estén configurados y habilitados.
+- Las plantillas existentes deben seguir funcionando aunque no utilicen las funciones nuevas.
+- Los cambios de composición deben guardarse correctamente.
+- No reemplaces datos del usuario por valores de demostración.
+- No borres archivos ni datos sin autorización.
+- No dupliques innecesariamente componentes o lógica que ya existe.
+
+12. DISEÑO, RENDIMIENTO Y ACCESIBILIDAD
+
+La aplicación debe conservar un acabado profesional y funcionar correctamente en móviles y computadoras.
+
+Requisitos:
+
+- Diseño adaptable.
+- Tipografía legible.
+- Contraste adecuado.
+- Controles accesibles.
+- Estados de carga y error claros.
+- Animaciones fluidas.
+- Imágenes optimizadas.
+- Tratamiento adecuado de errores.
+- Respeto a las preferencias de movimiento reducido.
+- Sin superposiciones que oculten contenido.
+- Sin botones que parezcan funcionales pero no lo sean.
+- Sin pérdida de rendimiento por animaciones innecesarias.
+
+No sacrifiques la legibilidad por los efectos visuales.
+
+13. PRUEBAS OBLIGATORIAS
+
+Después de implementar las funciones, ejecuta las comprobaciones que permita el proyecto.
+
+13.1. Plantillas
+
+- Verifica que se hayan incorporado exactamente 22 plantillas nuevas.
+- Comprueba que las plantillas anteriores continúen disponibles.
+- Comprueba que las 19 generales sean visualmente diferentes.
+- Verifica la plantilla de restaurante.
+- Verifica la plantilla exclusiva de Google Reviews.
+- Verifica la plantilla exclusiva de transferencias.
+
+13.2. Logotipos y fotografías
+
+- Comprueba la carga, sustitución y eliminación del logotipo.
+- Comprueba que las animaciones se puedan cambiar y desactivar.
+- Comprueba las diferentes composiciones fotográficas en las plantillas antiguas y nuevas.
+- Comprueba que las variantes se reflejen en las tarjetas guardadas y publicadas.
+- Comprueba la visualización en móviles y computadoras.
+
+13.3. Google Reviews
+
+- Comprueba que el botón pueda activarse y desactivarse en todas las plantillas.
+- Comprueba que abra el enlace configurado.
+- Comprueba que no aparezca si la función está desactivada o no existe un enlace válido.
+- Comprueba el diseño de la plantilla exclusiva.
+
+13.4. Transferencias bancarias
+
+Comprueba en la plantilla de restaurantes y en la plantilla exclusiva:
+
+- Copia individual de cada campo.
+- Copia de todos los campos en un solo bloque.
+- Exclusión de campos vacíos u ocultos.
+- Confirmación correcta de las operaciones de copia.
+- Preparación del mensaje de WhatsApp.
+- Apertura del enlace de WhatsApp.
+- Conservación de los datos al guardar y editar.
+
+13.5. PayPal
+
+- Comprueba la configuración disponible.
+- Comprueba la conexión real cuando se disponga de las credenciales y servicios necesarios.
+- Comprueba los errores y estados de pago.
+- Verifica que no se simulen pagos exitosos.
+- Comprueba que PayPal y las transferencias puedan habilitarse independientemente.
+
+13.6. Regresión
+
+Comprueba que las funciones antiguas sigan funcionando: edición, guardado, publicación, imágenes, enlaces, códigos QR, navegación y cualquier otro flujo existente.
+
+Ejecuta las pruebas, compilación y comprobaciones de despliegue disponibles. Corrige los errores que aparezcan como consecuencia de los cambios.
+
+No declares una prueba exitosa si no se ejecutó o si falló.
+
+14. FORMA DE TRABAJO
+
+Trabaja sobre el código real del proyecto y sigue este orden:
+
+1. Inspeccionar la arquitectura y las funciones existentes.
+2. Identificar los componentes que pueden reutilizarse.
+3. Diseñar una implementación compatible con el proyecto.
+4. Incorporar las 22 plantillas nuevas.
+5. Extender el sistema de logotipos, animaciones y composiciones a todas las plantillas.
+6. Implementar la función de reseñas de Google en todas las plantillas.
+7. Desarrollar las tres plantillas especializadas: restaurante, Google Reviews y transferencias.
+8. Implementar las funciones bancarias de copiar individualmente, copiar todo y compartir por WhatsApp en las dos plantillas correspondientes.
+9. Integrar PayPal de forma real y segura, de acuerdo con la infraestructura disponible.
+10. Conectar las opciones con el editor, el guardado y la publicación.
+11. Ejecutar pruebas y corregir los errores.
+12. Verificar que no se hayan eliminado ni dañado las funciones existentes.
+
+No te limites a describir cambios, generar una maqueta o devolver fragmentos de código sin integrar. Realiza los cambios directamente en el proyecto y en sus archivos reales, utilizando la estructura y las herramientas disponibles.
+
+Si falta una credencial o una configuración externa que no puedes proporcionar, deja implementada la parte que sí sea posible y especifica exactamente qué paso requiere intervención del propietario.
+
+15. INFORME FINAL OBLIGATORIO
+
+Al terminar, entrega un informe concreto que indique:
+
+- Qué archivos se modificaron y cuáles se crearon.
+- Cuáles de las 22 plantillas se incorporaron.
+- Cómo se habilitaron las variantes de composición fotográfica en las plantillas antiguas y nuevas.
+- Cómo funcionan la carga y las animaciones del logotipo.
+- Cómo se configuraron las reseñas de Google.
+- Cómo funcionan las plantillas de restaurante, Google Reviews y transferencias.
+- Cómo funcionan la copia individual, la copia completa y el envío preparado por WhatsApp.
+- Qué parte de PayPal quedó implementada y qué configuración externa falta, si corresponde.
+- Qué pruebas se ejecutaron y sus resultados reales.
+- Qué errores quedan pendientes, si los hay.
+
+CRITERIO DE ACEPTACIÓN FINAL: la actualización debe integrarse en la aplicación LAV Digital existente, incluir exactamente 22 plantillas nuevas, mantener las plantillas antiguas y proporcionar las funciones descritas en este documento sin simular integraciones ni eliminar capacidades existentes.
+
+No des por concluido el trabajo solamente porque el código se haya escrito. Verifica que la implementación esté conectada con el editor, el guardado, la publicación y los flujos reales de la aplicación.

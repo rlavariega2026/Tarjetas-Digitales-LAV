@@ -11,8 +11,13 @@ import {
   CustomButton,
   CatalogItem,
   GalleryItem,
+  PhotoComposition,
+  LogoAnimation,
+  GoogleReviewsConfig,
+  BankTransferConfig,
+  PayPalConfig,
 } from '../../types/card';
-import { DigitalCardView, getEmbedVideoUrl, formatSocialUrl } from '../card/DigitalCardView';
+import { DigitalCardView, getEmbedVideoUrl, formatSocialUrl, GoogleGIcon, PayPalIcon } from '../card/DigitalCardView';
 import { HostingerExportModal } from '../card/HostingerExportModal';
 import { downloadStandaloneHtmlFile } from '../../utils/exportHtml';
 import { downloadQr } from '../../utils/qr';
@@ -48,6 +53,10 @@ import {
   ExternalLink,
   Send,
   Camera,
+  Star,
+  Landmark,
+  Utensils,
+  Building2,
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
@@ -56,6 +65,56 @@ const XIcon: React.FC<{ className?: string }> = ({ className = 'w-4 h-4' }) => (
     <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
   </svg>
 );
+
+// 20 Real Photo Composition Variants Definition
+const PHOTO_COMPOSITION_OPTIONS: Array<{
+  id: PhotoComposition;
+  title: string;
+  category: string;
+  description: string;
+}> = [
+  { id: 'top-large', title: '1. Hero Superior Grande', category: 'Protagonista', description: 'Fotografía principal grande en la parte superior con gradiente' },
+  { id: 'bottom-compact', title: '2. Foto Inferior Compacta', category: 'Invertida', description: 'Fotografía principal destacada en la parte inferior de la bio' },
+  { id: 'left-photo', title: '3. Foto a la Izquierda', category: 'Bilateral', description: 'Fotografía a la izquierda y datos comerciales a la derecha' },
+  { id: 'right-photo', title: '4. Foto a la Derecha', category: 'Bilateral', description: 'Datos a la izquierda y fotografía a la derecha' },
+  { id: 'circle-portrait', title: '5. Retrato Circular Clásico', category: 'Clásica', description: 'Retrato circular centrado o flotante con halo de estado' },
+  { id: 'panoramic', title: '6. Panorámica 16:9', category: 'Cinematográfica', description: 'Fotografía panorámica de ancho completo con título' },
+  { id: 'card-bg', title: '7. Fondo con Velo Traslúcido', category: 'Inmersiva', description: 'Fotografía como fondo difuminado de la tarjeta' },
+  { id: 'elegant-frame', title: '8. Marco Metálico Dorado', category: 'Luxury', description: 'Marco elegante con filo metálico y destellos' },
+  { id: 'rounded-squircle', title: '9. Squircle con Aura Neón', category: 'Moderna', description: 'Fotografía con esquinas redondeadas y aura de luz' },
+  { id: 'asymmetric', title: '10. Composición Asimétrica', category: 'Creativa', description: 'Composición asimétrica moderna con inclinación sutil' },
+  { id: 'multi-grid', title: '11. Cuadrícula Multi-Foto', category: 'Múltiple', description: 'Varias fotografías en cuadrícula compacta' },
+  { id: 'horizontal-slider', title: '12. Galería Deslizable', category: 'Dinámica', description: 'Galería horizontal deslizable con snap táctil' },
+  { id: 'main-thumbnails', title: '13. Foto + Miniaturas Selectoras', category: 'Interactiva', description: 'Fotografía principal con selector interactivo de miniaturas' },
+  { id: 'editorial-spread', title: '14. Editorial Revista de Moda', category: 'Editorial', description: 'Composición editorial con texto e imágenes integradas' },
+  { id: 'overlapping-depth', title: '15. Capas 3D con Insignia', category: 'Espacial', description: 'Fotografías superpuestas con profundidad visual e indicador' },
+  { id: 'photo-cards', title: '16. Tarjeta Polaroid Creativa', category: 'Creativa', description: 'Fotografía en tarjeta independiente con marco blanco' },
+  { id: 'minimal-small', title: '17. Minimalista Nórdico (44px)', category: 'Minimal', description: 'Composición sobria con fotografía pequeña junto al nombre' },
+  { id: 'vertical-large', title: '18. Retrato Vertical 3:4', category: 'Impacto', description: 'Fotografía vertical de gran tamaño y presencia visual' },
+  { id: 'geometric-cut', title: '19. Corte Geométrico Hexagonal', category: 'Geométrica', description: 'Fotografía recortada en geometría poligonal moderna' },
+  { id: 'multi-zone', title: '20. Zona Dividida Empresa/Perfil', category: 'Corporativa', description: 'Fotografías distribuidas en distintas zonas de la tarjeta' },
+];
+
+// 12 Modern Logo Animations Definition
+const LOGO_ANIMATION_OPTIONS: Array<{
+  id: LogoAnimation;
+  label: string;
+  desc: string;
+}> = [
+  { id: 'none', label: 'Sin animación', desc: 'Logo estático sin efectos continuos' },
+  { id: 'cinematic-entrance', label: '1. Entrada Cinematográfica', desc: 'Aparición suave con desenfoque y escala' },
+  { id: '3d-flip', label: '2. Giro Tridimensional 3D', desc: 'Rotación continúa en perspectiva sobre eje Y' },
+  { id: 'depth-float', label: '3. Flotación en Profundidad', desc: 'Oscilación suave vertical y elevación Z' },
+  { id: 'light-reflection', label: '4. Reflejo de Luz', desc: 'Destello luminoso diagonal que cruza el logo' },
+  { id: 'shimmer-sweep', label: '5. Barrido Luminoso', desc: 'Halo de brillo elegante continuo' },
+  { id: 'sparkle-burst', label: '6. Destellos y Partículas', desc: 'Puntos de luz titilantes en los bordes' },
+  { id: 'holographic-glitch', label: '7. Efecto Holográfico', desc: 'Aberración cromática futurista digital' },
+  { id: 'pulse-glow', label: '8. Pulso de Iluminación Glow', desc: 'Latido luminoso con sombra de neón' },
+  { id: 'fade-scale', label: '9. Aparición Progresiva', desc: 'Respiración rítmica sutil' },
+  { id: 'orbital-drift', label: '10. Deriva Orbital', desc: 'Micro movimiento orbital flotante' },
+  { id: 'metallic-shine', label: '11. Brillo Metálico', desc: 'Reflejos dorados y cromados dinámicos' },
+  { id: 'subtle-parallax', label: '12. Parallax Sutil', desc: 'Movimiento suave con micro inclinación' },
+];
 
 interface CardEditorProps {
   initialCard: CardData;
@@ -72,7 +131,7 @@ export const CardEditor: React.FC<CardEditorProps> = ({
 }) => {
   const [card, setCard] = useState<CardData>(initialCard);
   const [activeTab, setActiveTab] = useState<
-    'info' | 'socials' | 'design' | 'media' | 'buttons' | 'catalog' | 'gallery' | 'physical' | 'ai'
+    'info' | 'socials' | 'design' | 'media' | 'buttons' | 'catalog' | 'gallery' | 'reviews' | 'banking' | 'paypal' | 'physical' | 'ai'
   >('info');
   const [viewportMode, setViewportMode] = useState<'mobile' | 'tablet' | 'desktop' | 'physical'>('mobile');
   const [activeFace, setActiveFace] = useState<'front' | 'back'>('front');
@@ -109,6 +168,42 @@ export const CardEditor: React.FC<CardEditorProps> = ({
           ...prev.design.physicalCard,
           [field]: value,
         },
+      },
+    }));
+  };
+
+  const updateGoogleReviews = <K extends keyof GoogleReviewsConfig>(field: K, value: GoogleReviewsConfig[K]) => {
+    setCard((prev) => ({
+      ...prev,
+      googleReviews: {
+        enabled: false,
+        buttonText: 'Calificar en Google',
+        ...prev.googleReviews,
+        [field]: value,
+      },
+    }));
+  };
+
+  const updateBankTransfer = <K extends keyof BankTransferConfig>(field: K, value: BankTransferConfig[K]) => {
+    setCard((prev) => ({
+      ...prev,
+      bankTransfer: {
+        enabled: false,
+        ...prev.bankTransfer,
+        [field]: value,
+      },
+    }));
+  };
+
+  const updatePayPal = <K extends keyof PayPalConfig>(field: K, value: PayPalConfig[K]) => {
+    setCard((prev) => ({
+      ...prev,
+      paypal: {
+        enabled: false,
+        currency: 'USD',
+        buttonText: 'Pagar con PayPal',
+        ...prev.paypal,
+        [field]: value,
       },
     }));
   };
@@ -182,6 +277,7 @@ export const CardEditor: React.FC<CardEditorProps> = ({
     const newItem: CatalogItem = {
       id: `cat-${Date.now()}`,
       title: 'Producto o Servicio',
+      category: 'General',
       description: 'Breve descripción de las características principales.',
       price: '$500 MXN',
       ctaLabel: 'Consultar',
@@ -532,6 +628,39 @@ export const CardEditor: React.FC<CardEditorProps> = ({
             >
               <Camera className="w-3.5 h-3.5" />
               <span>Galería</span>
+            </button>
+            <button
+              onClick={() => setActiveTab('reviews')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition ${
+                activeTab === 'reviews'
+                  ? 'bg-amber-600 text-white shadow-sm'
+                  : 'text-amber-400 hover:text-amber-200 hover:bg-slate-800'
+              }`}
+            >
+              <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
+              <span>Google Reviews</span>
+            </button>
+            <button
+              onClick={() => setActiveTab('banking')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition ${
+                activeTab === 'banking'
+                  ? 'bg-emerald-600 text-white shadow-sm'
+                  : 'text-emerald-400 hover:text-emerald-200 hover:bg-slate-800'
+              }`}
+            >
+              <Landmark className="w-3.5 h-3.5 text-emerald-400" />
+              <span>Transferencias SPEI</span>
+            </button>
+            <button
+              onClick={() => setActiveTab('paypal')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition ${
+                activeTab === 'paypal'
+                  ? 'bg-blue-600 text-white shadow-sm'
+                  : 'text-sky-400 hover:text-sky-200 hover:bg-slate-800'
+              }`}
+            >
+              <CreditCard className="w-3.5 h-3.5 text-sky-400" />
+              <span>PayPal</span>
             </button>
             <button
               onClick={() => setActiveTab('physical')}
@@ -1368,13 +1497,46 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                     onChange={(e) => updateDesignField('theme', e.target.value as CardTheme)}
                     className="w-full px-3 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs font-medium focus:ring-2 focus:ring-indigo-500 focus:outline-none"
                   >
-                    <optgroup label="✨ Colecciones Premium LAV Digital">
-                      <option value="elegance-luxury">Colección A: Elegance Luxury (Obsidiana, Oro & Prestigio)</option>
-                      <option value="future-tech">Colección B: Future Tech (Neón Láser, Cyber & Scanline)</option>
-                      <option value="young-creative">Colección C: Young & Creative (Fluid Mesh & Dinamismo)</option>
-                      <option value="minimal-studio">Colección D: Minimal Studio (Arquitectónico & Pureza)</option>
-                      <option value="glass-motion">Colección E: Glass & Motion (Cristal Translúcido & Orbes)</option>
-                      <option value="business-signature">Colección F: Business Signature (Corporativo Ejecutivo)</option>
+                    <optgroup label="✨ Colección A: Elegance Luxury">
+                      <option value="elegance-luxury">A1. Elegance Luxury (Obsidiana, Oro & Prestigio)</option>
+                      <option value="executive-black">A2. Executive Black (Carbono & Oro Líquido)</option>
+                      <option value="champagne-gold">A3. Champagne Gold (Marfil & Filigrana Áurea)</option>
+                      <option value="royal-navy">A4. Royal Navy (Azul Profundo & Destellos Dorados)</option>
+                    </optgroup>
+                    <optgroup label="⚡ Colección B: Future Tech">
+                      <option value="future-tech">B1. Future Tech (Neón Láser, Cyber & Scanline)</option>
+                      <option value="cyber-blue">B2. Cyber Blue (Cian Eléctrico & Grid Cuántico)</option>
+                      <option value="neon-purple">B3. Neon Purple (Magenta & Púrpura Synthwave)</option>
+                      <option value="digital-glass">B4. Digital Glass (Vidrio Translúcido & HUD)</option>
+                    </optgroup>
+                    <optgroup label="🎨 Colección C: Young & Creative">
+                      <option value="young-creative">C1. Young & Creative (Fluid Mesh & Dinamismo)</option>
+                      <option value="urban-gradient">C2. Urban Gradient (Degradado Sunset Energético)</option>
+                      <option value="pop-creative">C3. Pop Creative (Alto Contraste & Stickers)</option>
+                      <option value="color-motion">C4. Color Motion (Gradiente Multidimensional)</option>
+                    </optgroup>
+                    <optgroup label="🏛️ Colección D: Minimal Studio">
+                      <option value="minimal-studio">D1. Minimal Studio (Arquitectónico & Pureza)</option>
+                      <option value="pure-white">D2. Pure White (Blanco Inmaculado & Sombras Finas)</option>
+                      <option value="soft-beige">D3. Soft Beige (Lino Cálido & Estilo Orgánico)</option>
+                      <option value="modern-monochrome">D4. Modern Monochrome (Contraste Suizo)</option>
+                    </optgroup>
+                    <optgroup label="💎 Colección E: Glass & Motion">
+                      <option value="glass-motion">E1. Glass & Motion (Cristal Translúcido & Orbes)</option>
+                      <option value="aurora-glass">E2. Aurora Glass (Resplandor Boreal Translúcido)</option>
+                      <option value="frosted-depth">E3. Frosted Depth (Efecto Escarchado Acrílico)</option>
+                      <option value="crystal-prism">E4. Crystal Prism (Borde Prismático Irisado)</option>
+                    </optgroup>
+                    <optgroup label="💼 Colección F: Business Signature">
+                      <option value="business-signature">F1. Business Signature (Corporativo Ejecutivo)</option>
+                      <option value="corporate-executive">F2. Corporate Executive (Azul Zafiro & Acero)</option>
+                      <option value="modern-consultant">F3. Modern Consultant (Gris Pizarra & Acento Esmeralda)</option>
+                      <option value="lawyer-elite">F4. Lawyer Elite (Borgoña Prestigioso & Bronce)</option>
+                    </optgroup>
+                    <optgroup label="🌟 Plantillas Especializadas">
+                      <option value="restaurant-menu">🍽️ Restaurante & Menú Gastro (Categorías de Platos)</option>
+                      <option value="google-reviews-pro">⭐ Google Reviews Pro (Reputación & Calificación)</option>
+                      <option value="bank-transfer-spei">🏦 Transferencias SPEI Pro (Copia Rápida & WhatsApp)</option>
                     </optgroup>
                     <optgroup label="🎨 Estilos Clásicos">
                       <option value="dark-luxury">Dark Luxury Clásico</option>
@@ -1414,6 +1576,60 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                   <p className="text-[10px] text-slate-400 mt-1">
                     Efectos optimizados para GPU móvil. Se sincronizan en la tarjeta en vivo y en la exportación HTML para Hostinger.
                   </p>
+                </div>
+
+                {/* 3. Composición y Encuadre de Fotografía (20 Modelos Visuales) */}
+                <div className="border-t border-slate-800 pt-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <Camera className="w-4 h-4 text-indigo-400" />
+                      <div>
+                        <h3 className="text-xs font-bold text-white uppercase tracking-wider">
+                          Composición de Fotografía
+                        </h3>
+                        <p className="text-[10px] text-slate-400">20 variantes de encuadre y composición visual real</p>
+                      </div>
+                    </div>
+                    <span className="text-[10px] font-bold text-indigo-400 bg-indigo-950/80 border border-indigo-700/50 px-2 py-0.5 rounded-full">
+                      20 Diseños
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-72 overflow-y-auto p-1 rounded-xl bg-slate-900/60 border border-slate-800 custom-scrollbar">
+                    {PHOTO_COMPOSITION_OPTIONS.map((comp) => {
+                      const isSelected = (card.design.photoComposition || 'circle-portrait') === comp.id;
+                      return (
+                        <button
+                          key={comp.id}
+                          type="button"
+                          onClick={() => updateDesignField('photoComposition', comp.id)}
+                          className={`p-2.5 rounded-xl text-left transition relative border ${
+                            isSelected
+                              ? 'bg-indigo-950/70 border-indigo-500 shadow-md shadow-indigo-950/40 ring-1 ring-indigo-400'
+                              : 'bg-slate-850/60 border-slate-800 hover:border-slate-700 hover:bg-slate-800/60'
+                          }`}
+                        >
+                          <div className="flex items-start justify-between gap-1.5 mb-1">
+                            <span className="text-[11px] font-bold text-white leading-tight">
+                              {comp.title}
+                            </span>
+                            <span className="text-[9px] font-semibold text-slate-400 bg-slate-800 px-1.5 py-0.5 rounded-full flex-shrink-0">
+                              {comp.category}
+                            </span>
+                          </div>
+                          <p className="text-[10px] text-slate-400 line-clamp-2 leading-relaxed">
+                            {comp.description}
+                          </p>
+                          {isSelected && (
+                            <div className="mt-1 flex items-center gap-1 text-[10px] font-bold text-indigo-300">
+                              <Check className="w-3 h-3 text-indigo-400" />
+                              <span>Activo en tarjeta</span>
+                            </div>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
 
                 {/* Palettes */}
@@ -1748,19 +1964,98 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                   </div>
 
                   {card.design.logoUrl && (
-                    <div className="mt-3">
-                      <div className="flex items-center justify-between text-xs text-slate-400 mb-1">
-                        <span>Ancho de Logotipo</span>
-                        <span className="font-mono">{card.design.logoWidth}px</span>
+                    <div className="mt-4 space-y-3.5 p-3 rounded-2xl bg-slate-900/80 border border-slate-800">
+                      <div>
+                        <div className="flex items-center justify-between text-xs text-slate-400 mb-1">
+                          <span>Ancho de Logotipo</span>
+                          <span className="font-mono text-indigo-400 font-bold">{card.design.logoWidth}px</span>
+                        </div>
+                        <input
+                          type="range"
+                          min="50"
+                          max="220"
+                          value={card.design.logoWidth}
+                          onChange={(e) => updateDesignField('logoWidth', parseInt(e.target.value, 10))}
+                          className="w-full accent-indigo-500"
+                        />
                       </div>
-                      <input
-                        type="range"
-                        min="60"
-                        max="180"
-                        value={card.design.logoWidth}
-                        onChange={(e) => updateDesignField('logoWidth', parseInt(e.target.value, 10))}
-                        className="w-full accent-indigo-500"
-                      />
+
+                      {/* Posición del Logotipo */}
+                      <div>
+                        <label className="block text-[11px] font-bold text-slate-300 uppercase tracking-wider mb-1.5">
+                          Posición del Logotipo en la Tarjeta
+                        </label>
+                        <select
+                          value={card.design.logoPosition || 'card-top'}
+                          onChange={(e) => updateDesignField('logoPosition', e.target.value as any)}
+                          className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs font-medium focus:ring-2 focus:ring-indigo-500"
+                        >
+                          <option value="card-top">1. Encabezado superior de tarjeta (Recomendado)</option>
+                          <option value="above-avatar">2. Sobre el avatar o retrato personal</option>
+                          <option value="center-banner">3. Centro del banner de portada</option>
+                          <option value="top-right">4. Esquina superior derecha flotante</option>
+                          <option value="header">5. Barra superior fija</option>
+                          <option value="floating">6. Insignia flotante inferior derecha</option>
+                        </select>
+                      </div>
+
+                      {/* 12 Animaciones Modernas del Logotipo */}
+                      <div>
+                        <div className="flex items-center justify-between mb-1.5">
+                          <label className="text-[11px] font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+                            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                            <span>Animación Moderna del Logotipo</span>
+                          </label>
+                          <span className="text-[9px] font-bold text-amber-400 bg-amber-950/80 border border-amber-800/60 px-2 py-0.5 rounded-full">
+                            12 Efectos
+                          </span>
+                        </div>
+                        <select
+                          value={card.design.logoAnimation || 'none'}
+                          onChange={(e) => updateDesignField('logoAnimation', e.target.value as LogoAnimation)}
+                          className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs font-medium focus:ring-2 focus:ring-amber-500"
+                        >
+                          {LOGO_ANIMATION_OPTIONS.map((anim) => (
+                            <option key={anim.id} value={anim.id}>
+                              {anim.label} — {anim.desc}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      {/* Velocidad de la Animación */}
+                      {card.design.logoAnimation && card.design.logoAnimation !== 'none' && (
+                        <div>
+                          <label className="block text-[11px] font-medium text-slate-400 mb-1.5">
+                            Velocidad de la Animación
+                          </label>
+                          <div className="grid grid-cols-3 gap-2">
+                            {(
+                              [
+                                { id: 'slow', label: 'Suave (6s)' },
+                                { id: 'normal', label: 'Normal (3.5s)' },
+                                { id: 'fast', label: 'Dinámica (2s)' },
+                              ] as const
+                            ).map((spd) => {
+                              const isSelected = (card.design.logoAnimationSpeed || 'normal') === spd.id;
+                              return (
+                                <button
+                                  key={spd.id}
+                                  type="button"
+                                  onClick={() => updateDesignField('logoAnimationSpeed', spd.id)}
+                                  className={`py-1.5 px-2 rounded-xl text-[11px] font-bold border transition ${
+                                    isSelected
+                                      ? 'bg-amber-600 text-white border-amber-500 shadow-sm'
+                                      : 'bg-slate-800 text-slate-400 border-slate-700 hover:text-white'
+                                  }`}
+                                >
+                                  {spd.label}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
@@ -1942,8 +2237,33 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                             value={item.title}
                             onChange={(e) => handleUpdateCatalogItem(item.id, 'title', e.target.value)}
                             className="w-full px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-white text-xs"
-                            placeholder="Ej. Consulta Especializada"
+                            placeholder="Ej. Salmón a la Parrilla o Asesoría Jurídica"
                           />
+                        </div>
+
+                        <div>
+                          <div className="flex items-center justify-between mb-0.5">
+                            <label className="text-[10px] text-slate-400">Categoría / Sección del Menú</label>
+                            <span className="text-[9px] text-amber-400 font-semibold">Para filtros y carta de restaurante</span>
+                          </div>
+                          <input
+                            type="text"
+                            list="catalog-categories-list"
+                            value={item.category || 'General'}
+                            onChange={(e) => handleUpdateCatalogItem(item.id, 'category', e.target.value)}
+                            className="w-full px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-white text-xs focus:ring-1 focus:ring-amber-500"
+                            placeholder="Ej. Entradas, Platos Fuertes, Bebidas, Postres, Paquetes..."
+                          />
+                          <datalist id="catalog-categories-list">
+                            <option value="Entradas" />
+                            <option value="Platos Fuertes" />
+                            <option value="Bebidas" />
+                            <option value="Postres" />
+                            <option value="Especialidades" />
+                            <option value="Servicios" />
+                            <option value="Paquetes" />
+                            <option value="General" />
+                          </datalist>
                         </div>
 
                         <div className="grid grid-cols-2 gap-2">
@@ -2095,6 +2415,392 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                       </button>
                     </div>
                   )}
+                </div>
+              </div>
+            )}
+
+            {/* TAB: GOOGLE REVIEWS */}
+            {activeTab === 'reviews' && (
+              <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-xl bg-white p-2 shadow flex items-center justify-center flex-shrink-0">
+                    <GoogleGIcon className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="text-xs font-bold text-white uppercase tracking-wider">
+                      Google Reviews & Reputación
+                    </h3>
+                    <p className="text-[11px] text-slate-400">
+                      Muestra tu calificación oficial de Google e impulsa más reseñas de 5 estrellas.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Enable toggle */}
+                <div className="p-3.5 rounded-2xl bg-slate-800/80 border border-slate-700 flex items-center justify-between">
+                  <div>
+                    <p className="text-xs font-bold text-slate-200">Mostrar Tarjeta de Google Reviews</p>
+                    <p className="text-[11px] text-slate-400">Visible en la tarjeta y en la exportación HTML</p>
+                  </div>
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={card.googleReviews?.enabled ?? false}
+                      onChange={(e) => updateGoogleReviews('enabled', e.target.checked)}
+                      className="sr-only peer"
+                    />
+                    <div className="w-11 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-500"></div>
+                  </label>
+                </div>
+
+                <div className="space-y-3 p-4 rounded-2xl bg-slate-900/60 border border-slate-800">
+                  <div>
+                    <label className="block text-[11px] font-medium text-slate-300 mb-1">
+                      Título de la Sección
+                    </label>
+                    <input
+                      type="text"
+                      value={card.googleReviews?.title || ''}
+                      onChange={(e) => updateGoogleReviews('title', e.target.value)}
+                      placeholder="¿Te gustó nuestro servicio?"
+                      className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:ring-2 focus:ring-amber-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-medium text-slate-300 mb-1">
+                      Enlace Directo de Reseñas de Google Maps *
+                    </label>
+                    <input
+                      type="url"
+                      value={card.googleReviews?.placeUrl || ''}
+                      onChange={(e) => updateGoogleReviews('placeUrl', e.target.value)}
+                      placeholder="https://g.page/r/... o https://maps.app.goo.gl/..."
+                      className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:ring-2 focus:ring-amber-500 font-mono text-[11px]"
+                    />
+                    <p className="text-[10px] text-slate-400 mt-1">
+                      Copia el enlace de "Solicitar opiniones" desde tu perfil de Google Business para que el cliente califique directamente en 1 clic.
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2.5">
+                    <div>
+                      <label className="block text-[11px] font-medium text-slate-300 mb-1">
+                        Calificación (1.0 - 5.0)
+                      </label>
+                      <input
+                        type="number"
+                        step="0.1"
+                        min="1"
+                        max="5"
+                        value={card.googleReviews?.rating ?? 5.0}
+                        onChange={(e) => updateGoogleReviews('rating', parseFloat(e.target.value))}
+                        className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:ring-2 focus:ring-amber-500 font-bold"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[11px] font-medium text-slate-300 mb-1">
+                        Texto de Reseñas
+                      </label>
+                      <input
+                        type="text"
+                        value={card.googleReviews?.reviewCount || ''}
+                        onChange={(e) => updateGoogleReviews('reviewCount', e.target.value)}
+                        placeholder="148 reseñas verificadas"
+                        className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:ring-2 focus:ring-amber-500"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-medium text-slate-300 mb-1">
+                      Texto del Botón de Acción
+                    </label>
+                    <input
+                      type="text"
+                      value={card.googleReviews?.buttonText || ''}
+                      onChange={(e) => updateGoogleReviews('buttonText', e.target.value)}
+                      placeholder="Dejar una Reseña en Google"
+                      className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:ring-2 focus:ring-amber-500"
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* TAB: BANK TRANSFER (SPEI) */}
+            {activeTab === 'banking' && (
+              <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-xl bg-emerald-500/20 border border-emerald-500/40 p-2 flex items-center justify-center flex-shrink-0 text-emerald-400">
+                    <Landmark className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="text-xs font-bold text-white uppercase tracking-wider">
+                      Transferencias Bancarias (SPEI)
+                    </h3>
+                    <p className="text-[11px] text-slate-400">
+                      Datos bancarios con botones individuales de copia rápida y compartir por WhatsApp.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Enable toggle */}
+                <div className="p-3.5 rounded-2xl bg-slate-800/80 border border-slate-700 flex items-center justify-between">
+                  <div>
+                    <p className="text-xs font-bold text-slate-200">Mostrar Datos de Transferencia Bancaria</p>
+                    <p className="text-[11px] text-slate-400">Incluye botón de copiar CLABE y enviar por WhatsApp</p>
+                  </div>
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={card.bankTransfer?.enabled ?? false}
+                      onChange={(e) => updateBankTransfer('enabled', e.target.checked)}
+                      className="sr-only peer"
+                    />
+                    <div className="w-11 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+                  </label>
+                </div>
+
+                <div className="space-y-3 p-4 rounded-2xl bg-slate-900/60 border border-slate-800">
+                  <div className="grid grid-cols-2 gap-2.5">
+                    <div>
+                      <label className="block text-[11px] font-medium text-slate-300 mb-1">
+                        Banco Receptor *
+                      </label>
+                      <input
+                        type="text"
+                        list="banks-common-list"
+                        value={card.bankTransfer?.bankName || ''}
+                        onChange={(e) => updateBankTransfer('bankName', e.target.value)}
+                        placeholder="Ej. BBVA, Santander, Nu"
+                        className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:ring-2 focus:ring-emerald-500 font-semibold"
+                      />
+                      <datalist id="banks-common-list">
+                        <option value="BBVA México" />
+                        <option value="Santander" />
+                        <option value="Banorte" />
+                        <option value="Citibanamex" />
+                        <option value="Nu México" />
+                        <option value="Mercado Pago" />
+                        <option value="HSBC México" />
+                        <option value="Scotiabank" />
+                        <option value="Banco Azteca" />
+                        <option value="Hey Banco" />
+                        <option value="Inbursa" />
+                        <option value="Klar" />
+                      </datalist>
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] font-medium text-slate-300 mb-1">
+                        Nombre del Titular *
+                      </label>
+                      <input
+                        type="text"
+                        value={card.bankTransfer?.accountHolder || ''}
+                        onChange={(e) => updateBankTransfer('accountHolder', e.target.value)}
+                        placeholder="Ej. Roberto Mendoza S."
+                        className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:ring-2 focus:ring-emerald-500"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-medium text-slate-300 mb-1">
+                      CLABE Interbancaria (18 dígitos) *
+                    </label>
+                    <input
+                      type="text"
+                      maxLength={18}
+                      value={card.bankTransfer?.clabe || ''}
+                      onChange={(e) => updateBankTransfer('clabe', e.target.value.replace(/\s+/g, ''))}
+                      placeholder="012180015678901234"
+                      className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-emerald-400 text-xs font-mono tracking-widest focus:ring-2 focus:ring-emerald-500 font-bold"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2.5">
+                    <div>
+                      <label className="block text-[11px] font-medium text-slate-300 mb-1">
+                        Número de Tarjeta (16 dígitos, opcional)
+                      </label>
+                      <input
+                        type="text"
+                        maxLength={19}
+                        value={card.bankTransfer?.cardNumber || ''}
+                        onChange={(e) => updateBankTransfer('cardNumber', e.target.value)}
+                        placeholder="4152 3138 ...."
+                        className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs font-mono"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] font-medium text-slate-300 mb-1">
+                        Número de Cuenta (Opcional)
+                      </label>
+                      <input
+                        type="text"
+                        value={card.bankTransfer?.accountNumber || ''}
+                        onChange={(e) => updateBankTransfer('accountNumber', e.target.value)}
+                        placeholder="1234567890"
+                        className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs font-mono"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-medium text-slate-300 mb-1">
+                      Concepto o Referencia Sugerida
+                    </label>
+                    <input
+                      type="text"
+                      value={card.bankTransfer?.reference || ''}
+                      onChange={(e) => updateBankTransfer('reference', e.target.value)}
+                      placeholder="Ej. Nombre del cliente o Folio de pedido"
+                      className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-medium text-slate-300 mb-1">
+                      Instrucciones Adicionales
+                    </label>
+                    <input
+                      type="text"
+                      value={card.bankTransfer?.instructions || ''}
+                      onChange={(e) => updateBankTransfer('instructions', e.target.value)}
+                      placeholder="Ej. Favor de enviar captura de comprobante por WhatsApp"
+                      className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs"
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* TAB: PAYPAL */}
+            {activeTab === 'paypal' && (
+              <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-xl bg-blue-600/20 border border-blue-500/40 p-2 flex items-center justify-center flex-shrink-0 text-sky-400">
+                    <PayPalIcon className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="text-xs font-bold text-white uppercase tracking-wider">
+                      Integración PayPal
+                    </h3>
+                    <p className="text-[11px] text-slate-400">
+                      Acepta pagos y anticipos con enlace oficial PayPal.me o pasarela de pago.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Enable toggle */}
+                <div className="p-3.5 rounded-2xl bg-slate-800/80 border border-slate-700 flex items-center justify-between">
+                  <div>
+                    <p className="text-xs font-bold text-slate-200">Mostrar Botón de Pago PayPal</p>
+                    <p className="text-[11px] text-slate-400">Redirección segura al checkout oficial de PayPal</p>
+                  </div>
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={card.paypal?.enabled ?? false}
+                      onChange={(e) => updatePayPal('enabled', e.target.checked)}
+                      className="sr-only peer"
+                    />
+                    <div className="w-11 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                  </label>
+                </div>
+
+                <div className="space-y-3 p-4 rounded-2xl bg-slate-900/60 border border-slate-800">
+                  <div>
+                    <label className="block text-[11px] font-medium text-slate-300 mb-1">
+                      Enlace de Pago Directo PayPal.me o Enlace Seguro *
+                    </label>
+                    <input
+                      type="url"
+                      value={card.paypal?.paymentLink || ''}
+                      onChange={(e) => updatePayPal('paymentLink', e.target.value)}
+                      placeholder="https://paypal.me/tu_usuario o https://www.paypal.com/ncp/payment/..."
+                      className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs font-mono text-[11px] focus:ring-2 focus:ring-blue-500"
+                    />
+                    <p className="text-[10px] text-slate-400 mt-1">
+                      Puedes pegar tu link de PayPal.me o enlace de cobro generado en PayPal.
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2.5">
+                    <div>
+                      <label className="block text-[11px] font-medium text-slate-300 mb-1">
+                        Moneda
+                      </label>
+                      <select
+                        value={card.paypal?.currency || 'USD'}
+                        onChange={(e) => updatePayPal('currency', e.target.value)}
+                        className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs font-semibold focus:ring-2 focus:ring-blue-500"
+                      >
+                        <option value="MXN">MXN (Pesos Mexicanos)</option>
+                        <option value="USD">USD (Dólares Americanos)</option>
+                        <option value="EUR">EUR (Euros)</option>
+                        <option value="CAD">CAD (Dólares Canadienses)</option>
+                        <option value="GBP">GBP (Libras Esterlinas)</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] font-medium text-slate-300 mb-1">
+                        Monto Sugerido (Opcional)
+                      </label>
+                      <input
+                        type="text"
+                        value={card.paypal?.amount || ''}
+                        onChange={(e) => updatePayPal('amount', e.target.value)}
+                        placeholder="Ej. 25.00 o 500"
+                        className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs font-mono"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2.5">
+                    <div>
+                      <label className="block text-[11px] font-medium text-slate-300 mb-1">
+                        Correo de PayPal (Opcional)
+                      </label>
+                      <input
+                        type="email"
+                        value={card.paypal?.businessEmail || ''}
+                        onChange={(e) => updatePayPal('businessEmail', e.target.value)}
+                        placeholder="cobros@tuempresa.com"
+                        className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] font-medium text-slate-300 mb-1">
+                        Texto del Botón
+                      </label>
+                      <input
+                        type="text"
+                        value={card.paypal?.buttonText || ''}
+                        onChange={(e) => updatePayPal('buttonText', e.target.value)}
+                        placeholder="Pagar con PayPal"
+                        className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-medium text-slate-300 mb-1">
+                      Concepto o Descripción del Cobro
+                    </label>
+                    <input
+                      type="text"
+                      value={card.paypal?.description || ''}
+                      onChange={(e) => updatePayPal('description', e.target.value)}
+                      placeholder="Ej. Anticipo para inicio de proyecto o reserva"
+                      className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs"
+                    />
+                  </div>
                 </div>
               </div>
             )}

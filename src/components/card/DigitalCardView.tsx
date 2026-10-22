@@ -39,6 +39,13 @@ import {
   Bell,
   ArrowDown,
   X,
+  Star,
+  Building2,
+  CreditCard,
+  Landmark,
+  ThumbsUp,
+  Utensils,
+  Award,
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
@@ -46,6 +53,24 @@ import confetti from 'canvas-confetti';
 const XIcon: React.FC<{ className?: string }> = ({ className = 'w-4 h-4' }) => (
   <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor" className={className}>
     <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+  </svg>
+);
+
+// Official Google "G" logo
+export const GoogleGIcon: React.FC<{ className?: string }> = ({ className = 'w-5 h-5' }) => (
+  <svg viewBox="0 0 24 24" className={className} aria-hidden="true">
+    <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/>
+    <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.24v3.15C3.26 21.36 7.33 24 12 24z"/>
+    <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.24C.45 8.15 0 9.92 0 12s.45 3.85 1.24 5.42l4.04-3.15z"/>
+    <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.24 6.58l4.04 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+  </svg>
+);
+
+// Official PayPal logo
+export const PayPalIcon: React.FC<{ className?: string }> = ({ className = 'w-5 h-5' }) => (
+  <svg viewBox="0 0 24 24" className={className} aria-hidden="true">
+    <path fill="#003087" d="M20.067 8.478c-.492 4.148-3.265 6.208-7.397 6.208h-2.193l-1.077 6.828c-.062.387-.393.673-.784.673H4.76c-.495 0-.87-.442-.8-.934L6.96 2.67c.07-.446.45-.77.9-.77h6.728c3.084 0 5.24 1.488 4.98 4.698-.24 1.88-1.2 3.13-2.9 3.84 2.2.49 3.08 1.94 2.4 4.04z"/>
+    <path fill="#0079C1" d="M18.57 6.09c-.27 2.1-1.34 3.48-3.23 4.28-2.43 1.03-5.32.74-5.32.74l-1.4 8.87h-2.7c-.44 0-.77-.39-.71-.83L7.9 2.67c.06-.4.4-.7.81-.7h6.73c2.75 0 4.67 1.33 4.44 4.12z"/>
   </svg>
 );
 
@@ -204,6 +229,74 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
     }
   };
 
+  const [copyToast, setCopyToast] = useState<string | null>(null);
+  const [selectedCatalogCategory, setSelectedCatalogCategory] = useState<string>('Todos');
+  const [activeThumbnailIndex, setActiveThumbnailIndex] = useState<number>(0);
+
+  const handleCopyBankField = async (label: string, value?: string) => {
+    if (!value) return;
+    try {
+      await navigator.clipboard.writeText(value);
+      setCopyToast(`¡${label} copiado con éxito!`);
+      setTimeout(() => setCopyToast(null), 2500);
+    } catch {
+      // fallback
+    }
+  };
+
+  const handleCopyAllBankData = async () => {
+    const bt = card.bankTransfer;
+    if (!bt) return;
+    const lines: string[] = ['DATOS BANCARIOS PARA TRANSFERENCIA SPEI'];
+    if (card.businessName) lines.push(`Empresa / Negocio: ${card.businessName}`);
+    if (bt.accountHolder) lines.push(`Titular: ${bt.accountHolder}`);
+    if (bt.bankName) lines.push(`Banco: ${bt.bankName}`);
+    if (bt.clabe) lines.push(`CLABE Interbancaria: ${bt.clabe}`);
+    if (bt.accountNumber) lines.push(`Número de Cuenta: ${bt.accountNumber}`);
+    if (bt.cardNumber) lines.push(`Número de Tarjeta: ${bt.cardNumber}`);
+    if (bt.reference) lines.push(`Referencia: ${bt.reference}`);
+    if (bt.instructions) lines.push(`Concepto / Notas: ${bt.instructions}`);
+
+    const textToCopy = lines.join('\n');
+    try {
+      await navigator.clipboard.writeText(textToCopy);
+      setCopyToast('¡Todos los datos bancarios copiados al portapapeles!');
+      confetti({ particleCount: 35, spread: 60, origin: { y: 0.7 } });
+      setTimeout(() => setCopyToast(null), 3000);
+    } catch {
+      // fallback
+    }
+  };
+
+  const handleShareBankWhatsApp = () => {
+    const bt = card.bankTransfer;
+    if (!bt) return;
+    const lines: string[] = ['*DATOS BANCARIOS PARA TRANSFERENCIA SPEI*'];
+    if (card.businessName) lines.push(`*Empresa / Negocio:* ${card.businessName}`);
+    if (bt.accountHolder) lines.push(`*Titular:* ${bt.accountHolder}`);
+    if (bt.bankName) lines.push(`*Banco:* ${bt.bankName}`);
+    if (bt.clabe) lines.push(`*CLABE:* ${bt.clabe}`);
+    if (bt.accountNumber) lines.push(`*Cuenta:* ${bt.accountNumber}`);
+    if (bt.cardNumber) lines.push(`*Tarjeta:* ${bt.cardNumber}`);
+    if (bt.reference) lines.push(`*Referencia:* ${bt.reference}`);
+    if (bt.instructions) lines.push(`*Concepto / Notas:* ${bt.instructions}`);
+
+    const waText = encodeURIComponent(lines.join('\n'));
+    window.open(`https://wa.me/?text=${waText}`, '_blank');
+  };
+
+  const handleOpenPayPal = () => {
+    if (!card.paypal?.enabled) return;
+    if (card.paypal.paymentLink) {
+      window.open(card.paypal.paymentLink, '_blank');
+    } else if (card.paypal.businessEmail) {
+      const handle = card.paypal.businessEmail.replace(/@.*$/, '');
+      window.open(`https://www.paypal.com/paypalme/${handle}`, '_blank');
+    } else {
+      window.open('https://paypal.me', '_blank');
+    }
+  };
+
   // Font family styles
   const headlineFontFamily = `"${design.fontHeadline}", sans-serif`;
   const bodyFontFamily = `"${design.fontBody}", sans-serif`;
@@ -289,6 +382,459 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
   const isMinimalStudio = design.theme === 'minimal-studio' || design.animationStyle === 'subtle-fade';
   const isBusinessSignature = design.theme === 'business-signature';
 
+  const avatarUrl = design.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500';
+  const photoComp = design.photoComposition || 'circle-portrait';
+  const allPhotos = [
+    avatarUrl,
+    ...(card.gallery && card.gallery.length > 0
+      ? card.gallery.map((g) => g.imageUrl)
+      : [
+          'https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=500',
+          'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=500',
+        ]),
+  ].filter(Boolean);
+
+  // Business logo renderer with 12 animations and positions
+  const renderLogo = (targetPosition: 'card-top' | 'center-banner' | 'top-right' | 'above-avatar' | 'floating' | 'header') => {
+    if (!design.logoUrl) return null;
+    const currentPosition = design.logoPosition || 'header';
+    if (currentPosition !== targetPosition) return null;
+
+    const animClass = design.logoAnimation && design.logoAnimation !== 'none'
+      ? `anim-logo-${design.logoAnimation} anim-speed-${design.logoAnimationSpeed || 'normal'}`
+      : '';
+
+    return (
+      <div className={`inline-flex items-center justify-center ${animClass}`}>
+        <img
+          src={design.logoUrl}
+          alt={card.businessName || 'Logo'}
+          style={{ width: `${design.logoWidth || 100}px` }}
+          className="max-h-14 object-contain filter drop-shadow-md"
+        />
+      </div>
+    );
+  };
+
+  // 20 Distinct Photo Composition Variants
+  const renderPhotoComposition = () => {
+    switch (photoComp) {
+      case 'top-large':
+        return (
+          <div className="relative -mx-6 -mt-0 mb-4 overflow-hidden aspect-[4/3] bg-slate-900 group">
+            <img
+              src={avatarUrl}
+              alt={card.name}
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent" />
+            <div className="absolute top-3 right-3 flex items-center gap-2 z-10">
+              {renderLogo('top-right')}
+            </div>
+            <div className="absolute bottom-3 left-4 right-4 flex items-end justify-between">
+              <div>
+                <span className="text-[10px] uppercase font-bold tracking-widest text-emerald-400 bg-black/60 px-2 py-0.5 rounded-full backdrop-blur-md">
+                  Perfil Destacado
+                </span>
+              </div>
+              {renderLogo('header')}
+            </div>
+          </div>
+        );
+
+      case 'vertical-large':
+        return (
+          <div className="relative -mx-6 mb-4 overflow-hidden aspect-[3/4] bg-slate-900 group">
+            <img
+              src={avatarUrl}
+              alt={card.name}
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-black/30" />
+            <div className="absolute top-4 left-4 z-10">
+              {renderLogo('header')}
+            </div>
+          </div>
+        );
+
+      case 'card-bg':
+        return (
+          <div className="relative -mx-6 mb-4 overflow-hidden h-48 bg-slate-900">
+            <img
+              src={avatarUrl}
+              alt={card.name}
+              className="w-full h-full object-cover filter blur-sm scale-110 opacity-40"
+            />
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent to-slate-950" />
+            <div className="absolute inset-0 flex items-center justify-center p-4">
+              <div className="relative">
+                <img
+                  src={avatarUrl}
+                  alt={card.name}
+                  className="w-24 h-24 rounded-2xl object-cover ring-4 ring-white/20 shadow-2xl"
+                />
+                <span className="absolute bottom-1 right-1 w-4 h-4 rounded-full bg-emerald-500 ring-2 ring-slate-950" />
+              </div>
+            </div>
+          </div>
+        );
+
+      case 'bottom-compact':
+        return (
+          <div className="flex items-center justify-between -mt-10 mb-4 card-stagger-1">
+            <div className="flex items-center gap-2">
+              <span className="w-3 h-3 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-400">
+                Tarjeta Digital Activa
+              </span>
+            </div>
+            {renderLogo('header')}
+          </div>
+        );
+
+      case 'left-photo':
+        return (
+          <div className="flex items-center gap-3.5 -mt-10 mb-4 p-3 rounded-2xl bg-white/[0.04] border border-white/10 card-stagger-1 backdrop-blur-md">
+            <div className="relative flex-shrink-0">
+              <img
+                src={avatarUrl}
+                alt={card.name}
+                className="w-20 h-20 rounded-2xl object-cover shadow-xl ring-2 ring-white/10"
+              />
+              <span className="absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full bg-emerald-500 ring-2 ring-slate-950" />
+            </div>
+            <div className="flex-1 min-w-0">
+              {renderLogo('above-avatar')}
+              <p className="text-[11px] font-bold uppercase tracking-wider text-indigo-400 truncate">
+                {card.businessName || 'Profesional'}
+              </p>
+              <h2 className="text-base font-extrabold text-white truncate" style={{ fontFamily: headlineFontFamily }}>
+                {card.name}
+              </h2>
+              <p className="text-xs text-slate-300 truncate">{card.jobTitle}</p>
+            </div>
+            {renderLogo('header')}
+          </div>
+        );
+
+      case 'right-photo':
+        return (
+          <div className="flex items-center justify-between gap-3.5 -mt-10 mb-4 p-3 rounded-2xl bg-white/[0.04] border border-white/10 card-stagger-1 backdrop-blur-md">
+            <div className="flex-1 min-w-0">
+              {renderLogo('header')}
+              <p className="text-[11px] font-bold uppercase tracking-wider text-amber-400 truncate">
+                {card.businessName || 'Especialista'}
+              </p>
+              <h2 className="text-base font-extrabold text-white truncate" style={{ fontFamily: headlineFontFamily }}>
+                {card.name}
+              </h2>
+              <p className="text-xs text-slate-300 truncate">{card.jobTitle}</p>
+            </div>
+            <div className="relative flex-shrink-0">
+              <img
+                src={avatarUrl}
+                alt={card.name}
+                className="w-20 h-20 rounded-2xl object-cover shadow-xl ring-2 ring-white/10"
+              />
+              <span className="absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full bg-emerald-500 ring-2 ring-slate-950" />
+            </div>
+          </div>
+        );
+
+      case 'panoramic':
+        return (
+          <div className="relative -mx-6 -mt-10 mb-4 overflow-hidden rounded-2xl border border-white/10 shadow-2xl aspect-[16/9] bg-slate-900 group">
+            <img
+              src={avatarUrl}
+              alt={card.name}
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30" />
+            <div className="absolute bottom-3 left-4 right-4 flex items-center justify-between">
+              <span className="text-xs font-bold text-white tracking-wide drop-shadow">
+                {card.name}
+              </span>
+              {renderLogo('header')}
+            </div>
+          </div>
+        );
+
+      case 'elegant-frame':
+        return (
+          <div className="flex items-end justify-between -mt-14 mb-4 card-stagger-1">
+            <div className="relative p-1 rounded-2xl bg-gradient-to-tr from-amber-400 via-amber-200 to-amber-500 shadow-2xl">
+              <div className="p-0.5 rounded-[14px] bg-slate-950">
+                <img
+                  src={avatarUrl}
+                  alt={card.name}
+                  className="w-20 h-20 rounded-xl object-cover"
+                />
+              </div>
+              <span className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-amber-400 ring-2 ring-slate-950 flex items-center justify-center text-[8px] font-black text-slate-950">
+                ★
+              </span>
+            </div>
+            {renderLogo('header')}
+          </div>
+        );
+
+      case 'rounded-squircle':
+        return (
+          <div className="flex items-end justify-between -mt-14 mb-4 card-stagger-1">
+            <div className="relative group">
+              <div
+                className="absolute -inset-1 rounded-3xl blur-md opacity-60 group-hover:opacity-100 transition duration-500"
+                style={{
+                  background: `linear-gradient(45deg, ${design.primaryColor}, ${design.accentColor || design.secondaryColor})`,
+                }}
+              />
+              <img
+                src={avatarUrl}
+                alt={card.name}
+                className="relative w-20 h-20 rounded-2xl object-cover bg-slate-900 shadow-2xl ring-2 ring-white/20"
+              />
+              <span className="absolute bottom-1 right-1 w-4 h-4 rounded-full bg-emerald-500 ring-2 ring-slate-950 z-10" />
+            </div>
+            {renderLogo('header')}
+          </div>
+        );
+
+      case 'asymmetric':
+        return (
+          <div className="flex items-end justify-between -mt-14 mb-4 card-stagger-1">
+            <div className="relative rotate-[-3deg] hover:rotate-0 transition-transform duration-300">
+              <div className="absolute inset-0 bg-indigo-500/40 rounded-2xl translate-x-1.5 translate-y-1.5" />
+              <img
+                src={avatarUrl}
+                alt={card.name}
+                className="relative w-20 h-20 rounded-2xl object-cover bg-slate-900 shadow-2xl ring-2 ring-white"
+              />
+              <span className="absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full bg-emerald-400 ring-2 ring-slate-950" />
+            </div>
+            {renderLogo('header')}
+          </div>
+        );
+
+      case 'multi-grid':
+        return (
+          <div className="flex items-center gap-2 -mt-12 mb-4 card-stagger-1">
+            <img
+              src={avatarUrl}
+              alt={card.name}
+              className="w-20 h-20 rounded-2xl object-cover ring-2 ring-white/20 shadow-xl flex-shrink-0"
+            />
+            <div className="grid grid-cols-2 gap-1.5 flex-1 max-w-[130px]">
+              {allPhotos.slice(1, 3).map((img, i) => (
+                <img
+                  key={i}
+                  src={img}
+                  alt="Thumb"
+                  className="w-full h-9 rounded-lg object-cover opacity-80 hover:opacity-100 transition border border-white/10"
+                />
+              ))}
+            </div>
+            <div className="ml-auto">{renderLogo('header')}</div>
+          </div>
+        );
+
+      case 'horizontal-slider':
+        return (
+          <div className="relative -mx-6 -mt-8 mb-4">
+            <div className="flex gap-2.5 overflow-x-auto px-6 pb-2 no-scrollbar">
+              {allPhotos.map((img, i) => (
+                <div
+                  key={i}
+                  className="flex-shrink-0 w-24 h-24 rounded-2xl overflow-hidden border border-white/10 shadow-lg relative group bg-slate-800"
+                >
+                  <img
+                    src={img}
+                    alt={`Photo ${i}`}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                  />
+                  {i === 0 && (
+                    <span className="absolute bottom-1 left-1 text-[9px] bg-black/70 text-emerald-400 font-bold px-1.5 py-0.5 rounded">
+                      Principal
+                    </span>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+
+      case 'main-thumbnails':
+        return (
+          <div className="-mt-12 mb-4 space-y-2 card-stagger-1">
+            <div className="flex items-end justify-between">
+              <div className="relative">
+                <img
+                  src={allPhotos[activeThumbnailIndex] || avatarUrl}
+                  alt={card.name}
+                  className="w-24 h-24 rounded-2xl object-cover shadow-2xl ring-3 ring-white/20 transition-all duration-300"
+                />
+                <span className="absolute bottom-1 right-1 w-3.5 h-3.5 rounded-full bg-emerald-500 ring-2 ring-slate-950" />
+              </div>
+              {renderLogo('header')}
+            </div>
+            {/* Thumbnails row */}
+            <div className="flex gap-1.5 overflow-x-auto no-scrollbar">
+              {allPhotos.map((photo, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => setActiveThumbnailIndex(idx)}
+                  className={`w-9 h-9 rounded-lg overflow-hidden border transition flex-shrink-0 ${
+                    activeThumbnailIndex === idx ? 'border-amber-400 ring-2 ring-amber-400/40' : 'border-white/20 opacity-60'
+                  }`}
+                >
+                  <img src={photo} alt="" className="w-full h-full object-cover" />
+                </button>
+              ))}
+            </div>
+          </div>
+        );
+
+      case 'editorial-spread':
+        return (
+          <div className="flex items-start justify-between -mt-10 mb-4 card-stagger-1">
+            <div className="flex-1 pr-3 pt-2">
+              <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 block mb-1">
+                Editorial &bull; Vol. 1
+              </span>
+              {renderLogo('above-avatar')}
+            </div>
+            <div className="relative flex-shrink-0">
+              <img
+                src={avatarUrl}
+                alt={card.name}
+                className="w-24 h-32 rounded-xl object-cover shadow-2xl ring-1 ring-white/30"
+              />
+              <div className="absolute inset-0 ring-1 ring-inset ring-black/20 rounded-xl pointer-events-none" />
+            </div>
+          </div>
+        );
+
+      case 'overlapping-depth':
+        return (
+          <div className="flex items-end justify-between -mt-14 mb-4 card-stagger-1">
+            <div className="relative group">
+              <div className="absolute -inset-2 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-3xl blur-lg opacity-40 group-hover:opacity-75 transition" />
+              <div className="relative p-1 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20">
+                <img
+                  src={avatarUrl}
+                  alt={card.name}
+                  className="w-20 h-20 rounded-xl object-cover shadow-2xl"
+                />
+              </div>
+              <div className="absolute -bottom-2 -left-2 px-2 py-0.5 rounded-full bg-slate-900/90 border border-emerald-500/40 text-[9px] font-bold text-emerald-400 shadow-sm flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                <span>Disponible</span>
+              </div>
+            </div>
+            {renderLogo('header')}
+          </div>
+        );
+
+      case 'photo-cards':
+        return (
+          <div className="flex items-end justify-between -mt-14 mb-4 card-stagger-1">
+            <div className="bg-white p-1.5 pb-4 rounded-xl shadow-2xl rotate-[-2deg] hover:rotate-0 transition duration-300">
+              <img
+                src={avatarUrl}
+                alt={card.name}
+                className="w-20 h-20 rounded-lg object-cover bg-slate-200"
+              />
+              <p className="text-[9px] font-bold text-slate-800 text-center mt-1 truncate max-w-[80px]">
+                {card.name.split(' ')[0]}
+              </p>
+            </div>
+            {renderLogo('header')}
+          </div>
+        );
+
+      case 'minimal-small':
+        return (
+          <div className="flex items-center justify-between -mt-6 mb-3 card-stagger-1">
+            <div className="flex items-center gap-3">
+              <img
+                src={avatarUrl}
+                alt={card.name}
+                className="w-12 h-12 rounded-full object-cover ring-2 ring-white/20 shadow-md"
+              />
+              <div>
+                <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block">
+                  Perfil Verificado
+                </span>
+              </div>
+            </div>
+            {renderLogo('header')}
+          </div>
+        );
+
+      case 'geometric-cut':
+        return (
+          <div className="flex items-end justify-between -mt-14 mb-4 card-stagger-1">
+            <div className="relative">
+              <div className="w-22 h-22 p-0.5 bg-gradient-to-tr from-cyan-400 to-indigo-500 clip-hexagon">
+                <img
+                  src={avatarUrl}
+                  alt={card.name}
+                  className="w-20 h-20 object-cover clip-hexagon"
+                />
+              </div>
+              <span className="absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full bg-cyan-400 ring-2 ring-slate-950" />
+            </div>
+            {renderLogo('header')}
+          </div>
+        );
+
+      case 'multi-zone':
+        return (
+          <div className="flex items-end justify-between -mt-14 mb-4 card-stagger-1">
+            <div className="relative">
+              {renderLogo('above-avatar')}
+              <img
+                src={avatarUrl}
+                alt={card.name}
+                className="w-20 h-20 rounded-full object-cover shadow-2xl ring-4 ring-slate-900 border-2 border-indigo-500"
+              />
+              <span className="absolute bottom-1 right-1 w-4 h-4 rounded-full bg-emerald-500 ring-2 ring-slate-950" />
+            </div>
+            {renderLogo('header')}
+          </div>
+        );
+
+      case 'circle-portrait':
+      default:
+        return (
+          <div className="flex items-end justify-between -mt-14 mb-4 card-stagger-1">
+            <div className="relative group">
+              {renderLogo('above-avatar')}
+              <img
+                src={avatarUrl}
+                alt={card.name}
+                className={`object-cover bg-slate-800 shadow-xl transition-transform ${
+                  design.avatarSize === 'lg' ? 'w-24 h-24' : design.avatarSize === 'sm' ? 'w-16 h-16' : 'w-20 h-20'
+                } ${
+                  design.avatarShape === 'circle'
+                    ? 'rounded-full'
+                    : design.avatarShape === 'squircle'
+                    ? 'rounded-2xl'
+                    : 'rounded-lg'
+                } ${design.avatarBorder ? 'ring-4' : ''}`}
+                style={{
+                  boxShadow: design.avatarBorder ? `0 0 0 4px ${design.backgroundColor || '#0f172a'}` : undefined,
+                  borderColor: design.primaryColor,
+                }}
+              />
+              <span className="absolute bottom-1 right-1 w-4 h-4 rounded-full bg-emerald-500 ring-2 ring-slate-950" />
+            </div>
+            {renderLogo('header')}
+          </div>
+        );
+    }
+  };
+
   return (
     <div
       className={`relative w-full max-w-[430px] mx-auto overflow-hidden transition-all duration-300 ${
@@ -340,105 +886,91 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
         <div className="absolute inset-0 pointer-events-none anim-scanline overflow-hidden z-20 opacity-70" />
       )}
 
-      {/* Cover Banner */}
-      <div
-        className={`relative w-full transition-all ${
-          isYoungCreative && !design.bannerUrl ? 'anim-liquid-flow' : ''
-        } ${
-          design.coverHeight === 'sm'
-            ? 'h-28'
-            : design.coverHeight === 'lg'
-            ? 'h-48'
-            : design.coverHeight === 'none'
-            ? 'h-10'
-            : 'h-36'
-        }`}
-        style={{
-          background: `linear-gradient(135deg, ${design.primaryColor}, ${design.secondaryColor})`,
-          backgroundImage: design.bannerUrl ? `url('${design.bannerUrl}')` : undefined,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-        }}
-      >
-        {/* Subtle gradient vignette */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
-
-        {/* Top Floating Action Icons */}
-        <div className="absolute top-3 right-3 flex items-center gap-2 z-10">
-          {design.showQrCodeButton && (
-            <button
-              onClick={handleOpenQr}
-              aria-label="Código QR"
-              className="p-2 rounded-full bg-black/40 backdrop-blur-md text-white hover:bg-black/60 transition shadow-sm border border-white/10"
-              title="Ver Código QR"
-            >
-              <QrCode className="w-4 h-4" />
-            </button>
-          )}
-          {design.showNfcButton && (
-            <button
-              onClick={() => setShowNfcModal(true)}
-              aria-label="Tarjeta NFC"
-              className="p-2 rounded-full bg-black/40 backdrop-blur-md text-white hover:bg-black/60 transition shadow-sm border border-white/10"
-              title="Programar Tarjeta NFC"
-            >
-              <Wifi className="w-4 h-4" />
-            </button>
-          )}
-          {design.showShareButton && (
-            <button
-              onClick={handleCopyLink}
-              aria-label="Compartir enlace"
-              className="p-2 rounded-full bg-black/40 backdrop-blur-md text-white hover:bg-black/60 transition shadow-sm border border-white/10"
-              title="Copiar enlace"
-            >
-              {copiedLink ? <Check className="w-4 h-4 text-emerald-400" /> : <Share2 className="w-4 h-4" />}
-            </button>
-          )}
+      {/* Optional Card Top Logo */}
+      {renderLogo('card-top') && (
+        <div className="pt-3 px-6 pb-1 text-center z-10 relative">
+          {renderLogo('card-top')}
         </div>
-      </div>
+      )}
+
+      {/* Cover Banner with Center Logo & Top-Right Logo support */}
+      {photoComp !== 'top-large' && photoComp !== 'vertical-large' && photoComp !== 'card-bg' && (
+        <div
+          className={`relative w-full transition-all ${
+            isYoungCreative && !design.bannerUrl ? 'anim-liquid-flow' : ''
+          } ${
+            design.coverHeight === 'sm'
+              ? 'h-28'
+              : design.coverHeight === 'lg'
+              ? 'h-48'
+              : design.coverHeight === 'none'
+              ? 'h-10'
+              : 'h-36'
+          }`}
+          style={{
+            background: `linear-gradient(135deg, ${design.primaryColor}, ${design.secondaryColor})`,
+            backgroundImage: design.bannerUrl ? `url('${design.bannerUrl}')` : undefined,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+          }}
+        >
+          {/* Subtle gradient vignette */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
+
+          {/* Centered Banner Logo */}
+          {renderLogo('center-banner') && (
+            <div className="absolute inset-0 flex items-center justify-center p-3 z-10 pointer-events-none">
+              {renderLogo('center-banner')}
+            </div>
+          )}
+
+          {/* Top-Right Logo */}
+          {renderLogo('top-right') && (
+            <div className="absolute top-3 left-4 z-10">
+              {renderLogo('top-right')}
+            </div>
+          )}
+
+          {/* Top Floating Action Icons */}
+          <div className="absolute top-3 right-3 flex items-center gap-2 z-10">
+            {design.showQrCodeButton && (
+              <button
+                onClick={handleOpenQr}
+                aria-label="Código QR"
+                className="p-2 rounded-full bg-black/40 backdrop-blur-md text-white hover:bg-black/60 transition shadow-sm border border-white/10"
+                title="Ver Código QR"
+              >
+                <QrCode className="w-4 h-4" />
+              </button>
+            )}
+            {design.showNfcButton && (
+              <button
+                onClick={() => setShowNfcModal(true)}
+                aria-label="Tarjeta NFC"
+                className="p-2 rounded-full bg-black/40 backdrop-blur-md text-white hover:bg-black/60 transition shadow-sm border border-white/10"
+                title="Programar Tarjeta NFC"
+              >
+                <Wifi className="w-4 h-4" />
+              </button>
+            )}
+            {design.showShareButton && (
+              <button
+                onClick={handleCopyLink}
+                aria-label="Compartir enlace"
+                className="p-2 rounded-full bg-black/40 backdrop-blur-md text-white hover:bg-black/60 transition shadow-sm border border-white/10"
+                title="Copiar enlace"
+              >
+                {copiedLink ? <Check className="w-4 h-4 text-emerald-400" /> : <Share2 className="w-4 h-4" />}
+              </button>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Main Card Content */}
       <div className="relative px-6 pb-8" style={{ fontFamily: bodyFontFamily }}>
-        {/* Avatar & Logo Row */}
-        <div className="flex items-end justify-between -mt-14 mb-4 card-stagger-1">
-          <div className="relative group">
-            <img
-              src={
-                design.avatarUrl ||
-                'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400'
-              }
-              alt={card.name}
-              className={`object-cover bg-slate-800 shadow-xl transition-transform ${
-                design.avatarSize === 'lg' ? 'w-24 h-24' : design.avatarSize === 'sm' ? 'w-16 h-16' : 'w-20 h-20'
-              } ${
-                design.avatarShape === 'circle'
-                  ? 'rounded-full'
-                  : design.avatarShape === 'squircle'
-                  ? 'rounded-2xl'
-                  : 'rounded-lg'
-              } ${design.avatarBorder ? 'ring-4' : ''}`}
-              style={{
-                boxShadow: design.avatarBorder ? `0 0 0 4px ${design.backgroundColor || '#0f172a'}` : undefined,
-                borderColor: design.primaryColor,
-              }}
-            />
-            {/* Active status pulse indicator */}
-            <span className="absolute bottom-1 right-1 w-4 h-4 rounded-full bg-emerald-500 ring-2 ring-slate-950" />
-          </div>
-
-          {/* Business Logo */}
-          {design.logoUrl && (
-            <div className="pb-1 max-w-[130px]">
-              <img
-                src={design.logoUrl}
-                alt={card.businessName}
-                style={{ width: `${design.logoWidth || 100}px` }}
-                className="max-h-12 object-contain"
-              />
-            </div>
-          )}
-        </div>
+        {/* Render Selected Photo Composition (1 of 20 variants) */}
+        {renderPhotoComposition()}
 
         {/* Company & Name */}
         <div className="mb-3 card-stagger-2">
@@ -466,6 +998,20 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
           <p className="text-xs leading-relaxed opacity-85 mb-5 p-3 rounded-xl bg-white/[0.04] border border-white/[0.06] card-stagger-2">
             {card.bio}
           </p>
+        )}
+
+        {/* Bottom Compact Photo (When photoComposition === 'bottom-compact') */}
+        {photoComp === 'bottom-compact' && (
+          <div className="mb-5 rounded-2xl overflow-hidden border border-white/10 shadow-lg relative aspect-[16/9] group bg-slate-800">
+            <img
+              src={avatarUrl}
+              alt={card.name}
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-3">
+              <span className="text-xs font-bold text-white drop-shadow">{card.name}</span>
+            </div>
+          </div>
         )}
 
         {/* Quick Action Matrix (WhatsApp, Call, Email, Location) */}
@@ -620,62 +1166,317 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
           );
         })()}
 
-        {/* Catalog / Products & Services */}
-        {design.showCatalog && card.catalog && card.catalog.length > 0 && (
-          <div className="mb-5">
-            <h2
-              className="text-xs font-bold uppercase tracking-wider mb-2.5 opacity-70"
-              style={{ fontFamily: headlineFontFamily }}
-            >
-              Catálogo & Servicios
-            </h2>
-            <div className="space-y-2.5">
-              {card.catalog.map((item) => (
-                <div
-                  key={item.id}
-                  className="flex gap-3 p-3 rounded-2xl bg-white/[0.04] border border-white/[0.08] items-center"
+        {/* Catalog / Products, Services & Restaurant Gastro Menu */}
+        {design.showCatalog && card.catalog && card.catalog.length > 0 && (() => {
+          const categories = ['Todos', ...Array.from(new Set(card.catalog.map(c => c.category).filter(Boolean) as string[]))];
+          const filteredItems = selectedCatalogCategory === 'Todos'
+            ? card.catalog
+            : card.catalog.filter(c => c.category === selectedCatalogCategory);
+
+          return (
+            <div className="mb-5">
+              <div className="flex items-center justify-between mb-2.5">
+                <h2
+                  className="text-xs font-bold uppercase tracking-wider opacity-75 flex items-center gap-1.5"
+                  style={{ fontFamily: headlineFontFamily }}
                 >
-                  {item.imageUrl ? (
-                    <img
-                      src={item.imageUrl}
-                      alt={item.title}
-                      className="w-16 h-16 rounded-xl object-cover bg-slate-800 flex-shrink-0"
-                    />
-                  ) : (
-                    <div
-                      className="w-16 h-16 rounded-xl flex items-center justify-center flex-shrink-0"
-                      style={{ backgroundColor: `${design.primaryColor}22` }}
+                  <Utensils className="w-3.5 h-3.5 text-amber-400" />
+                  <span>{design.theme === 'gastro-menu' ? 'Menú & Carta Digital' : 'Catálogo & Servicios'}</span>
+                </h2>
+                <span className="text-[10px] text-slate-400 font-medium">
+                  {filteredItems.length} {filteredItems.length === 1 ? 'opción' : 'opciones'}
+                </span>
+              </div>
+
+              {/* Category Filter Tabs for Menu / Catalog */}
+              {categories.length > 1 && (
+                <div className="flex items-center gap-1.5 overflow-x-auto pb-2 mb-2.5 no-scrollbar">
+                  {categories.map((cat) => (
+                    <button
+                      key={cat}
+                      type="button"
+                      onClick={() => setSelectedCatalogCategory(cat)}
+                      className={`px-3 py-1 rounded-xl text-[11px] font-bold whitespace-nowrap transition ${
+                        selectedCatalogCategory === cat
+                          ? 'bg-amber-500 text-slate-950 shadow-md font-extrabold'
+                          : 'bg-white/[0.06] text-white/70 hover:bg-white/[0.12] hover:text-white'
+                      }`}
                     >
-                      <Sparkles className="w-6 h-6" style={{ color: design.accentColor }} />
-                    </div>
-                  )}
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs font-bold text-white truncate">{item.title}</p>
-                    {item.description && (
-                      <p className="text-[11px] opacity-75 line-clamp-2 mt-0.5">{item.description}</p>
-                    )}
-                    {item.price && (
-                      <p
-                        className="text-xs font-extrabold mt-1"
-                        style={{ color: design.accentColor || '#38bdf8' }}
+                      {cat}
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              <div className="space-y-2.5">
+                {filteredItems.map((item) => (
+                  <div
+                    key={item.id}
+                    className="flex gap-3 p-3 rounded-2xl bg-white/[0.04] border border-white/[0.08] items-center hover:bg-white/[0.07] transition"
+                  >
+                    {item.imageUrl ? (
+                      <img
+                        src={item.imageUrl}
+                        alt={item.title}
+                        className="w-16 h-16 rounded-xl object-cover bg-slate-800 flex-shrink-0"
+                      />
+                    ) : (
+                      <div
+                        className="w-16 h-16 rounded-xl flex items-center justify-center flex-shrink-0"
+                        style={{ backgroundColor: `${design.primaryColor}22` }}
                       >
-                        {item.price}
-                      </p>
+                        <Sparkles className="w-6 h-6" style={{ color: design.accentColor }} />
+                      </div>
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5">
+                        <p className="text-xs font-bold text-white truncate">{item.title}</p>
+                        {item.category && item.category !== 'General' && (
+                          <span className="text-[9px] font-semibold px-1.5 py-0.2 rounded bg-white/10 text-slate-300">
+                            {item.category}
+                          </span>
+                        )}
+                      </div>
+                      {item.description && (
+                        <p className="text-[11px] opacity-75 line-clamp-2 mt-0.5">{item.description}</p>
+                      )}
+                      {item.price && (
+                        <p
+                          className="text-xs font-extrabold mt-1"
+                          style={{ color: design.accentColor || '#38bdf8' }}
+                        >
+                          {item.price}
+                        </p>
+                      )}
+                    </div>
+                    {item.ctaLink && (
+                      <a
+                        href={item.ctaLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-2.5 py-1.5 rounded-lg text-[10px] font-bold bg-white/10 hover:bg-white/20 text-white transition flex-shrink-0 shadow-sm"
+                      >
+                        {item.ctaLabel || 'Pedir'}
+                      </a>
                     )}
                   </div>
-                  {item.ctaLink && (
-                    <a
-                      href={item.ctaLink}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="px-2.5 py-1.5 rounded-lg text-[10px] font-bold bg-white/10 hover:bg-white/20 text-white transition flex-shrink-0"
-                    >
-                      {item.ctaLabel || 'Ver'}
-                    </a>
-                  )}
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
+          );
+        })()}
+
+        {/* Google Reviews Module */}
+        {card.googleReviews?.enabled && (
+          <div className="mb-5 p-4 rounded-2xl bg-gradient-to-br from-white/[0.07] to-white/[0.02] border border-white/10 shadow-lg relative overflow-hidden">
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <GoogleGIcon className="w-5 h-5 flex-shrink-0" />
+                <span className="text-xs font-bold text-white tracking-wide" style={{ fontFamily: headlineFontFamily }}>
+                  {card.googleReviews.title || 'Déjanos tu opinión en Google'}
+                </span>
+              </div>
+              <div className="flex items-center gap-0.5 text-amber-400">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                ))}
+              </div>
+            </div>
+
+            <p className="text-[11px] text-slate-300 mb-3 leading-relaxed">
+              Tu recomendación es muy valiosa para nosotros y ayuda a más personas a conocer nuestro trabajo.
+            </p>
+
+            <a
+              href={card.googleReviews.placeUrl || 'https://search.google.com/local/writereview'}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full py-2.5 px-3 rounded-xl bg-white hover:bg-slate-100 text-slate-900 font-extrabold text-xs flex items-center justify-center gap-2 transition shadow-md active:scale-[0.99]"
+            >
+              <GoogleGIcon className="w-4 h-4" />
+              <span>{card.googleReviews.buttonText || 'Calificar en Google'}</span>
+              <ExternalLink className="w-3.5 h-3.5 opacity-60 ml-auto" />
+            </a>
+          </div>
+        )}
+
+        {/* Bank Transfer / SPEI Module */}
+        {card.bankTransfer?.enabled && (
+          <div className="mb-5 p-4 rounded-2xl bg-gradient-to-br from-slate-900/90 to-slate-850/90 border border-emerald-500/30 shadow-xl relative overflow-hidden">
+            <div className="flex items-center justify-between pb-3 border-b border-white/10 mb-3">
+              <div className="flex items-center gap-2">
+                <div className="w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
+                  <Landmark className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="text-xs font-extrabold text-white" style={{ fontFamily: headlineFontFamily }}>
+                    Transferencia Bancaria / SPEI
+                  </h3>
+                  <p className="text-[10px] text-emerald-400 font-semibold">Depósitos y transferencias directas</p>
+                </div>
+              </div>
+              <span className="text-[9px] uppercase tracking-wider font-extrabold bg-emerald-950 text-emerald-300 border border-emerald-800 px-2 py-0.5 rounded-full">
+                SPEI
+              </span>
+            </div>
+
+            <div className="space-y-2 text-xs mb-4">
+              {card.bankTransfer.bankName && (
+                <div className="flex items-center justify-between p-2 rounded-xl bg-white/[0.04] border border-white/[0.06]">
+                  <div>
+                    <span className="text-[10px] text-slate-400 block font-medium">Banco:</span>
+                    <span className="text-white font-bold">{card.bankTransfer.bankName}</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => handleCopyBankField('Banco', card.bankTransfer?.bankName)}
+                    className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-slate-300 transition"
+                    title="Copiar Banco"
+                  >
+                    <Copy className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              )}
+
+              {card.bankTransfer.accountHolder && (
+                <div className="flex items-center justify-between p-2 rounded-xl bg-white/[0.04] border border-white/[0.06]">
+                  <div>
+                    <span className="text-[10px] text-slate-400 block font-medium">Beneficiario / Titular:</span>
+                    <span className="text-white font-bold">{card.bankTransfer.accountHolder}</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => handleCopyBankField('Titular', card.bankTransfer?.accountHolder)}
+                    className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-slate-300 transition"
+                    title="Copiar Titular"
+                  >
+                    <Copy className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              )}
+
+              {card.bankTransfer.clabe && (
+                <div className="flex items-center justify-between p-2 rounded-xl bg-emerald-950/30 border border-emerald-500/20">
+                  <div>
+                    <span className="text-[10px] text-emerald-400 block font-bold">CLABE Interbancaria (18 dígitos):</span>
+                    <span className="text-emerald-300 font-mono font-bold tracking-wider">{card.bankTransfer.clabe}</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => handleCopyBankField('CLABE', card.bankTransfer?.clabe)}
+                    className="p-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white transition shadow-sm"
+                    title="Copiar CLABE"
+                  >
+                    <Copy className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              )}
+
+              {card.bankTransfer.accountNumber && (
+                <div className="flex items-center justify-between p-2 rounded-xl bg-white/[0.04] border border-white/[0.06]">
+                  <div>
+                    <span className="text-[10px] text-slate-400 block font-medium">Número de Cuenta:</span>
+                    <span className="text-white font-mono font-bold">{card.bankTransfer.accountNumber}</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => handleCopyBankField('Cuenta', card.bankTransfer?.accountNumber)}
+                    className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-slate-300 transition"
+                    title="Copiar Cuenta"
+                  >
+                    <Copy className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              )}
+
+              {card.bankTransfer.cardNumber && (
+                <div className="flex items-center justify-between p-2 rounded-xl bg-white/[0.04] border border-white/[0.06]">
+                  <div>
+                    <span className="text-[10px] text-slate-400 block font-medium">Tarjeta de Débito (16 dígitos):</span>
+                    <span className="text-white font-mono font-bold">{card.bankTransfer.cardNumber}</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => handleCopyBankField('Tarjeta', card.bankTransfer?.cardNumber)}
+                    className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-slate-300 transition"
+                    title="Copiar Tarjeta"
+                  >
+                    <Copy className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              )}
+
+              {card.bankTransfer.reference && (
+                <div className="p-2 rounded-xl bg-white/[0.04] border border-white/[0.06] text-[11px]">
+                  <span className="text-slate-400 block font-medium">Referencia / Concepto:</span>
+                  <span className="text-white font-semibold">{card.bankTransfer.reference}</span>
+                </div>
+              )}
+
+              {card.bankTransfer.instructions && (
+                <p className="text-[10px] text-slate-400 italic px-1">
+                  Nota: {card.bankTransfer.instructions}
+                </p>
+              )}
+            </div>
+
+            {/* Quick Action Buttons for Bank Data */}
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                onClick={handleCopyAllBankData}
+                className="py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition active:scale-95"
+              >
+                <Copy className="w-3.5 h-3.5" />
+                <span>Copiar todos los datos</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={handleShareBankWhatsApp}
+                className="py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition active:scale-95 shadow-md shadow-emerald-600/30"
+              >
+                <MessageCircle className="w-3.5 h-3.5" />
+                <span>Enviar por WhatsApp</span>
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* PayPal Real Checkout & Payment Link Module */}
+        {card.paypal?.enabled && (
+          <div className="mb-5 p-4 rounded-2xl bg-[#003087]/20 border border-[#0079C1]/40 shadow-xl relative overflow-hidden">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <PayPalIcon className="w-6 h-6" />
+                <div>
+                  <h3 className="text-xs font-black text-white" style={{ fontFamily: headlineFontFamily }}>
+                    Pago Seguro con PayPal
+                  </h3>
+                  <p className="text-[10px] text-sky-300 font-semibold">Tarjetas de crédito, débito o saldo PayPal</p>
+                </div>
+              </div>
+              {card.paypal.amount && (
+                <span className="text-xs font-black text-white bg-[#003087] px-2.5 py-1 rounded-lg border border-[#0079C1]/60">
+                  {card.paypal.currency || 'USD'} ${card.paypal.amount}
+                </span>
+              )}
+            </div>
+
+            {card.paypal.description && (
+              <p className="text-[11px] text-slate-300 mb-3 leading-relaxed">
+                {card.paypal.description}
+              </p>
+            )}
+
+            <button
+              type="button"
+              onClick={handleOpenPayPal}
+              className="w-full py-3 px-4 rounded-xl bg-[#0070BA] hover:bg-[#005ea6] text-white font-extrabold text-xs flex items-center justify-center gap-2 transition shadow-lg shadow-[#003087]/40 active:scale-[0.98]"
+            >
+              <PayPalIcon className="w-4 h-4" />
+              <span>{card.paypal.buttonText || 'Pagar con PayPal'}</span>
+            </button>
           </div>
         )}
 
@@ -829,6 +1630,16 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
           </p>
         </div>
       </div>
+
+      {/* Floating Copy Toast Notification */}
+      {copyToast && (
+        <div className="fixed bottom-6 inset-x-0 z-50 flex items-center justify-center px-4 pointer-events-none">
+          <div className="py-2.5 px-4 rounded-2xl bg-emerald-600 text-white font-bold text-xs flex items-center gap-2 shadow-2xl border border-emerald-400/40 pointer-events-auto animate-bounce">
+            <Check className="w-4 h-4 text-emerald-200" />
+            <span>{copyToast}</span>
+          </div>
+        </div>
+      )}
 
       {/* QR Code Modal */}
       {showQrModal && (

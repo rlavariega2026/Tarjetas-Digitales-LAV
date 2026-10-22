@@ -238,6 +238,276 @@
   }
 }
 
+/* =========================================================================
+   12 ADVANCED MODERN LOGO ANIMATIONS
+   Hardware-accelerated, customizable speed, elegant & non-intrusive
+   ========================================================================= */
+
+/* 1. Entrada cinematográfica */
+.anim-logo-cinematic {
+  animation: logo-cinematic 1.2s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+@keyframes logo-cinematic {
+  0% {
+    opacity: 0;
+    transform: scale(0.65) translateY(-8px);
+    filter: blur(8px) brightness(1.6);
+  }
+  70% {
+    filter: blur(0px) brightness(1.2);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    filter: blur(0) brightness(1);
+  }
+}
+
+/* 2. Giro tridimensional (3D Flip) */
+.anim-logo-3d-flip {
+  perspective: 600px;
+  animation: logo-3d-flip 5s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+  transform-style: preserve-3d;
+}
+@keyframes logo-3d-flip {
+  0%, 65% {
+    transform: rotateY(0deg);
+  }
+  80% {
+    transform: rotateY(180deg) scale(1.05);
+  }
+  100% {
+    transform: rotateY(360deg);
+  }
+}
+
+/* 3. Movimiento suave en profundidad (Depth Float) */
+.anim-logo-depth-float {
+  animation: logo-depth-float 3.5s ease-in-out infinite alternate;
+}
+@keyframes logo-depth-float {
+  0% {
+    transform: translateY(0px) scale(1);
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.25));
+  }
+  100% {
+    transform: translateY(-6px) scale(1.03);
+    filter: drop-shadow(0 14px 18px rgba(0, 0, 0, 0.45));
+  }
+}
+
+/* 4. Reflejo de luz (Light Reflection) */
+.anim-logo-light-reflection {
+  position: relative;
+  overflow: hidden;
+}
+.anim-logo-light-reflection::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -180%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    115deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.05) 25%,
+    rgba(255, 255, 255, 0.5) 50%,
+    rgba(255, 255, 255, 0.05) 75%,
+    transparent 100%
+  );
+  transform: skewX(-25deg);
+  animation: logo-light-reflection 4s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes logo-light-reflection {
+  0%, 55% {
+    left: -180%;
+  }
+  85%, 100% {
+    left: 200%;
+  }
+}
+
+/* 5. Barrido luminoso (Shimmer Sweep) */
+.anim-logo-shimmer-sweep {
+  position: relative;
+  overflow: hidden;
+}
+.anim-logo-shimmer-sweep::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -150%;
+  width: 80%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 215, 0, 0.15) 30%,
+    rgba(255, 255, 255, 0.6) 50%,
+    rgba(255, 215, 0, 0.15) 70%,
+    transparent 100%
+  );
+  animation: logo-shimmer 3.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  pointer-events: none;
+}
+@keyframes logo-shimmer {
+  0%, 50% {
+    left: -150%;
+  }
+  80%, 100% {
+    left: 200%;
+  }
+}
+
+/* 6. Destellos y partículas (Sparkle Burst) */
+.anim-logo-sparkle-burst {
+  animation: logo-sparkle 3s ease-in-out infinite;
+}
+@keyframes logo-sparkle {
+  0%, 100% {
+    filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.2)) brightness(1);
+    transform: scale(1);
+  }
+  50% {
+    filter: drop-shadow(0 0 14px rgba(255, 215, 0, 0.75)) drop-shadow(0 0 25px rgba(255, 255, 255, 0.5)) brightness(1.15);
+    transform: scale(1.04);
+  }
+}
+
+/* 7. Efectos holográficos (Holographic Glitch) */
+.anim-logo-holographic-glitch {
+  animation: logo-holographic 4.5s ease-in-out infinite;
+}
+@keyframes logo-holographic {
+  0%, 82%, 100% {
+    filter: none;
+    transform: translate(0, 0);
+  }
+  84% {
+    filter: drop-shadow(-2px 0 0 #06b6d4) drop-shadow(2px 0 0 #ec4899);
+    transform: translate(-1px, 1px);
+  }
+  86% {
+    filter: drop-shadow(2px 0 0 #06b6d4) drop-shadow(-2px 0 0 #ec4899);
+    transform: translate(1px, -1px);
+  }
+  88% {
+    filter: none;
+    transform: translate(0, 0);
+  }
+}
+
+/* 8. Pulso de iluminación (Pulse Glow) */
+.anim-logo-pulse-glow {
+  animation: logo-pulse 2.8s ease-in-out infinite;
+}
+@keyframes logo-pulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 4px rgba(56, 189, 248, 0.3));
+    opacity: 0.95;
+  }
+  50% {
+    filter: drop-shadow(0 0 16px rgba(56, 189, 248, 0.85));
+    opacity: 1;
+  }
+}
+
+/* 9. Aparición progresiva (Fade Scale) */
+.anim-logo-fade-scale {
+  animation: logo-fade-scale 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+}
+@keyframes logo-fade-scale {
+  0% {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* 10. Movimiento orbital (Orbital Drift) */
+.anim-logo-orbital-drift {
+  animation: logo-orbital 5.5s ease-in-out infinite;
+}
+@keyframes logo-orbital {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  25% {
+    transform: translate(3px, -3px) rotate(1deg);
+  }
+  50% {
+    transform: translate(0, -5px) rotate(0deg);
+  }
+  75% {
+    transform: translate(-3px, -2px) rotate(-1deg);
+  }
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+}
+
+/* 11. Efecto metálico (Metallic Shine) */
+.anim-logo-metallic-shine {
+  animation: logo-metallic 4s ease-in-out infinite;
+}
+@keyframes logo-metallic {
+  0%, 100% {
+    filter: contrast(100%) brightness(1);
+  }
+  50% {
+    filter: contrast(130%) brightness(1.25) drop-shadow(0 0 12px rgba(212, 175, 55, 0.6));
+  }
+}
+
+/* 12. Parallax sutil (Subtle Parallax) */
+.anim-logo-subtle-parallax {
+  animation: logo-parallax 6s ease-in-out infinite alternate;
+}
+@keyframes logo-parallax {
+  0% {
+    transform: translate(-2px, -2px) scale(0.99);
+  }
+  100% {
+    transform: translate(3px, 2px) scale(1.02);
+  }
+}
+
+/* Logo Animation Speed Modifiers */
+.anim-speed-slow {
+  animation-duration: 6.5s !important;
+}
+.anim-speed-slow::after {
+  animation-duration: 6.5s !important;
+}
+.anim-speed-normal {
+  animation-duration: 3.5s !important;
+}
+.anim-speed-normal::after {
+  animation-duration: 3.5s !important;
+}
+.anim-speed-fast {
+  animation-duration: 1.8s !important;
+}
+.anim-speed-fast::after {
+  animation-duration: 1.8s !important;
+}
+
+/* Geometric Clips for Photo Compositions */
+.clip-hexagon {
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+}
+.clip-diagonal-cut {
+  clip-path: polygon(0 0, 100% 0, 100% 86%, 0 100%);
+}
+.clip-diamond-cut {
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+}
+
 /* Accessibility: respect user prefers-reduced-motion */
 @media (prefers-reduced-motion: reduce) {
   .anim-shimmer-sweep::after,
@@ -250,7 +520,19 @@
   .card-stagger-1,
   .card-stagger-2,
   .card-stagger-3,
-  .card-stagger-4 {
+  .card-stagger-4,
+  .anim-logo-cinematic,
+  .anim-logo-3d-flip,
+  .anim-logo-depth-float,
+  .anim-logo-light-reflection::after,
+  .anim-logo-shimmer-sweep::after,
+  .anim-logo-sparkle-burst,
+  .anim-logo-holographic-glitch,
+  .anim-logo-pulse-glow,
+  .anim-logo-fade-scale,
+  .anim-logo-orbital-drift,
+  .anim-logo-metallic-shine,
+  .anim-logo-subtle-parallax {
     animation: none !important;
     transition: none !important;
   }
