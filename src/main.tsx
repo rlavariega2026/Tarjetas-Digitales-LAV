@@ -1,4 +1,3 @@
-```tsx
 import React, { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import type { Session } from '@supabase/supabase-js';
@@ -222,5 +221,5 @@ function Root() {
 registerSW({ immediate: true });
 
 createRoot(document.getElementById('root')!).render(<Root />);
-```
+
 
