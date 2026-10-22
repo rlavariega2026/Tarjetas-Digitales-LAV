@@ -738,7 +738,12 @@ export function generateStandaloneHtml(card: CardData): string {
         if (CARD_DATA.address) intentParts.push('S.postal=' + encodeURIComponent(CARD_DATA.address));
         if (CARD_DATA.notes) intentParts.push('S.notes=' + encodeURIComponent(CARD_DATA.notes));
 
-        const intentUrl = 'intent:#Intent;' + intentParts.join(';') + ';end';
+        // Chrome en Android necesita una URI intent:// válida para lanzar Contactos.
+        // "intent:#Intent" no incluye destino y algunos navegadores la ignoran.
+        const intentUrl = 'intent://contacts/people/#Intent;scheme=content;' +
+          intentParts.join(';') +
+          ';S.browser_fallback_url=' + encodeURIComponent(window.location.href) +
+          ';end';
         window.location.href = intentUrl;
         return;
       }
