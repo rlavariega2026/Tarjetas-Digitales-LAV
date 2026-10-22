@@ -68,7 +68,11 @@ export function generateStandaloneHtml(card: CardData): string {
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="${escapeHtml(card.name)}">
   <title>${escapeHtml(card.name)} — ${escapeHtml(card.businessName || 'Tarjeta Digital')}</title>
   <meta name="description" content="${escapeHtml(card.bio || `${card.name} - ${card.jobTitle}`)}">
   <meta property="og:title" content="${escapeHtml(card.name)} | ${escapeHtml(card.businessName)}">
@@ -107,23 +111,30 @@ export function generateStandaloneHtml(card: CardData): string {
       body {
         min-height: 100vh;
         min-height: 100dvh;
-        padding: 16px 12px;
-        align-items: center;
+        padding: max(18px, env(safe-area-inset-top)) 12px max(24px, env(safe-area-inset-bottom));
+        align-items: flex-start;
         justify-content: center;
         overflow-x: hidden;
-        background: #090d18;
+        background:
+          radial-gradient(ellipse at 50% 0%, rgba(56,189,248,.12), transparent 52%),
+          radial-gradient(ellipse at 100% 65%, rgba(129,140,248,.08), transparent 42%),
+          #070b14;
       }
       .card-container {
         width: 100%;
-        max-width: 440px;
+        max-width: 420px;
         min-height: 0;
-        border-radius: 28px;
+        border-radius: 26px;
         background: ${card.design.backgroundColor};
-        box-shadow: 0 24px 70px rgba(0,0,0,.42), 0 0 0 1px rgba(255,255,255,.12);
+        border: 1px solid rgba(255,255,255,.12);
+        box-shadow: 0 28px 75px rgba(0,0,0,.52), 0 0 0 1px rgba(255,255,255,.035);
         margin: 0 auto;
         isolation: isolate;
+        overflow: hidden;
       }
-      .social-row { gap: 10px; margin: 20px 0; }
+      .cover-banner { border-radius: 25px 25px 0 0; }
+      .footer-brand { font-size: 10px; opacity: .38; }
+      .social-row { gap: 10px; margin: 18px 0 12px; }
       .social-icon-btn {
         width: 46px;
         height: 46px;
@@ -472,6 +483,7 @@ export function generateStandaloneHtml(card: CardData): string {
     .social-icon-btn {
       width: 48px;
       height: 48px;
+      flex: 0 0 48px;
       border-radius: 16px;
       background: linear-gradient(145deg, rgba(255,255,255,.12), rgba(255,255,255,.035));
       border: 1px solid rgba(255,255,255,.16);
@@ -782,23 +794,18 @@ export function generateStandaloneHtml(card: CardData): string {
       }
 
       // 3. iOS Safari: Abre directamente la ficha de contacto en pantalla sin descargar archivos sueltos
-      if (isIOS) {
-        const blob = new Blob([CARD_DATA.vcard], { type: 'text/vcard;charset=utf-8' });
-        const blobUrl = URL.createObjectURL(blob);
-        window.location.href = blobUrl;
-        return;
-      }
-
-      // 4. Fallback PC / Navegador de escritorio: Descarga el archivo para Outlook / Gmail
+      // 3. iPhone/iPad y navegadores sin Web Share: ofrecer la ficha vCard como archivo
+      // para que el sistema muestre la vista previa/importación nativa de Contactos.
       const blob = new Blob([CARD_DATA.vcard], { type: 'text/vcard;charset=utf-8' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
       a.download = (CARD_DATA.name.replace(/[^a-zA-Z0-9]/g, '_') || 'contacto') + '.vcf';
+      a.style.display = 'none';
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
-      URL.revokeObjectURL(url);
+      window.setTimeout(function() { URL.revokeObjectURL(url); }, 60000);
     }
   </script>
 </body>
