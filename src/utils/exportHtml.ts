@@ -738,9 +738,9 @@ export function generateStandaloneHtml(card: CardData): string {
         if (CARD_DATA.address) intentParts.push('S.postal=' + encodeURIComponent(CARD_DATA.address));
         if (CARD_DATA.notes) intentParts.push('S.notes=' + encodeURIComponent(CARD_DATA.notes));
 
-        // Chrome en Android necesita una URI intent:// válida para lanzar Contactos.
-        // "intent:#Intent" no incluye destino y algunos navegadores la ignoran.
-        const intentUrl = 'intent://contacts/people/#Intent;scheme=content;' +
+        // URI Android Intent estándar: solicita abrir el formulario nativo para crear contacto.
+        // El navegador conserva una página de respaldo si el dispositivo no admite el intent.
+        const intentUrl = 'intent:#Intent;' +
           intentParts.join(';') +
           ';S.browser_fallback_url=' + encodeURIComponent(window.location.href) +
           ';end';
