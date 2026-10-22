@@ -500,7 +500,7 @@ export function generateStandaloneHtml(card: CardData): string {
     .social-instagram { color: #f4a7c7; }
     .social-facebook { color: #7db2ff; }
     .social-youtube { color: #ff7777; }
-    .social-x-twitter { color: #fff; }
+    .social-x-twitter, .social-xtwitter { color: #fff; }
     .social-tiktok { color: #8ef2e9; }
     .social-linkedin { color: #86c8ff; }
     .social-telegram { color: #79d2ff; }
