@@ -106,6 +106,21 @@ export function generateStandaloneHtml(card: CardData): string {
       position: relative;
       margin-bottom: 30px;
     }
+    .fullscreen-card-btn {
+      position: absolute; top: 12px; right: 12px; z-index: 30;
+      display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+      min-height: 38px; padding: 8px 11px; border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.28); background: rgba(8,12,22,.76);
+      color: #fff; font: 600 12px/1.2 Inter, sans-serif; cursor: pointer;
+      -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+    }
+    .fullscreen-card-btn svg { width: 16px; height: 16px; flex: 0 0 16px; }
+    .card-container:fullscreen {
+      width: 100vw; max-width: none; height: 100vh; height: 100dvh;
+      min-height: 100vh; min-height: 100dvh; margin: 0; border-radius: 0;
+      overflow-y: auto; overscroll-behavior: contain; background: ${card.design.backgroundColor};
+    }
+    .card-container:fullscreen .fullscreen-card-btn { position: fixed; top: max(12px, env(safe-area-inset-top)); right: 12px; }
 
     /* En móviles, presenta una tarjeta premium independiente, no una página a pantalla completa */
     @media (max-width: 600px) {
@@ -549,6 +564,10 @@ export function generateStandaloneHtml(card: CardData): string {
 </head>
 <body>
   <div class="card-container ${isEleganceLuxury ? 'anim-shimmer-sweep' : ''} ${isFutureTech ? 'anim-border-beam' : ''}">
+    <button type="button" class="fullscreen-card-btn" id="fullscreenCardBtn" onclick="toggleCardFullscreen(event)" aria-label="Ver tarjeta en pantalla completa" title="Ver tarjeta en pantalla completa">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M21 16v3a2 2 0 0 1-2 2h-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+      <span>Pantalla completa</span>
+    </button>
     ${isGlassMotion ? '<div class="anim-float-orb-1"></div><div class="anim-float-orb-2"></div>' : ''}
     ${isFutureTech ? '<div class="anim-scanline"></div>' : ''}
     <div class="cover-banner ${isYoungCreative && !card.design.bannerUrl ? 'anim-liquid-flow' : ''}"></div>
@@ -758,6 +777,26 @@ export function generateStandaloneHtml(card: CardData): string {
       notes: ${JSON.stringify((card.bio || '') + (card.website ? ' | Web: ' + card.website : ''))},
       vcard: ${JSON.stringify(generateVCardString(card))}
     };
+
+    async function toggleCardFullscreen(event) {
+      if (event) { event.preventDefault(); event.stopPropagation(); }
+      const card = document.querySelector('.card-container');
+      const button = document.getElementById('fullscreenCardBtn');
+      if (!card) return;
+      try {
+        if (document.fullscreenElement) {
+          await document.exitFullscreen();
+          if (button) { button.querySelector('span').textContent = 'Pantalla completa'; button.setAttribute('aria-label', 'Ver tarjeta en pantalla completa'); }
+        } else if (card.requestFullscreen) {
+          await card.requestFullscreen();
+          if (button) { button.querySelector('span').textContent = 'Salir de pantalla completa'; button.setAttribute('aria-label', 'Salir de pantalla completa'); }
+        } else {
+          if (button) button.querySelector('span').textContent = 'No disponible en este navegador';
+        }
+      } catch (_) {
+        if (button) button.querySelector('span').textContent = 'Pantalla completa no disponible';
+      }
+    }
 
     async function compartirContactoDirecto() {
       const ua = (navigator.userAgent || '').toLowerCase();
