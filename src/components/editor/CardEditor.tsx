@@ -1735,7 +1735,7 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                       </div>
                     </div>
                     <div>
-                      <label className="block text-[11px] font-medium text-slate-400 mb-1">Color de Texto</label>
+                      <label className="block text-[11px] font-medium text-slate-400 mb-1">Color de Texto Independiente de la Paleta</label>
                       <div className="flex items-center gap-2">
                         <input
                           type="color"
