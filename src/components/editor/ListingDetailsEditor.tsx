@@ -70,7 +70,7 @@ export const ListingDetailsEditor: React.FC<ListingDetailsEditorProps> = ({ card
       )}
       <div className="space-y-3 border-t border-slate-800 pt-4">
         <h4 className="text-xs font-bold uppercase tracking-wide text-slate-300">Ubicación y portales (opcionales)</h4>
-        <div><label className={labelClass}><MapPin className="mr-1 inline h-3 w-3" />Enlace de Google Maps</label><input value={card.googleMapsUrl || ''} onChange={e => onChange({ ...listing })} readOnly className={inputClass + ' opacity-60'} placeholder="Configúralo en la pestaña Info" /><p className="mt-1 text-[10px] text-slate-500">La dirección y el mapa se editan en la pestaña Info.</p></div>
+        <div className="rounded-xl border border-slate-700 bg-slate-950/50 p-3"><p className="flex items-center gap-1.5 text-xs font-semibold text-slate-300"><MapPin className="h-3.5 w-3.5 text-indigo-400" />Ubicación y cómo llegar</p><p className="mt-1 text-[10px] leading-relaxed text-slate-500">Configura la dirección y el enlace de Google Maps en la pestaña Info. El botón de ubicación se mostrará en la tarjeta cuando exista un destino válido.</p></div>
         <div><label className={labelClass}>Facebook Marketplace</label><input value={listing.marketplaceUrl || ''} onChange={e => set('marketplaceUrl', e.target.value)} placeholder="https://www.facebook.com/marketplace/..." className={inputClass} /></div>
         <div><label className={labelClass}>Mercado Libre</label><input value={listing.mercadoLibreUrl || ''} onChange={e => set('mercadoLibreUrl', e.target.value)} placeholder="https://articulo.mercadolibre.com.mx/..." className={inputClass} /></div>
       </div>
