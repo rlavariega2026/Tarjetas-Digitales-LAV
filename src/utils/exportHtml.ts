@@ -66,6 +66,24 @@ export function generateStandaloneHtml(card: CardData): string {
   const isGlassMotion = card.design.theme === 'glass-motion' || card.design.animationStyle === 'floating-glow' || card.design.animationStyle === 'glass-parallax';
   const isYoungCreative = card.design.theme === 'young-creative' || card.design.animationStyle === 'liquid-flow';
 
+  const listing = card.listing;
+  const listingDetails = listing?.kind === 'vehicle'
+    ? [['Marca', listing.make], ['Modelo', listing.model], ['Versión', listing.version], ['Año', listing.year], ['Kilometraje', listing.mileage], ['Transmisión', listing.transmission], ['Combustible', listing.fuel], ['Motor', listing.engine], ['Color', listing.exteriorColor], ['Condición', listing.condition]]
+    : [['Tipo de inmueble', listing?.propertyType], ['Operación', listing?.operation], ['Terreno', listing?.areaM2 ? listing.areaM2 + ' m²' : ''], ['Construcción', listing?.builtAreaM2 ? listing.builtAreaM2 + ' m²' : ''], ['Habitaciones', listing?.bedrooms], ['Baños', listing?.bathrooms], ['Estacionamientos', listing?.parkingSpaces], ['Uso de suelo', listing?.landUse], ['Documentación declarada', listing?.titleStatus]];
+  const visibleListingDetails = listingDetails.filter((entry) => Boolean(entry[1] && String(entry[1]).trim()));
+  const listingPriceRaw = listing?.price?.trim() || '';
+  const listingPriceNumber = Number(listingPriceRaw.replace(/[^0-9.]/g, ''));
+  const listingPrice = listingPriceRaw && Number.isFinite(listingPriceNumber) && listingPriceNumber > 0
+    ? new Intl.NumberFormat('es-MX', { style: 'currency', currency: listing?.currency || 'MXN', maximumFractionDigits: 0 }).format(listingPriceNumber)
+    : listingPriceRaw;
+  const listingHtml = listing && listing.showDetails !== false && (listingPriceRaw || visibleListingDetails.length || listing.marketplaceUrl || listing.mercadoLibreUrl)
+    ? `<section class="listing-panel">
+        ${listingPriceRaw ? `<div class="listing-price-label">Precio</div><div class="listing-price">${escapeHtml(listingPrice)}</div>` : ''}
+        ${visibleListingDetails.length ? `<div class="listing-grid">${visibleListingDetails.map(([label, value]) => `<div class="listing-detail"><span>${escapeHtml(String(label))}</span><strong>${escapeHtml(String(value))}</strong></div>`).join('')}</div>` : ''}
+        ${listing.marketplaceUrl || listing.mercadoLibreUrl ? `<div class="listing-links">${listing.marketplaceUrl ? `<a href="${escapeHtml(listing.marketplaceUrl)}" target="_blank" rel="noopener noreferrer">Facebook Marketplace ↗</a>` : ''}${listing.mercadoLibreUrl ? `<a href="${escapeHtml(listing.mercadoLibreUrl)}" target="_blank" rel="noopener noreferrer">Mercado Libre ↗</a>` : ''}</div>` : ''}
+      </section>`
+    : '';
+
   return `<!DOCTYPE html>
 <html lang="es">
 <head>
@@ -323,6 +341,15 @@ export function generateStandaloneHtml(card: CardData): string {
       opacity: 0.8;
       margin-bottom: 14px;
     }
+    .listing-panel { margin: 18px 0; padding: 16px; border: 1px solid rgba(255,255,255,.12); border-radius: 20px; background: rgba(255,255,255,.045); text-align: left; }
+    .listing-price-label { color: rgba(255,255,255,.52); font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .16em; }
+    .listing-price { margin: 4px 0 14px; font-size: 26px; line-height: 1.2; font-weight: 900; color: ${card.design.accentColor || card.design.primaryColor}; }
+    .listing-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; }
+    .listing-detail { min-width: 0; padding: 10px; border: 1px solid rgba(255,255,255,.08); border-radius: 12px; background: rgba(0,0,0,.12); }
+    .listing-detail span { display: block; color: rgba(255,255,255,.5); font-size: 9px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; }
+    .listing-detail strong { display: block; margin-top: 4px; overflow-wrap: anywhere; color: #fff; font-size: 12px; }
+    .listing-links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .listing-links a { display: inline-flex; padding: 9px 11px; border: 1px solid rgba(255,255,255,.12); border-radius: 11px; color: #fff; background: rgba(255,255,255,.06); font-size: 11px; font-weight: 800; text-decoration: none; }
     .bio-text {
       font-size: 14px;
       line-height: 1.6;
@@ -568,6 +595,7 @@ export function generateStandaloneHtml(card: CardData): string {
       <div class="job-title card-stagger-2">${escapeHtml(card.jobTitle || '')}</div>
 
       ${card.bio ? `<div class="bio-text card-stagger-2">${escapeHtml(card.bio)}</div>` : ''}
+      ${listingHtml}
 
       <!-- Quick Action Grid -->
       <div class="action-grid card-stagger-3">
