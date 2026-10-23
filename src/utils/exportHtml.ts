@@ -102,6 +102,7 @@ export function generateStandaloneHtml(card: CardData): string {
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700;800&family=Space+Grotesk:wght@600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --card-text-color: ${/^#[0-9a-fA-F]{6}$/.test(card.design.textColor || '') ? card.design.textColor : '#f8fafc'}; }
     body {
       background-color: ${card.design.backgroundColor};
       color: ${card.design.textColor || '#f8fafc'};
@@ -561,6 +562,11 @@ export function generateStandaloneHtml(card: CardData): string {
       display: none;
       z-index: 9999;
     }
+    /* El color de texto es independiente de la paleta y se aplica a la tarjeta publicada. */
+    .card-container :is(h1,h2,h3,h4,p,span,strong,em,label,small,li,a,button):not(.social-icon-btn) {
+      color: var(--card-text-color) !important;
+    }
+    .card-container .social-icon-btn { color: revert !important; }
   </style>
 </head>
 <body>
