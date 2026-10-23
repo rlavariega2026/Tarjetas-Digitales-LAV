@@ -513,7 +513,7 @@ export default function App() {
       {hostingerCard && (
         <HostingerExportModal
           card={hostingerCard}
-          onClose={() => setHostingerCard(null)}
+          onClose={() => { setHostingerCard(null); refreshData(); }}
         />
       )}
     </div>
