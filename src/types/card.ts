@@ -232,6 +232,39 @@ export interface ContactClicksBreakdown {
   total: number;
 }
 
+
+export type ListingKind = 'real-estate' | 'vehicle';
+
+export interface ListingDetails {
+  kind?: ListingKind;
+  operation?: string;
+  price?: string;
+  currency?: string;
+  propertyType?: string;
+  areaM2?: string;
+  builtAreaM2?: string;
+  bedrooms?: string;
+  bathrooms?: string;
+  parkingSpaces?: string;
+  landUse?: string;
+  titleStatus?: string;
+  make?: string;
+  model?: string;
+  version?: string;
+  year?: string;
+  mileage?: string;
+  transmission?: string;
+  fuel?: string;
+  engine?: string;
+  exteriorColor?: string;
+  condition?: string;
+  features?: string[];
+  marketplaceUrl?: string;
+  mercadoLibreUrl?: string;
+  coverImageUrl?: string;
+  showDetails?: boolean;
+}
+
 export interface CardData {
   id: string;
   slug: string;
@@ -288,6 +321,9 @@ export interface CardData {
 
   // Real PayPal Integration
   paypal?: PayPalConfig;
+
+  // Optional real-estate / vehicle listing data
+  listing?: ListingDetails;
 
   // Visual design
   design: CardDesign;
