@@ -45,7 +45,8 @@ export function generateStandaloneHtml(card: CardData): string {
       'X / Twitter': '<path d="M18.9 2H22l-6.8 7.8L23.2 22h-6.3L12 14.9 5.8 22H2.7l7.3-8.4L1.8 2h6.5l4.4 6.6zm-1.1 17.8h1.7L7.3 4.1H5.5z" fill="currentColor" stroke="none"/>',
       TikTok: '<path d="M19.6 8.7a7.4 7.4 0 0 1-4.5-1.5v7.1a6.1 6.1 0 1 1-6.1-6.1c.4 0 .8 0 1.2.1v3.4a2.8 2.8 0 1 0 1.5 2.5V2.2h3.5a4.8 4.8 0 0 0 4.4 4.4z" fill="currentColor" stroke="none"/>',
       LinkedIn: '<path d="M20.4 3H3.6A.6.6 0 0 0 3 3.6v16.8a.6.6 0 0 0 .6.6h16.8a.6.6 0 0 0 .6-.6V3.6a.6.6 0 0 0-.6-.6ZM8.3 18H5.4V9.4h2.9ZM6.85 8.2a1.68 1.68 0 1 1 0-3.36 1.68 1.68 0 0 1 0 3.36ZM18.6 18h-2.9v-4.2c0-1-.02-2.3-1.4-2.3s-1.6 1.1-1.6 2.2V18H9.8V9.4h2.8v1.17h.04a3.1 3.1 0 0 1 2.8-1.54c3 0 3.55 1.97 3.55 4.53z" fill="currentColor" stroke="none"/>',
-      Telegram: '<path d="M21.7 3.2 18.5 20c-.24 1.2-.87 1.5-1.77.94l-4.9-3.62-2.36 2.27c-.26.26-.48.48-.98.48l.35-4.98 9.07-8.2c.4-.35-.09-.55-.62-.2L6.1 13.7l-4.77-1.5c-1.04-.33-1.06-1.04.22-1.55L20.2 3.3c.87-.32 1.63.2 1.5-.1Z" fill="currentColor" stroke="none"/>'
+      Telegram: '<path d="M21.7 3.2 18.5 20c-.24 1.2-.87 1.5-1.77.94l-4.9-3.62-2.36 2.27c-.26.26-.48.48-.98.48l.35-4.98 9.07-8.2c.4-.35-.09-.55-.62-.2L6.1 13.7l-4.77-1.5c-1.04-.33-1.06-1.04.22-1.55L20.2 3.3c.87-.32 1.63.2 1.5-.1Z" fill="currentColor" stroke="none"/>',
+      Spotify: '<path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm4.59 14.42a.75.75 0 0 1-1.03.25c-2.83-1.73-6.39-2.12-10.59-1.16a.75.75 0 1 1-.34-1.46c4.59-1.05 8.52-.59 11.71 1.34.35.21.46.68.25 1.03Zm1.47-3.27a.94.94 0 0 1-1.29.31c-3.24-1.99-8.18-2.56-12.01-1.4a.94.94 0 1 1-.55-1.79c4.38-1.33 9.82-.69 13.54 1.59.44.27.58.85.31 1.29Zm.13-3.4c-3.88-2.3-10.29-2.52-14-.14a1.13 1.13 0 1 1-1.22-1.91c4.26-2.73 11.35-2.2 15.68.37a1.13 1.13 0 0 1-1.16 1.68Z" fill="currentColor" stroke="none"/>'
     };
     return '<svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' + (paths[name] || '') + '</svg>';
   };
@@ -57,6 +58,7 @@ export function generateStandaloneHtml(card: CardData): string {
     card.socials.tiktok && { name: 'TikTok', url: toUrl(card.socials.tiktok, 'https://tiktok.com/@') },
     card.socials.linkedin && { name: 'LinkedIn', url: card.socials.linkedin.startsWith('http') ? card.socials.linkedin : `https://linkedin.com/in/${cleanHandle(card.socials.linkedin)}` },
     card.socials.telegram && { name: 'Telegram', url: toUrl(card.socials.telegram, 'https://t.me/') },
+    card.socials.spotify && { name: 'Spotify', url: toUrl(card.socials.spotify, 'https://open.spotify.com/') },
   ].filter(Boolean) as Array<{ name: string; url: string }>;
 
   const isEleganceLuxury = card.design.theme === 'elegance-luxury' || card.design.animationStyle === 'metallic-sheen';
@@ -134,7 +136,7 @@ export function generateStandaloneHtml(card: CardData): string {
       }
       .cover-banner { border-radius: 25px 25px 0 0; }
       .footer-brand { font-size: 10px; opacity: .38; }
-      .social-row { gap: 10px; margin: 18px 0 12px; }
+      .social-row { gap: 10px; margin: 18px 0 12px; display: flex !important; visibility: visible !important; opacity: 1 !important; flex-wrap: wrap; overflow: visible; }
       .social-icon-btn {
         width: 46px;
         height: 46px;
@@ -474,11 +476,18 @@ export function generateStandaloneHtml(card: CardData): string {
       text-align: center;
     }
     .social-row {
-      display: flex;
+      display: flex !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+      position: relative;
+      z-index: 5;
+      width: 100%;
+      align-items: center;
       justify-content: center;
       gap: 12px;
       margin: 22px 0;
       flex-wrap: wrap;
+      overflow: visible;
     }
     .social-icon-btn {
       width: 48px;
@@ -487,11 +496,16 @@ export function generateStandaloneHtml(card: CardData): string {
       border-radius: 16px;
       background: linear-gradient(145deg, rgba(255,255,255,.12), rgba(255,255,255,.035));
       border: 1px solid rgba(255,255,255,.16);
-      display: flex;
+      display: flex !important;
+      visibility: visible !important;
+      opacity: 1 !important;
       align-items: center;
       justify-content: center;
-      color: white;
+      color: white !important;
       text-decoration: none;
+      position: relative;
+      z-index: 6;
+      overflow: visible;
       box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 8px 20px rgba(0,0,0,.16);
       transition: transform .18s ease, background .18s ease;
     }
