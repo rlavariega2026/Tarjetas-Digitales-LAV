@@ -84,6 +84,21 @@ export function generateStandaloneHtml(card: CardData): string {
       </section>`
     : '';
 
+  const galleryHtml = card.design.showGallery && card.gallery && card.gallery.length
+    ? `<section class="photo-gallery-section">
+        <div class="section-title">Galería fotográfica</div>
+        <div class="photo-gallery-controls">
+          <button type="button" onclick="movePhotoGallery(-1)" aria-label="Fotografía anterior">‹</button>
+          <span>${card.gallery.length} fotografía${card.gallery.length === 1 ? '' : 's'}</span>
+          <button type="button" onclick="movePhotoGallery(1)" aria-label="Fotografía siguiente">›</button>
+        </div>
+        <div class="photo-gallery-track" id="photoGalleryTrack">
+          ${card.gallery.map((photo, index) => `<figure class="photo-gallery-item"><img loading="lazy" src="${escapeHtml(photo.imageUrl)}" alt="${escapeHtml(photo.title || 'Fotografía ' + (index + 1))}" onclick="openPhotoViewer(this.src,this.alt)"><figcaption>${escapeHtml(photo.caption || photo.title || '')}</figcaption></figure>`).join('')}
+        </div>
+        <div id="photoViewer" class="photo-viewer" onclick="this.classList.remove('open')" aria-label="Cerrar fotografía ampliada"><button type="button" onclick="event.stopPropagation();document.getElementById('photoViewer').classList.remove('open')">×</button><img id="photoViewerImage" alt=""></div>
+      </section>`
+    : '';
+
   return `<!DOCTYPE html>
 <html lang="es">
 <head>
@@ -341,6 +356,17 @@ export function generateStandaloneHtml(card: CardData): string {
       opacity: 0.8;
       margin-bottom: 14px;
     }
+    .photo-gallery-section { margin: 20px 0; text-align: left; }
+    .photo-gallery-controls { display: flex; align-items: center; justify-content: space-between; margin: 8px 0; color: rgba(255,255,255,.55); font-size: 10px; }
+    .photo-gallery-controls button { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; border: 1px solid rgba(255,255,255,.14); color: #fff; background: rgba(255,255,255,.07); font-size: 22px; cursor: pointer; }
+    .photo-gallery-track { display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; padding-bottom: 8px; -webkit-overflow-scrolling: touch; scrollbar-width: thin; }
+    .photo-gallery-item { flex: 0 0 86%; max-width: 86%; scroll-snap-align: center; overflow: hidden; border-radius: 16px; border: 1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.04); }
+    .photo-gallery-item img { display: block; width: 100%; height: 240px; object-fit: cover; cursor: zoom-in; }
+    .photo-gallery-item figcaption { padding: 8px 10px; color: rgba(255,255,255,.68); font-size: 11px; }
+    .photo-viewer { display: none; position: fixed; inset: 0; z-index: 9999; align-items: center; justify-content: center; padding: 18px; background: rgba(0,0,0,.94); }
+    .photo-viewer.open { display: flex; }
+    .photo-viewer img { max-width: 100%; max-height: 88vh; object-fit: contain; }
+    .photo-viewer button { position: absolute; top: 18px; right: 18px; width: 42px; height: 42px; border: 1px solid rgba(255,255,255,.25); border-radius: 50%; background: rgba(255,255,255,.1); color: white; font-size: 28px; }
     .listing-panel { margin: 18px 0; padding: 16px; border: 1px solid rgba(255,255,255,.12); border-radius: 20px; background: rgba(255,255,255,.045); text-align: left; }
     .listing-price-label { color: rgba(255,255,255,.52); font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .16em; }
     .listing-price { margin: 4px 0 14px; font-size: 26px; line-height: 1.2; font-weight: 900; color: ${card.design.accentColor || card.design.primaryColor}; }
@@ -696,6 +722,8 @@ export function generateStandaloneHtml(card: CardData): string {
         </div>
       </div>` : ''}
 
+      ${galleryHtml}
+
       <!-- Catalog -->
       ${card.catalog && card.catalog.length > 0 ? `
       <div class="section-title">Productos & Servicios</div>
@@ -912,6 +940,20 @@ export function generateStandaloneHtml(card: CardData): string {
       window.setTimeout(function() { URL.revokeObjectURL(url); }, 60000);
     }
   </script>
+<script>
+  function movePhotoGallery(direction) {
+    const track = document.getElementById('photoGalleryTrack');
+    if (!track) return;
+    const item = track.querySelector('.photo-gallery-item');
+    track.scrollBy({ left: direction * ((item ? item.getBoundingClientRect().width : track.clientWidth) + 12), behavior: 'smooth' });
+  }
+  function openPhotoViewer(src, alt) {
+    const viewer = document.getElementById('photoViewer');
+    const image = document.getElementById('photoViewerImage');
+    if (!viewer || !image) return;
+    image.src = src; image.alt = alt || 'Fotografía ampliada'; viewer.classList.add('open');
+  }
+</script>
 </body>
 </html>`;
 }
