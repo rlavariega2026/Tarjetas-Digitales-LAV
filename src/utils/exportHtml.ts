@@ -697,9 +697,59 @@ export function generateStandaloneHtml(card: CardData): string {
       </div>
     </div>
   </div>
+  <button id="fullscreenCardBtn" type="button" aria-label="Ver tarjeta en pantalla completa" title="Pantalla completa" style="position:fixed;right:12px;top:12px;z-index:99999;width:42px;height:42px;border:1px solid rgba(255,255,255,.22);border-radius:14px;background:rgba(10,14,24,.72);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 18px rgba(0,0,0,.22);cursor:pointer;padding:0;">
+    <svg aria-hidden="true" viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M21 16v3a2 2 0 0 1-2 2h-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+  </button>
   <div id="toastNotice"></div>
 
   <script>
+    (function() {
+      var fullscreenBtn = document.getElementById('fullscreenCardBtn');
+      function enterCardFullscreen() {
+        var root = document.documentElement;
+        if (document.fullscreenElement || document.webkitFullscreenElement) return Promise.resolve();
+        var request = root.requestFullscreen || root.webkitRequestFullscreen;
+        if (!request) return Promise.resolve();
+        try {
+          var result = request.call(root);
+          if (result && result.catch) result.catch(function() {});
+          return result || Promise.resolve();
+        } catch (e) {
+          return Promise.resolve();
+        }
+      }
+      if (fullscreenBtn) {
+        fullscreenBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          var active = document.fullscreenElement || document.webkitFullscreenElement;
+          if (active) {
+            var exit = document.exitFullscreen || document.webkitExitFullscreen;
+            if (exit) exit.call(document);
+          } else {
+            enterCardFullscreen();
+          }
+        });
+      }
+      // Browsers require a user gesture for fullscreen. Try on open where allowed,
+      // then automatically enter fullscreen on the first tap anywhere on the card.
+      window.addEventListener('load', function() {
+        enterCardFullscreen();
+      }, { once: true });
+      var firstGesture = function() {
+        enterCardFullscreen();
+        document.removeEventListener('pointerdown', firstGesture, true);
+        document.removeEventListener('touchstart', firstGesture, true);
+      };
+      document.addEventListener('pointerdown', firstGesture, true);
+      document.addEventListener('touchstart', firstGesture, { capture: true, passive: true });
+      document.addEventListener('fullscreenchange', function() {
+        if (fullscreenBtn) fullscreenBtn.style.display = document.fullscreenElement ? 'none' : 'flex';
+      });
+      document.addEventListener('webkitfullscreenchange', function() {
+        if (fullscreenBtn) fullscreenBtn.style.display = document.webkitFullscreenElement ? 'none' : 'flex';
+      });
+    })();
+
     function showToast(msg) {
       var t = document.getElementById('toastNotice');
       if (!t) return;
