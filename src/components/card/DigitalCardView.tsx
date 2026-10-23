@@ -145,9 +145,9 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
   const [showContactSaveModal, setShowContactSaveModal] = useState(false);
 
   const design = card.design;
-  const currentUrl = typeof window !== 'undefined'
+  const currentUrl = card.publicUrl || (typeof window !== 'undefined'
     ? `${window.location.origin}/#card=${card.slug || card.id}`
-    : `https://lavdigitalmkt.com/c/${card.slug}`;
+    : `https://lavdigitalmkt.com/c/${card.slug}`);
 
   const whatsappClean = card.whatsapp ? card.whatsapp.replace(/\D/g, '') : '';
   const phoneClean = card.phone ? card.phone.replace(/\D/g, '') : '';
