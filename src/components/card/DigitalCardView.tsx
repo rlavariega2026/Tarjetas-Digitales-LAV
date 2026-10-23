@@ -145,9 +145,20 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
   const [showContactSaveModal, setShowContactSaveModal] = useState(false);
 
   const design = card.design;
-  const currentUrl = typeof window !== 'undefined'
-    ? `${window.location.origin}/#card=${card.slug || card.id}`
-    : `https://lavdigitalmkt.com/c/${card.slug}`;
+  const toSafeCardSlug = (value?: string) => (value || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9_-]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 80);
+
+  const publishedCardUrl = `https://lavdigitalmkt.com/tarjetas/${encodeURIComponent(toSafeCardSlug(card.businessName || card.name || 'cliente'))}/${encodeURIComponent(toSafeCardSlug(card.slug || card.id || 'tarjeta'))}/`;
+  const currentUrl = typeof window !== 'undefined' && window.location.pathname.startsWith('/tarjetas/')
+    ? window.location.href
+    : (card.website && /^https:\/\/lavdigitalmkt\.com\/tarjetas\//i.test(card.website)
+      ? card.website
+      : publishedCardUrl);
 
   const whatsappClean = card.whatsapp ? card.whatsapp.replace(/\D/g, '') : '';
   const phoneClean = card.phone ? card.phone.replace(/\D/g, '') : '';
