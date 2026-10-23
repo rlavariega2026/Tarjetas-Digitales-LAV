@@ -144,7 +144,8 @@ export function generateStandaloneHtml(card: CardData): string {
         flex: 0 0 46px;
         -webkit-tap-highlight-color: transparent;
       }
-      .social-icon-btn svg { width: 23px; height: 23px; }
+      .social-icon-btn { width: 46px !important; height: 46px !important; min-width: 46px; min-height: 46px; flex: 0 0 46px !important; display: flex !important; align-items: center; justify-content: center; visibility: visible !important; opacity: 1 !important; }
+      .social-icon-btn svg { display: block !important; visibility: visible !important; opacity: 1 !important; width: 23px; height: 23px; flex-shrink: 0; }
       .save-contact-btn, .quick-btn, .custom-link-btn { -webkit-tap-highlight-color: transparent; }
       .content-body { padding: 0 22px 26px; }
       .cover-banner { height: ${card.design.coverHeight === 'sm' ? '110px' : card.design.coverHeight === 'lg' ? '170px' : '135px'}; }
@@ -763,28 +764,23 @@ export function generateStandaloneHtml(card: CardData): string {
       const isAndroid = /android/i.test(ua);
       const isIOS = /iphone|ipad|ipod/i.test(ua);
 
-      // 1. Android: Abre DIRECTAMENTE la aplicación de Contactos (Google / Samsung) pre-llenada sin descargar archivo
+      // Android: invoca el formulario nativo para crear el contacto, con los campos ya rellenados.
       if (isAndroid) {
-        const cleanPhone = (CARD_DATA.phone || '').replace(/[^\\d+]/g, '');
         const intentParts = [
           'action=android.intent.action.INSERT',
           'type=vnd.android.cursor.dir/contact',
-          'S.name=' + encodeURIComponent(CARD_DATA.name)
+          'S.name=' + encodeURIComponent(CARD_DATA.name || '')
         ];
+        const cleanPhone = (CARD_DATA.phone || '').replace(/[^\\d+]/g, '');
         if (cleanPhone) intentParts.push('S.phone=' + encodeURIComponent(cleanPhone));
         if (CARD_DATA.email) intentParts.push('S.email=' + encodeURIComponent(CARD_DATA.email));
         if (CARD_DATA.business) intentParts.push('S.company=' + encodeURIComponent(CARD_DATA.business));
         if (CARD_DATA.job) intentParts.push('S.job_title=' + encodeURIComponent(CARD_DATA.job));
         if (CARD_DATA.address) intentParts.push('S.postal=' + encodeURIComponent(CARD_DATA.address));
         if (CARD_DATA.notes) intentParts.push('S.notes=' + encodeURIComponent(CARD_DATA.notes));
-
-        // URI Android Intent estándar: solicita abrir el formulario nativo para crear contacto.
-        // El navegador conserva una página de respaldo si el dispositivo no admite el intent.
-        const intentUrl = 'intent:#Intent;' +
-          intentParts.join(';') +
-          ';S.browser_fallback_url=' + encodeURIComponent(window.location.href) +
-          ';end';
-        window.location.href = intentUrl;
+        const fallback = encodeURIComponent(window.location.href);
+        window.location.href = 'intent:#Intent;' + intentParts.join(';') +
+          ';S.browser_fallback_url=' + fallback + ';end';
         return;
       }
 
