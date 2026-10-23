@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { CardData } from '../../types/card';
 import { generateStandaloneHtml } from '../../utils/exportHtml';
+import { saveOrUpdateCard } from '../../utils/storage';
 import { Globe, Download, Check, Copy, X } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
@@ -32,7 +33,7 @@ export const HostingerExportModal: React.FC<HostingerExportModalProps> = ({ card
   const finalCardUrl = publishedUrl || `https://lavdigitalmkt.com/tarjetas/${encodeURIComponent(resolvedClientFolder)}/${encodeURIComponent(resolvedCardFolder)}/`;
 
   const handleDownload = (filename: string) => {
-    const updatedCardForExport: CardData = { ...card, website: finalCardUrl };
+    const updatedCardForExport: CardData = { ...card, publicUrl: finalCardUrl, website: finalCardUrl };
     const htmlContent = generateStandaloneHtml(updatedCardForExport);
     const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
     const url = URL.createObjectURL(blob);
@@ -55,7 +56,7 @@ export const HostingerExportModal: React.FC<HostingerExportModalProps> = ({ card
       try { window.localStorage.setItem('lav-hostinger-publish-token', publishToken.trim()); } catch {}
       if (!resolvedClientFolder || !resolvedCardFolder) throw new Error('Indica la carpeta del cliente y la carpeta de la tarjeta.');
       const targetUrl = `https://lavdigitalmkt.com/tarjetas/${encodeURIComponent(resolvedClientFolder)}/${encodeURIComponent(resolvedCardFolder)}/`;
-      const html = generateStandaloneHtml({ ...card, website: targetUrl });
+      const html = generateStandaloneHtml({ ...card, publicUrl: targetUrl, website: targetUrl });
       const response = await fetch('/tarjetas-digitales/api/publish-card.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + publishToken.trim() },
@@ -64,6 +65,7 @@ export const HostingerExportModal: React.FC<HostingerExportModalProps> = ({ card
       const result = await response.json().catch(() => ({}));
       if (!response.ok || !result.ok || !result.url) throw new Error(result.error || 'Error al publicar (' + response.status + ').');
       setPublishedUrl(result.url);
+      saveOrUpdateCard({ ...card, publicUrl: result.url, updatedAt: new Date().toISOString() });
       await navigator.clipboard.writeText(result.url).catch(() => undefined);
       confetti({ particleCount: 50, spread: 70, origin: { y: 0.65 } });
     } catch (error) {
