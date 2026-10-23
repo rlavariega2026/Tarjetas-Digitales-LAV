@@ -1735,6 +1735,27 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                         />
                       </div>
                     </div>
+                    <div>
+                      <label className="block text-[11px] font-medium text-slate-400 mb-1">Color de Texto</label>
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="color"
+                          value={/^#[0-9a-fA-F]{6}$/.test(card.design.textColor || '') ? card.design.textColor : '#f8fafc'}
+                          onChange={(e) => updateDesignField('textColor', e.target.value)}
+                          aria-label="Elegir color de texto"
+                          className="w-8 h-8 rounded-lg cursor-pointer bg-transparent border-0"
+                        />
+                        <input
+                          type="text"
+                          value={card.design.textColor || '#f8fafc'}
+                          onChange={(e) => updateDesignField('textColor', e.target.value)}
+                          aria-label="Código hexadecimal del color de texto"
+                          placeholder="#FFFFFF"
+                          className="w-full px-2 py-1 bg-slate-800 border border-slate-700 rounded-lg text-xs font-mono text-slate-200"
+                        />
+                      </div>
+                      <p className="mt-1 text-[10px] text-slate-500">Cambia el color de los textos de la tarjeta.</p>
+                    </div>
                   </div>
                 </div>
 
