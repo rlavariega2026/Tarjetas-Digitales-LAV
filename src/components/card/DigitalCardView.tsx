@@ -865,7 +865,7 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
 
   return (
     <div
-      className={`relative w-full max-w-[430px] mx-auto overflow-hidden transition-all duration-300 ${
+      className={`lav-card-preview relative w-full max-w-[430px] mx-auto overflow-hidden transition-all duration-300 ${
         isEleganceLuxury
           ? 'anim-shimmer-sweep border border-amber-500/30 shadow-[0_20px_50px_rgba(217,119,6,0.18)]'
           : isFutureTech
@@ -893,8 +893,15 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
         color: design.textColor || '#f8fafc',
         backgroundImage: getPatternBg(),
         ['--beam-color' as any]: design.primaryColor || '#06b6d4',
+        ['--card-text-color' as any]: /^#[0-9a-fA-F]{6}$/.test(design.textColor || '') ? design.textColor : '#f8fafc',
       }}
     >
+      <style>{`
+        .lav-card-preview :is(h1,h2,h3,h4,p,span,strong,em,label,small,li,a,button):not(.social-icon-btn):not(.text-emerald-400):not(.text-amber-400) {
+          color: var(--card-text-color) !important;
+        }
+        .lav-card-preview .social-icon-btn { color: revert !important; }
+      `}</style>
       {/* Background Ambient Floating Orbs for Glass & Motion */}
       {isGlassMotion && (
         <>
