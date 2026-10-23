@@ -60,7 +60,8 @@ export const MyCardsView: React.FC<MyCardsViewProps> = ({
   });
 
   const handleCopy = async (card: CardData) => {
-    const url = `${window.location.origin}/#card=${card.slug}`;
+    if (!card.publicUrl) { onOpenHostingerModal(card); return; }
+    const url = card.publicUrl;
     await navigator.clipboard.writeText(url);
     setCopiedId(card.id);
     confetti({ particleCount: 20, spread: 50, origin: { y: 0.8 } });
@@ -238,9 +239,9 @@ export const MyCardsView: React.FC<MyCardsViewProps> = ({
                     </button>
                     <button
                       onClick={() =>
-                        downloadQr(`${window.location.origin}/#card=${card.slug}`, card.slug, 'png', {
+                        card.publicUrl ? downloadQr(card.publicUrl, card.slug, 'png', {
                           colorDark: card.design.primaryColor,
-                        })
+                        }) : onOpenHostingerModal(card)
                       }
                       className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition"
                       title="Descargar Código QR"
