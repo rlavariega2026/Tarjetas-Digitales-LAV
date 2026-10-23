@@ -235,6 +235,39 @@ export const CardEditor: React.FC<CardEditorProps> = ({
     }
   };
 
+  // Upload multiple gallery photos from the phone, optimize them, and keep each image with this card.
+  const handleGalleryUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    e.target.value = '';
+    if (!files.length) return;
+    const remaining = Math.max(0, 20 - (card.gallery || []).length);
+    if (remaining === 0) {
+      window.alert('Esta tarjeta ya tiene el máximo de 20 fotografías en la galería.');
+      return;
+    }
+    if (files.length > remaining) {
+      window.alert(`Puedes agregar ${remaining} fotografía(s) más. El máximo por tarjeta es de 20.`);
+    }
+    const selected = files.slice(0, remaining);
+    const tooLarge = selected.filter((file) => file.size > 8 * 1024 * 1024);
+    if (tooLarge.length) {
+      window.alert('Cada fotografía debe pesar menos de 8 MB. Se omitirán los archivos demasiado grandes.');
+    }
+    const validFiles = selected.filter((file) => file.type.startsWith('image/') && file.size <= 8 * 1024 * 1024);
+    try {
+      const newItems = await Promise.all(validFiles.map(async (file, index) => ({
+        id: `gal-upload-${Date.now()}-${index}-${Math.random().toString(36).slice(2, 6)}`,
+        title: file.name.replace(/\.[^.]+$/, ''),
+        imageUrl: await optimizeImageFile(file, 1400, 1400, 0.82),
+        caption: '',
+      })));
+      setCard((prev) => ({ ...prev, gallery: [...(prev.gallery || []), ...newItems] }));
+    } catch (error) {
+      console.error('Error al cargar fotografías de la galería:', error);
+      window.alert('No se pudieron procesar todas las fotografías. Prueba con imágenes más pequeñas.');
+    }
+  };
+
   // Save Card
   const handleSave = () => {
     setIsSaving(true);
@@ -2345,13 +2378,20 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                     </h3>
                     <p className="text-[11px] text-slate-400">Muestra fotos de tus proyectos, instalaciones y trabajos.</p>
                   </div>
-                  <button
-                    onClick={handleAddGalleryItem}
-                    className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition"
-                  >
-                    <Plus className="w-3.5 h-3.5" />
-                    <span>Añadir Foto</span>
-                  </button>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <label className="flex cursor-pointer items-center gap-1 rounded-xl border border-indigo-500/40 bg-indigo-500/10 px-3 py-1.5 text-xs font-bold text-indigo-200 transition hover:bg-indigo-500/20">
+                      <Camera className="h-3.5 w-3.5" />
+                      <span>Subir fotos</span>
+                      <input type="file" accept="image/*" multiple onChange={handleGalleryUpload} className="hidden" />
+                    </label>
+                    <button
+                      onClick={handleAddGalleryItem}
+                      className="flex items-center gap-1 rounded-xl bg-indigo-600 px-3 py-1.5 text-xs font-bold text-white transition hover:bg-indigo-500"
+                    >
+                      <Plus className="h-3.5 w-3.5" />
+                      <span>Añadir por URL</span>
+                    </button>
+                  </div>
                 </div>
 
                 {/* Show Gallery Toggle */}
