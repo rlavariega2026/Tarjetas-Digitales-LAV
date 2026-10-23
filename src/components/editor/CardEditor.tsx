@@ -16,7 +16,9 @@ import {
   GoogleReviewsConfig,
   BankTransferConfig,
   PayPalConfig,
+  ListingDetails,
 } from '../../types/card';
+import { ListingDetailsEditor } from './ListingDetailsEditor';
 import { DigitalCardView, getEmbedVideoUrl, formatSocialUrl, GoogleGIcon, PayPalIcon } from '../card/DigitalCardView';
 import { HostingerExportModal } from '../card/HostingerExportModal';
 import { downloadStandaloneHtmlFile } from '../../utils/exportHtml';
@@ -131,7 +133,7 @@ export const CardEditor: React.FC<CardEditorProps> = ({
 }) => {
   const [card, setCard] = useState<CardData>(initialCard);
   const [activeTab, setActiveTab] = useState<
-    'info' | 'socials' | 'design' | 'media' | 'buttons' | 'catalog' | 'gallery' | 'reviews' | 'banking' | 'paypal' | 'physical' | 'ai'
+    'info' | 'listing' | 'socials' | 'design' | 'media' | 'buttons' | 'catalog' | 'gallery' | 'reviews' | 'banking' | 'paypal' | 'physical' | 'ai'
   >('info');
   const [viewportMode, setViewportMode] = useState<'mobile' | 'tablet' | 'desktop' | 'physical'>('mobile');
   const [activeFace, setActiveFace] = useState<'front' | 'back'>('front');
@@ -564,6 +566,13 @@ export const CardEditor: React.FC<CardEditorProps> = ({
               <span>Info</span>
             </button>
             <button
+              onClick={() => setActiveTab('listing')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition ${activeTab === 'listing' ? 'bg-emerald-600 text-white shadow-sm' : 'text-emerald-300 hover:text-white hover:bg-emerald-950/40 bg-emerald-950/20 border border-emerald-500/20'}`}
+            >
+              <Building2 className="w-3.5 h-3.5" />
+              <span>Inmueble / Vehículo</span>
+            </button>
+            <button
               onClick={() => setActiveTab('socials')}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition ${
                 activeTab === 'socials'
@@ -688,6 +697,14 @@ export const CardEditor: React.FC<CardEditorProps> = ({
 
           {/* Tab Content Panel (Scrollable) */}
           <div className="flex-1 overflow-y-auto p-4 space-y-5 custom-scrollbar">
+            {/* TAB: INMUEBLE / VEHÍCULO */}
+            {activeTab === 'listing' && (
+              <ListingDetailsEditor
+                card={card}
+                onChange={(listing: ListingDetails) => setCard((prev) => ({ ...prev, listing }))}
+              />
+            )}
+
             {/* TAB: INFO */}
             {activeTab === 'info' && (
               <div className="space-y-4">
