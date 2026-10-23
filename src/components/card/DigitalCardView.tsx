@@ -207,13 +207,30 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
   };
 
   const handleCopyLink = async () => {
+    const shareData = {
+      title: `${card.name} | ${card.businessName || 'Tarjeta Digital'}`,
+      text: `Te comparto la tarjeta digital de ${card.name}${card.businessName ? ` de ${card.businessName}` : ''}.`,
+      url: currentUrl,
+    };
+
+    // En teléfonos abre el menú nativo para compartir directamente a WhatsApp, Mensajes, etc.
+    if (typeof navigator.share === 'function') {
+      try {
+        await navigator.share(shareData);
+        return;
+      } catch (error) {
+        if (error instanceof DOMException && error.name === 'AbortError') return;
+        // Si el navegador no puede compartir, se usa la copia del enlace como respaldo.
+      }
+    }
+
     try {
       await navigator.clipboard.writeText(currentUrl);
       setCopiedLink(true);
       confetti({ particleCount: 30, spread: 60, origin: { y: 0.8 } });
       setTimeout(() => setCopiedLink(false), 2500);
     } catch {
-      // fallback
+      // El portapapeles puede estar bloqueado por permisos del navegador.
     }
   };
 
@@ -956,9 +973,9 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
             {design.showShareButton && (
               <button
                 onClick={handleCopyLink}
-                aria-label="Compartir enlace"
+                aria-label="Compartir tarjeta"
                 className="p-2 rounded-full bg-black/40 backdrop-blur-md text-white hover:bg-black/60 transition shadow-sm border border-white/10"
-                title="Copiar enlace"
+                title="Compartir tarjeta"
               >
                 {copiedLink ? <Check className="w-4 h-4 text-emerald-400" /> : <Share2 className="w-4 h-4" />}
               </button>
