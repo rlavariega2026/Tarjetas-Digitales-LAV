@@ -897,10 +897,9 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
       }}
     >
       <style>{`
-        .lav-card-preview :is(h1,h2,h3,h4,p,span,strong,em,label,small,li,a,button):not(.social-icon-btn):not(.text-emerald-400):not(.text-amber-400) {
+        .lav-card-preview :is(div,h1,h2,h3,h4,p,span,strong,em,label,small,li,a,button):not(.social-icon-btn):not(.text-emerald-400):not(.text-amber-400) {
           color: var(--card-text-color) !important;
         }
-        .lav-card-preview .social-icon-btn { color: revert !important; }
       `}</style>
       {/* Background Ambient Floating Orbs for Glass & Motion */}
       {isGlassMotion && (
