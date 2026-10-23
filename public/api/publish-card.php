@@ -17,7 +17,7 @@ if (!$auth && function_exists('getallheaders')) {
 if (!$token || !preg_match('/^Bearer\\s+(.+)$/i', $auth, $m) || !hash_equals($token, trim($m[1]))) out(401, ['ok'=>false,'error'=>'Token incorrecto']);
 
 $raw = file_get_contents('php://input');
-if (!$raw || strlen($raw) > 2000000) out(413, ['ok'=>false,'error'=>'HTML vacío o demasiado grande']);
+if (!$raw || strlen($raw) > 12582912) out(413, ['ok'=>false,'error'=>'HTML vacío o demasiado grande (máximo 12 MB)']);
 $data = json_decode($raw, true);
 $clientFolder = (string)($data['clientFolder'] ?? '');
 $cardFolder = (string)($data['cardFolder'] ?? '');
