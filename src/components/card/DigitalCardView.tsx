@@ -1014,6 +1014,61 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
           </div>
         )}
 
+        {/* Optional real-estate / vehicle listing details */}
+        {card.listing && card.listing.showDetails !== false && (
+          (() => {
+            const listing = card.listing!;
+            const isVehicle = listing.kind === 'vehicle';
+            const details: Array<[string, string | undefined]> = isVehicle
+              ? [
+                  ['Marca', listing.make], ['Modelo', listing.model], ['Versión', listing.version],
+                  ['Año', listing.year], ['Kilometraje', listing.mileage], ['Transmisión', listing.transmission],
+                  ['Combustible', listing.fuel], ['Motor', listing.engine], ['Color', listing.exteriorColor],
+                  ['Condición', listing.condition],
+                ]
+              : [
+                  ['Tipo de inmueble', listing.propertyType], ['Operación', listing.operation],
+                  ['Terreno', listing.areaM2 ? listing.areaM2 + ' m²' : undefined],
+                  ['Construcción', listing.builtAreaM2 ? listing.builtAreaM2 + ' m²' : undefined],
+                  ['Habitaciones', listing.bedrooms], ['Baños', listing.bathrooms],
+                  ['Estacionamientos', listing.parkingSpaces], ['Uso de suelo', listing.landUse],
+                  ['Documentación declarada', listing.titleStatus],
+                ];
+            const visibleDetails = details.filter((entry) => Boolean(entry[1]?.trim()));
+            const formattedPrice = listing.price?.trim()
+              ? new Intl.NumberFormat('es-MX', { style: 'currency', currency: listing.currency || 'MXN', maximumFractionDigits: 0 }).format(Number(listing.price.replace(/[^0-9.]/g, '')))
+              : '';
+            return (listing.price?.trim() || visibleDetails.length || listing.marketplaceUrl || listing.mercadoLibreUrl) ? (
+              <section className="mb-5 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-4 card-stagger-3">
+                {listing.price?.trim() && (
+                  <div className="mb-4">
+                    <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.18em] text-white/50">Precio</p>
+                    <p className="text-2xl font-extrabold tracking-tight" style={{ color: design.accentColor || design.primaryColor }}>
+                      {Number.isFinite(Number(listing.price.replace(/[^0-9.]/g, ''))) && Number(listing.price.replace(/[^0-9.]/g, '')) > 0 ? formattedPrice : listing.price}
+                    </p>
+                  </div>
+                )}
+                {visibleDetails.length > 0 && (
+                  <div className="grid grid-cols-2 gap-2">
+                    {visibleDetails.map(([label, value]) => (
+                      <div key={label} className="rounded-xl border border-white/[0.07] bg-black/10 px-3 py-2">
+                        <p className="text-[9px] font-semibold uppercase tracking-wide text-white/45">{label}</p>
+                        <p className="mt-0.5 break-words text-xs font-semibold text-white">{value}</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {(listing.marketplaceUrl || listing.mercadoLibreUrl) && (
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {listing.marketplaceUrl && <a href={listing.marketplaceUrl} target="_blank" rel="noopener noreferrer" className="rounded-xl border border-white/10 bg-white/[0.06] px-3 py-2 text-[11px] font-bold text-white hover:bg-white/10">Ver en Facebook Marketplace ↗</a>}
+                    {listing.mercadoLibreUrl && <a href={listing.mercadoLibreUrl} target="_blank" rel="noopener noreferrer" className="rounded-xl border border-white/10 bg-white/[0.06] px-3 py-2 text-[11px] font-bold text-white hover:bg-white/10">Ver en Mercado Libre ↗</a>}
+                  </div>
+                )}
+              </section>
+            ) : null;
+          })()
+        )}
+
         {/* Quick Action Matrix (WhatsApp, Call, Email, Location) */}
         <div className="grid grid-cols-4 gap-2 mb-4 card-stagger-3">
           {whatsappUrl && (
