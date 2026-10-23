@@ -1137,7 +1137,7 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
               }}
             >
               <UserPlus className="w-4 h-4" />
-              <span>Compartir contacto</span>
+              <span>Guardar contacto</span>
             </button>
 
             <div className="text-center">
@@ -1847,7 +1847,7 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
                 <li>Las computadoras no cuentan con la aplicación nativa de Contactos de Android o iOS.</li>
                 <li>Los navegadores web bloquean llamadas a aplicaciones externas del teléfono dentro de visores por seguridad.</li>
                 <li>
-                  <strong className="text-emerald-300">En tu celular real o en tu sitio (Hostinger):</strong> Al pulsar <em>"Compartir contacto"</em> se abre inmediatamente la app de Contactos de Google/Samsung en Android o Apple Contacts en iPhone.
+                  <strong className="text-emerald-300">En tu celular real o en tu sitio (Hostinger):</strong> Al pulsar <em>"Guardar contacto"</em> se abre inmediatamente la app de Contactos de Google/Samsung en Android o Apple Contacts en iPhone.
                 </li>
               </ul>
             </div>

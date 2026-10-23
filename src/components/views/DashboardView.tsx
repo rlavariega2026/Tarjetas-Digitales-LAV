@@ -67,10 +67,10 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             <span>Plataforma Oficial &bull; LAV Digital Marketing</span>
           </div>
           <h1 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight">
-            Tarjetas de Presentación Digitales e Interactivas
+            Tarjetas Digitales para Bienes Raíces y Vehículos
           </h1>
           <p className="mt-2 text-sm sm:text-base text-slate-300 leading-relaxed">
-            Crea, diseña y publica tarjetas modernas con códigos QR, tecnología NFC, catálogo de productos y enlace para guardar contactos directamente en el celular.
+            Diseña presentaciones digitales para terrenos, casas y vehículos con galerías fotográficas, precios, fichas técnicas, ubicación en Google Maps y contacto directo. Publica cada tarjeta en Hostinger y comparte su enlace.
           </p>
 
           <div className="mt-6 flex flex-wrap items-center gap-3">

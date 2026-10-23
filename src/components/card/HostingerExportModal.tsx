@@ -65,7 +65,7 @@ export const HostingerExportModal: React.FC<HostingerExportModalProps> = ({ card
       const result = await response.json().catch(() => ({}));
       if (!response.ok || !result.ok || !result.url) throw new Error(result.error || 'Error al publicar (' + response.status + ').');
       setPublishedUrl(result.url);
-      saveOrUpdateCard({ ...card, publicUrl: result.url, updatedAt: new Date().toISOString() });
+      saveOrUpdateCard({ ...card, publicUrl: result.url, status: 'published', updatedAt: new Date().toISOString() });
       await navigator.clipboard.writeText(result.url).catch(() => undefined);
       confetti({ particleCount: 50, spread: 70, origin: { y: 0.65 } });
     } catch (error) {

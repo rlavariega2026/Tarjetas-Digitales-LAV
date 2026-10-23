@@ -240,13 +240,13 @@ export const CardEditor: React.FC<CardEditorProps> = ({
     const files = Array.from(e.target.files || []);
     e.target.value = '';
     if (!files.length) return;
-    const remaining = Math.max(0, 20 - (card.gallery || []).length);
+    const remaining = Math.max(0, 12 - (card.gallery || []).length);
     if (remaining === 0) {
-      window.alert('Esta tarjeta ya tiene el máximo de 20 fotografías en la galería.');
+      window.alert('Esta tarjeta ya tiene el máximo de 12 fotografías en la galería.');
       return;
     }
     if (files.length > remaining) {
-      window.alert(`Puedes agregar ${remaining} fotografía(s) más. El máximo por tarjeta es de 20.`);
+      window.alert(`Puedes agregar ${remaining} fotografía(s) más. El máximo por tarjeta es de 12.`);
     }
     const selected = files.slice(0, remaining);
     const tooLarge = selected.filter((file) => file.size > 8 * 1024 * 1024);
@@ -258,7 +258,7 @@ export const CardEditor: React.FC<CardEditorProps> = ({
       const newItems = await Promise.all(validFiles.map(async (file, index) => ({
         id: `gal-upload-${Date.now()}-${index}-${Math.random().toString(36).slice(2, 6)}`,
         title: file.name.replace(/\.[^.]+$/, ''),
-        imageUrl: await optimizeImageFile(file, 1400, 1400, 0.82),
+        imageUrl: await optimizeImageFile(file, 1200, 1200, 0.72),
         caption: '',
       })));
       setCard((prev) => ({ ...prev, gallery: [...(prev.gallery || []), ...newItems] }));

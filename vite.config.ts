@@ -15,9 +15,9 @@ export default defineConfig(() => {
         includeAssets: ['icon.svg', 'apple-touch-icon.png', 'pwa-192x192.png', 'pwa-512x512.png'],
         manifest: {
           id: '/tarjetas-digitales/',
-          name: 'LAV Digital Marketing — Tarjetas Digitales',
-          short_name: 'LAV Tarjetas',
-          description: 'Diseña, personaliza, publica y comparte tarjetas de presentación digitales interactivas con QR y NFC.',
+          name: 'LAV Digital Marketing — Inmuebles y Vehículos',
+          short_name: 'LAV Inmuebles',
+          description: 'Crea tarjetas digitales interactivas para inmuebles y vehículos con fotos, precio, ubicación y contacto.',
           theme_color: '#0f172a',
           background_color: '#0f172a',
           display: 'standalone',

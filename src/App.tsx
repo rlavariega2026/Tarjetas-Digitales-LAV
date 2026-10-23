@@ -455,7 +455,7 @@ export default function App() {
                     <span className="font-bold text-sm text-white">Elegir Plantilla por Sector</span>
                   </div>
                   <p className="text-xs text-slate-300">
-                    Inmobiliarias y casas, bodas, fiestas infantiles, eventos VIP, médicos y más.
+                    Terrenos, casas, departamentos, autos, camionetas y vehículos comerciales.
                   </p>
                 </div>
                 <span className="text-indigo-400 group-hover:translate-x-1 transition-transform">➔</span>

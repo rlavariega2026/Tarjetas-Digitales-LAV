@@ -631,11 +631,11 @@ export function generateStandaloneHtml(card: CardData): string {
         ${card.googleMapsUrl || card.address ? `<a href="${card.googleMapsUrl || `https://maps.google.com/?q=${encodeURIComponent(card.address)}`}" target="_blank" class="quick-btn"><span>📍</span> Ubicación</a>` : ''}
       </div>
 
-      <!-- Compartir contacto (Apertura directa en app de Contactos) -->
+      <!-- Guardar contacto (Apertura directa en app de Contactos) -->
       ${card.design.showSaveContactButton ? `
       <button type="button" onclick="compartirContactoDirecto()" class="save-contact-btn headline-font" id="btnCompartirContacto">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:6px;"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
-        <span>Compartir contacto</span>
+        <span>Guardar contacto</span>
       </button>` : ''}
 
       <!-- Social Networks -->
