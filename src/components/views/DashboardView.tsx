@@ -49,7 +49,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   const totalViews = cards.reduce((acc, c) => acc + (c.viewsCount || 0), 0);
 
   const handleCopyLink = async (card: CardData) => {
-    const url = `${window.location.origin}/#card=${card.slug}`;
+    if (!card.publicUrl) { onOpenHostingerModal(card); return; }
+    const url = card.publicUrl;
     await navigator.clipboard.writeText(url);
     setCopiedSlug(card.id);
     confetti({ particleCount: 25, spread: 60, origin: { y: 0.8 } });
@@ -227,9 +228,9 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                   </button>
                   <button
                     onClick={() =>
-                      downloadQr(`${window.location.origin}/#card=${card.slug}`, card.slug, 'png', {
+                      card.publicUrl ? downloadQr(card.publicUrl, card.slug, 'png', {
                         colorDark: card.design.primaryColor,
-                      })
+                      }) : onOpenHostingerModal(card)
                     }
                     className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition"
                     title="Descargar QR"
