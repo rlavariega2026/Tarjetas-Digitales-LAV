@@ -564,6 +564,14 @@ export function generateStandaloneHtml(card: CardData): string {
         <span>Compartir contacto</span>
       </button>` : ''}
 
+      <!-- Social Networks -->
+      ${socialLinks.length > 0 ? `
+      <div class="social-row">
+        ${socialLinks.map(s => `
+          <a href="${s.url}" target="_blank" rel="noopener noreferrer" class="social-icon-btn social-${s.name.toLowerCase().replace(/[^a-z]/g, '')}" title="${s.name}" aria-label="${s.name}">${socialSvg(s.name)}</a>
+        `).join('')}
+      </div>` : ''}
+
       <!-- Custom Buttons -->
       ${card.customButtons && card.customButtons.length > 0 ? `
       <div class="custom-links">
@@ -662,14 +670,6 @@ export function generateStandaloneHtml(card: CardData): string {
       <div class="section-title">Horarios de Atención</div>
       <div style="font-size:13px; opacity:0.85; margin-bottom:18px; padding:12px; background:rgba(255,255,255,0.03); border-radius:12px; border:1px solid rgba(255,255,255,0.06);">
         🕒 ${escapeHtml(card.businessHours)}
-      </div>` : ''}
-
-      <!-- Social Networks -->
-      ${socialLinks.length > 0 ? `
-      <div class="social-row">
-        ${socialLinks.map(s => `
-          <a href="${s.url}" target="_blank" rel="noopener noreferrer" class="social-icon-btn social-${s.name.toLowerCase().replace(/[^a-z]/g, '')}" title="${s.name}" aria-label="${s.name}">${socialSvg(s.name)}</a>
-        `).join('')}
       </div>` : ''}
 
       <div class="footer-brand">
