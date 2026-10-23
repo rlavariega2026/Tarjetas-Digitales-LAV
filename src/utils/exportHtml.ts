@@ -6,7 +6,7 @@ import { generateVCardString } from './vcard';
  */
 export function generateStandaloneHtml(card: CardData): string {
   const vcardEncoded = encodeURIComponent(generateVCardString(card));
-  const cardUrl = card.website || `https://lavdigitalmkt.com/c/${card.slug}`;
+  const cardUrl = card.publicUrl || `https://lavdigitalmkt.com/tarjetas/${card.slug}/`;
   const whatsappUrl = card.whatsapp
     ? `https://wa.me/${card.whatsapp.replace(/\D/g, '')}?text=${encodeURIComponent(card.whatsappMessage || `Hola ${card.name}, vi tu tarjeta digital y me gustaría obtener más información.`)}`
     : '';
