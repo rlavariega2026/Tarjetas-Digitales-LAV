@@ -397,6 +397,14 @@ app.get(['/manifest.webmanifest', '/manifest.json'], (_req, res) => {
 });
 
 // Direct vCard endpoint to trigger native Contact App opening in iOS and Android
+function escapeVCardField(value: string): string {
+  return value
+    .replace(/\\/g, '\\\\')
+    .replace(/\r\n|\n|\r/g, '\\n')
+    .replace(/;/g, '\\;')
+    .replace(/,/g, '\\,');
+}
+
 app.get(['/api/vcard', '/api/card/:slug/vcard', '/c/:slug.vcf'], (req, res) => {
   try {
     const slug = req.params.slug;
@@ -420,20 +428,20 @@ app.get(['/api/vcard', '/api/card/:slug/vcard', '/c/:slug.vcf'], (req, res) => {
     const lines: string[] = [
       'BEGIN:VCARD',
       'VERSION:3.0',
-      `FN;CHARSET=UTF-8:${name}`,
-      `N;CHARSET=UTF-8:${name};;;;`,
+      `FN;CHARSET=UTF-8:${escapeVCardField(name)}`,
+      `N;CHARSET=UTF-8:${escapeVCardField(name)};;;;`,
     ];
 
-    if (org) lines.push(`ORG;CHARSET=UTF-8:${org}`);
-    if (title) lines.push(`TITLE;CHARSET=UTF-8:${title}`);
+    if (org) lines.push(`ORG;CHARSET=UTF-8:${escapeVCardField(org)}`);
+    if (title) lines.push(`TITLE;CHARSET=UTF-8:${escapeVCardField(title)}`);
     if (phone) lines.push(`TEL;TYPE=CELL,VOICE:${phone}`);
     if (email) lines.push(`EMAIL;TYPE=INTERNET,WORK:${email}`);
     if (website) lines.push(`URL:${website}`);
     if (address) {
-      lines.push(`ADR;TYPE=WORK;CHARSET=UTF-8:;;${address};;;;`);
-      lines.push(`LABEL;TYPE=WORK;CHARSET=UTF-8:${address}`);
+      lines.push(`ADR;TYPE=WORK;CHARSET=UTF-8:;;${escapeVCardField(address)};;;;`);
+      lines.push(`LABEL;TYPE=WORK;CHARSET=UTF-8:${escapeVCardField(address)}`);
     }
-    if (note) lines.push(`NOTE;CHARSET=UTF-8:${note.replace(/\n/g, '\\n')}`);
+    if (note) lines.push(`NOTE;CHARSET=UTF-8:${escapeVCardField(note)}`);
     lines.push(`REV:${new Date().toISOString()}`);
     lines.push('END:VCARD');
 
