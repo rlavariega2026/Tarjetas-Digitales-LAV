@@ -45,7 +45,8 @@ export function generateStandaloneHtml(card: CardData): string {
       'X / Twitter': '<path d="M18.9 2H22l-6.8 7.8L23.2 22h-6.3L12 14.9 5.8 22H2.7l7.3-8.4L1.8 2h6.5l4.4 6.6zm-1.1 17.8h1.7L7.3 4.1H5.5z" fill="currentColor" stroke="none"/>',
       TikTok: '<path d="M19.6 8.7a7.4 7.4 0 0 1-4.5-1.5v7.1a6.1 6.1 0 1 1-6.1-6.1c.4 0 .8 0 1.2.1v3.4a2.8 2.8 0 1 0 1.5 2.5V2.2h3.5a4.8 4.8 0 0 0 4.4 4.4z" fill="currentColor" stroke="none"/>',
       LinkedIn: '<path d="M20.4 3H3.6A.6.6 0 0 0 3 3.6v16.8a.6.6 0 0 0 .6.6h16.8a.6.6 0 0 0 .6-.6V3.6a.6.6 0 0 0-.6-.6ZM8.3 18H5.4V9.4h2.9ZM6.85 8.2a1.68 1.68 0 1 1 0-3.36 1.68 1.68 0 0 1 0 3.36ZM18.6 18h-2.9v-4.2c0-1-.02-2.3-1.4-2.3s-1.6 1.1-1.6 2.2V18H9.8V9.4h2.8v1.17h.04a3.1 3.1 0 0 1 2.8-1.54c3 0 3.55 1.97 3.55 4.53z" fill="currentColor" stroke="none"/>',
-      Telegram: '<path d="M21.7 3.2 18.5 20c-.24 1.2-.87 1.5-1.77.94l-4.9-3.62-2.36 2.27c-.26.26-.48.48-.98.48l.35-4.98 9.07-8.2c.4-.35-.09-.55-.62-.2L6.1 13.7l-4.77-1.5c-1.04-.33-1.06-1.04.22-1.55L20.2 3.3c.87-.32 1.63.2 1.5-.1Z" fill="currentColor" stroke="none"/>'
+      Telegram: '<path d="M21.7 3.2 18.5 20c-.24 1.2-.87 1.5-1.77.94l-4.9-3.62-2.36 2.27c-.26.26-.48.48-.98.48l.35-4.98 9.07-8.2c.4-.35-.09-.55-.62-.2L6.1 13.7l-4.77-1.5c-1.04-.33-1.06-1.04.22-1.55L20.2 3.3c.87-.32 1.63.2 1.5-.1Z" fill="currentColor" stroke="none"/>',
+      Spotify: '<circle cx="12" cy="12" r="10" fill="currentColor" stroke="none"/><path d="M6.2 9.1c3.8-1.1 8.4-.6 11.6 1.4M7 12.1c3.2-.9 7-.4 9.7 1.2M7.8 15c2.7-.7 5.7-.3 7.8 1" fill="none" stroke="#07110b" stroke-width="1.5" stroke-linecap="round"/>'
     };
     return '<svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' + (paths[name] || '') + '</svg>';
   };
@@ -57,6 +58,7 @@ export function generateStandaloneHtml(card: CardData): string {
     card.socials.tiktok && { name: 'TikTok', url: toUrl(card.socials.tiktok, 'https://tiktok.com/@') },
     card.socials.linkedin && { name: 'LinkedIn', url: card.socials.linkedin.startsWith('http') ? card.socials.linkedin : `https://linkedin.com/in/${cleanHandle(card.socials.linkedin)}` },
     card.socials.telegram && { name: 'Telegram', url: toUrl(card.socials.telegram, 'https://t.me/') },
+    card.socials.spotify && { name: 'Spotify', url: toUrl(card.socials.spotify, 'https://open.spotify.com/') },
   ].filter(Boolean) as Array<{ name: string; url: string }>;
 
   const isEleganceLuxury = card.design.theme === 'elegance-luxury' || card.design.animationStyle === 'metallic-sheen';
@@ -496,7 +498,24 @@ export function generateStandaloneHtml(card: CardData): string {
       transition: transform .18s ease, background .18s ease;
     }
     .social-icon-btn:active { transform: scale(.94); }
-    .social-icon-btn svg { display: block; }
+    .social-icon-btn,
+    .social-icon-btn:visited,
+    .social-icon-btn:hover { text-decoration: none; }
+    .social-icon-btn svg {
+      display: block;
+      width: 25px;
+      height: 25px;
+      min-width: 25px;
+      min-height: 25px;
+      flex: 0 0 25px;
+      overflow: visible;
+      opacity: 1;
+      visibility: visible;
+      color: inherit;
+    }
+    .social-icon-btn svg path,
+    .social-icon-btn svg circle,
+    .social-icon-btn svg rect { vector-effect: non-scaling-stroke; }
     .social-instagram { color: #f4a7c7; }
     .social-facebook { color: #7db2ff; }
     .social-youtube { color: #ff7777; }
@@ -504,6 +523,7 @@ export function generateStandaloneHtml(card: CardData): string {
     .social-tiktok { color: #8ef2e9; }
     .social-linkedin { color: #86c8ff; }
     .social-telegram { color: #79d2ff; }
+    .social-spotify { color: #1ed760; }
     .footer-brand {
       text-align: center;
       font-size: 11px;
