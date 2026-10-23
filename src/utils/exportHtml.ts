@@ -9,7 +9,7 @@ export function generateStandaloneHtml(card: CardData): string {
   const cardUrl = card.website || `https://lavdigitalmkt.com/c/${card.slug || card.id}`;
   const absolutePublicImage = [card.design.avatarUrl, card.design.logoUrl, card.design.bannerUrl]
     .find((value) => typeof value === 'string' && /^https:\/\//i.test(value) && !value.startsWith('data:'));
-  const previewImageUrl = absolutePublicImage || 'https://lavdigitalmkt.com/apple-touch-icon.png';
+  const previewImageUrl = absolutePublicImage || 'https://lavdigitalmkt.com/pwa-512x512.png';
   const previewDescription = (card.bio || card.jobTitle || `Tarjeta digital de ${card.name}`).replace(/\s+/g, ' ').trim().slice(0, 200);
   const whatsappUrl = card.whatsapp
     ? `https://wa.me/${card.whatsapp.replace(/\D/g, '')}?text=${encodeURIComponent(card.whatsappMessage || `Hola ${card.name}, vi tu tarjeta digital y me gustaría obtener más información.`)}`
@@ -89,6 +89,8 @@ export function generateStandaloneHtml(card: CardData): string {
   <meta property="og:image:secure_url" content="${escapeHtml(previewImageUrl)}">
   <meta property="og:image:alt" content="Tarjeta digital de ${escapeHtml(card.name)}">
   <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="512">
+  <meta property="og:image:height" content="512">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="${escapeHtml(card.name)} | Tarjeta Digital">
   <meta name="twitter:description" content="${escapeHtml(previewDescription)}">
