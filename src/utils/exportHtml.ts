@@ -786,11 +786,17 @@ export function generateStandaloneHtml(card: CardData): string {
 
         // URI Android Intent estándar: solicita abrir el formulario nativo para crear contacto.
         // El navegador conserva una página de respaldo si el dispositivo no admite el intent.
-        const intentUrl = 'intent:#Intent;' +
+        // Usar una URI intent con destino de Contactos; Android resuelve el formulario nativo.
+        // No usar la URL de la tarjeta como fallback: eso hace parecer que el botón no hizo nada.
+        const intentUrl = 'intent://contacts/people/#Intent;' +
           intentParts.join(';') +
-          ';S.browser_fallback_url=' + encodeURIComponent(window.location.href) +
           ';end';
-        window.location.href = intentUrl;
+        const intentLink = document.createElement('a');
+        intentLink.href = intentUrl;
+        intentLink.style.display = 'none';
+        document.body.appendChild(intentLink);
+        intentLink.click();
+        intentLink.remove();
         return;
       }
 
