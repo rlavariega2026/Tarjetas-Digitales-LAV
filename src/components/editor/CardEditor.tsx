@@ -540,9 +540,9 @@ export const CardEditor: React.FC<CardEditorProps> = ({
           {/* QR code download */}
           <button
             onClick={() =>
-              downloadQr(`${window.location.origin}/#card=${card.slug}`, card.slug, 'png', {
+              card.publicUrl ? downloadQr(card.publicUrl, card.slug, 'png', {
                 colorDark: card.design.primaryColor,
-              })
+              }) : setShowHostingerModal(true)
             }
             className="hidden sm:inline-flex p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition"
             title="Descargar Código QR PNG"
