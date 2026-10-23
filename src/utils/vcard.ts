@@ -1,22 +1,34 @@
 import { CardData } from '../types/card';
 
 /**
+ * Escape text values according to the vCard 3.0 text-value rules.
+ * Prevents commas, semicolons, backslashes and line breaks from corrupting fields.
+ */
+function escapeVCardText(value: string): string {
+  return value
+    .replace(/\\/g, '\\\\')
+    .replace(/\r\n|\n|\r/g, '\\n')
+    .replace(/;/g, '\\;')
+    .replace(/,/g, '\\,');
+}
+
+/**
  * Generates RFC 2426 compliant vCard 3.0 data string
  */
 export function generateVCardString(card: CardData): string {
   const lines: string[] = [
     'BEGIN:VCARD',
     'VERSION:3.0',
-    `FN;CHARSET=UTF-8:${card.name}`,
-    `N;CHARSET=UTF-8:${card.name};;;;`,
+    `FN;CHARSET=UTF-8:${escapeVCardText(card.name || 'Contacto')}`,
+    `N;CHARSET=UTF-8:${escapeVCardText(card.name || 'Contacto')};;;;`,
   ];
 
   if (card.businessName) {
-    lines.push(`ORG;CHARSET=UTF-8:${card.businessName}`);
+    lines.push(`ORG;CHARSET=UTF-8:${escapeVCardText(card.businessName)}`);
   }
 
   if (card.jobTitle) {
-    lines.push(`TITLE;CHARSET=UTF-8:${card.jobTitle}`);
+    lines.push(`TITLE;CHARSET=UTF-8:${escapeVCardText(card.jobTitle)}`);
   }
 
   if (card.phone) {
@@ -28,7 +40,7 @@ export function generateVCardString(card: CardData): string {
   }
 
   if (card.email) {
-    lines.push(`EMAIL;TYPE=INTERNET,WORK:${card.email}`);
+    lines.push(`EMAIL;TYPE=INTERNET,WORK:${escapeVCardText(card.email)}`);
   }
 
   if (card.website) {
@@ -36,12 +48,12 @@ export function generateVCardString(card: CardData): string {
   }
 
   if (card.address) {
-    lines.push(`ADR;TYPE=WORK;CHARSET=UTF-8:;;${card.address};;;;`);
-    lines.push(`LABEL;TYPE=WORK;CHARSET=UTF-8:${card.address}`);
+    lines.push(`ADR;TYPE=WORK;CHARSET=UTF-8:;;${escapeVCardText(card.address)};;;;`);
+    lines.push(`LABEL;TYPE=WORK;CHARSET=UTF-8:${escapeVCardText(card.address)}`);
   }
 
   if (card.bio) {
-    const cleanBio = card.bio.replace(/\n/g, '\\n');
+    const cleanBio = escapeVCardText(card.bio);
     lines.push(`NOTE;CHARSET=UTF-8:${cleanBio}`);
   }
 
