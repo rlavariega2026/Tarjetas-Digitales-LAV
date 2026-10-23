@@ -1646,7 +1646,6 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                           updateDesignField('secondaryColor', p.secondary);
                           updateDesignField('accentColor', p.accent);
                           updateDesignField('backgroundColor', p.bg);
-                          if (p.text) updateDesignField('textColor', p.text);
                         }}
                         className="p-2.5 rounded-xl bg-slate-800 border border-slate-700 hover:border-slate-500 text-left transition flex items-center justify-between"
                       >
@@ -1754,7 +1753,7 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                           className="w-full px-2 py-1 bg-slate-800 border border-slate-700 rounded-lg text-xs font-mono text-slate-200"
                         />
                       </div>
-                      <p className="mt-1 text-[10px] text-slate-500">Cambia el color de los textos de la tarjeta.</p>
+                      <p className="mt-1 text-[10px] text-slate-500">Este color se conserva por separado: cambiar una paleta no lo modifica.</p>
                     </div>
                   </div>
                 </div>
