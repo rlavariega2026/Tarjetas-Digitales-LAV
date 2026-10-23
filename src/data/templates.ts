@@ -1229,5 +1229,122 @@ export const INITIAL_TEMPLATES: CardTemplate[] = [
   },
   ...NEW_COLLECTION_TEMPLATES,
   ...TEMPLATES_22_NEW,
+  // 47 specialized real-estate and vehicle templates. Combined with the existing
+  // 53 templates, the library exposes 100 selectable designs.
+  ...Array.from({ length: 47 }, (_, index): CardTemplate => {
+    const isVehicle = index >= 24;
+    const n = index + 1;
+    const source = TEMPLATES_22_NEW[index % TEMPLATES_22_NEW.length];
+    const themes = [
+      'dark-luxury', 'modern-clean', 'bold-gradient', 'minimalist', 'editorial',
+      'elegance-luxury', 'business-signature', 'architectural-lines',
+      'black-gold', 'platinum-edition', 'swiss-minimal', 'soft-gradient',
+      'asymmetric-flow', 'dynamic-layers', 'warm-organic', 'glass-motion',
+      'monochrome-studio', 'liquid-glass', 'aurora-flow', 'bold-creative',
+    ] as const;
+    const compositions = [
+      'panoramic', 'multi-grid', 'horizontal-slider', 'main-thumbnails',
+      'editorial-spread', 'overlapping-depth', 'photo-cards', 'vertical-large',
+      'multi-zone', 'asymmetric', 'left-photo', 'right-photo', 'card-bg',
+      'elegant-frame', 'rounded-squircle', 'top-large', 'bottom-compact',
+      'minimal-small', 'geometric-cut', 'circle-portrait',
+    ] as const;
+    const propertyNames = [
+      'Horizonte Residencial', 'Áurea Inmobiliaria', 'Línea Arquitectónica',
+      'Patrimonio Selecto', 'Espacios Premium', 'Terreno & Proyecto',
+      'Residencia Signature', 'Urban Living', 'Vista Panorámica',
+      'Casa Contemporánea', 'Inversión Inteligente', 'Reserva Natural',
+    ];
+    const vehicleNames = [
+      'Motor Signature', 'Garage Selecto', 'Auto Gallery', 'Performance Line',
+      'Motor Premium', 'Drive Collection', 'Urban Motors', 'Road Edition',
+      'Velocity Auto', 'Classic Garage', 'Sport Drive', 'Motor House',
+    ];
+    const name = isVehicle
+      ? vehicleNames[(index - 24) % vehicleNames.length] + ' ' + String(index - 23).padStart(2, '0')
+      : propertyNames[index % propertyNames.length] + ' ' + String(index + 1).padStart(2, '0');
+    const photo = isVehicle
+      ? 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1400&q=85'
+      : 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1400&q=85';
+    const colorSets = [
+      ['#0f172a', '#d4af37', '#f5d77a'],
+      ['#102a43', '#3b82f6', '#7dd3fc'],
+      ['#171717', '#a3a3a3', '#f5f5f5'],
+      ['#172554', '#c084fc', '#f0abfc'],
+      ['#14251f', '#65a30d', '#bef264'],
+      ['#3b1d2a', '#e879a9', '#fbcfe8'],
+      ['#1f2937', '#f97316', '#fdba74'],
+    ];
+    const colors = colorSets[index % colorSets.length];
+    return {
+      id: 'tpl-lav-listing-' + String(n).padStart(2, '0'),
+      name,
+      category: isVehicle ? 'Vehículos' : 'Bienes raíces',
+      description: isVehicle
+        ? 'Tarjeta automotriz especializada con portada fotográfica, ficha técnica, precio y enlaces comerciales opcionales.'
+        : 'Tarjeta inmobiliaria especializada con portada fotográfica, características, precio, ubicación y contacto opcionales.',
+      thumbnailGradient: [
+        'from-slate-900 to-amber-600', 'from-blue-950 to-sky-500',
+        'from-zinc-950 to-zinc-500', 'from-violet-950 to-fuchsia-500',
+        'from-emerald-950 to-lime-500', 'from-rose-950 to-pink-500',
+        'from-gray-900 to-orange-500',
+      ][index % 7],
+      badge: isVehicle ? 'Automotriz' : 'Inmobiliaria',
+      animationPreview: 'Presentación interactiva con composición fotográfica adaptable',
+      cardData: {
+        ...source.cardData,
+        id: 'card-template-lav-listing-' + String(n).padStart(2, '0'),
+        slug: 'lav-listing-template-' + String(n).padStart(2, '0'),
+        name: isVehicle ? 'Vehículo en venta' : 'Propiedad en venta',
+        businessName: isVehicle ? 'Mi catálogo automotriz' : 'Mi catálogo inmobiliario',
+        jobTitle: isVehicle ? 'Información del vehículo' : 'Información de la propiedad',
+        bio: isVehicle
+          ? 'Conoce los detalles, fotografías y condiciones de este vehículo. Contacta para recibir más información.'
+          : 'Conoce esta propiedad, revisa sus fotografías y características y solicita información o una visita.',
+        category: isVehicle ? 'Vehículos' : 'Bienes raíces',
+        status: 'draft',
+        viewsCount: 0,
+        contactClicks: 0,
+        contactBreakdown: { whatsapp: 0, call: 0, email: 0, saveContact: 0, map: 0, total: 0 },
+        createdAt: new Date(0).toISOString(),
+        updatedAt: new Date(0).toISOString(),
+        phone: '',
+        whatsapp: '',
+        whatsappMessage: '',
+        email: '',
+        website: '',
+        address: '',
+        googleMapsUrl: '',
+        businessHours: '',
+        socials: {},
+        customButtons: [],
+        catalog: [],
+        gallery: [],
+        design: {
+          ...source.cardData.design,
+          theme: themes[index % themes.length],
+          primaryColor: colors[1],
+          secondaryColor: colors[0],
+          accentColor: colors[2],
+          backgroundColor: colors[0],
+          textColor: '#ffffff',
+          photoComposition: compositions[index % compositions.length],
+          avatarUrl: photo,
+          bannerUrl: photo,
+          showCatalog: false,
+          showGallery: true,
+          showHours: false,
+          showSocials: true,
+          showCustomButtons: true,
+          showMapButton: true,
+        },
+        listing: {
+          kind: isVehicle ? 'vehicle' : 'real-estate',
+          currency: 'MXN',
+          showDetails: true,
+        },
+      },
+    };
+  }),
 ];
 
