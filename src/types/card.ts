@@ -268,6 +268,8 @@ export interface ListingDetails {
 export interface CardData {
   id: string;
   slug: string;
+  /** Public URL created after the standalone card is successfully published to hosting. */
+  publicUrl?: string;
   name: string;
   businessName: string;
   jobTitle: string;
