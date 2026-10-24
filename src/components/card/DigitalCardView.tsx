@@ -1584,89 +1584,40 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
 
         {/* Social Networks Row */}
         {design.showSocials && (
-          <div className="flex items-center justify-center gap-2 pt-2 pb-4 flex-wrap">
+          <div className="flex items-center justify-center gap-2.5 pt-3 pb-4 flex-wrap" aria-label="Redes sociales">
             {card.socials.instagram && (
-              <a
-                href={formatSocialUrl('instagram', card.socials.instagram)}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Instagram"
-                title="Instagram"
-                className="w-10 h-10 rounded-full bg-white/[0.08] hover:bg-gradient-to-tr hover:from-amber-500 hover:to-pink-600 border border-white/[0.1] flex items-center justify-center text-white transition hover:scale-110 shadow-sm"
-              >
-                <Instagram className="w-4 h-4" />
+              <a href={formatSocialUrl('instagram', card.socials.instagram)} target="_blank" rel="noopener noreferrer" aria-label="Instagram" title="Instagram" className="inline-flex items-center gap-2 min-h-10 px-3 rounded-xl bg-white/[0.08] hover:bg-pink-500/15 border border-white/[0.14] hover:border-pink-400/50 text-white transition-all duration-200 hover:-translate-y-0.5 shadow-sm">
+                <Instagram className="w-[18px] h-[18px] text-pink-300 flex-shrink-0" /><span className="text-xs font-semibold tracking-wide">Instagram</span>
               </a>
             )}
             {card.socials.facebook && (
-              <a
-                href={formatSocialUrl('facebook', card.socials.facebook)}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Facebook"
-                title="Facebook"
-                className="w-10 h-10 rounded-full bg-white/[0.08] hover:bg-blue-600 border border-white/[0.1] flex items-center justify-center text-white transition hover:scale-110 shadow-sm"
-              >
-                <Facebook className="w-4 h-4" />
+              <a href={formatSocialUrl('facebook', card.socials.facebook)} target="_blank" rel="noopener noreferrer" aria-label="Facebook" title="Facebook" className="inline-flex items-center gap-2 min-h-10 px-3 rounded-xl bg-white/[0.08] hover:bg-blue-500/15 border border-white/[0.14] hover:border-blue-400/50 text-white transition-all duration-200 hover:-translate-y-0.5 shadow-sm">
+                <Facebook className="w-[18px] h-[18px] text-blue-300 flex-shrink-0" /><span className="text-xs font-semibold tracking-wide">Facebook</span>
               </a>
             )}
             {card.socials.youtube && (
-              <a
-                href={formatSocialUrl('youtube', card.socials.youtube)}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Canal de YouTube"
-                title="YouTube"
-                className="w-10 h-10 rounded-full bg-white/[0.08] hover:bg-red-600 border border-white/[0.1] flex items-center justify-center text-white transition hover:scale-110 shadow-sm"
-              >
-                <Youtube className="w-4 h-4" />
+              <a href={formatSocialUrl('youtube', card.socials.youtube)} target="_blank" rel="noopener noreferrer" aria-label="Canal de YouTube" title="YouTube" className="inline-flex items-center gap-2 min-h-10 px-3 rounded-xl bg-white/[0.08] hover:bg-red-500/15 border border-white/[0.14] hover:border-red-400/50 text-white transition-all duration-200 hover:-translate-y-0.5 shadow-sm">
+                <Youtube className="w-[18px] h-[18px] text-red-300 flex-shrink-0" /><span className="text-xs font-semibold tracking-wide">YouTube</span>
               </a>
             )}
             {card.socials.twitter && (
-              <a
-                href={formatSocialUrl('twitter', card.socials.twitter)}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="X (Twitter)"
-                title="X (Twitter)"
-                className="w-10 h-10 rounded-full bg-white/[0.08] hover:bg-black hover:border-slate-400 border border-white/[0.1] flex items-center justify-center text-white transition hover:scale-110 shadow-sm"
-              >
-                <XIcon className="w-4 h-4" />
+              <a href={formatSocialUrl('twitter', card.socials.twitter)} target="_blank" rel="noopener noreferrer" aria-label="X (Twitter)" title="X" className="inline-flex items-center gap-2 min-h-10 px-3 rounded-xl bg-white/[0.08] hover:bg-white/10 border border-white/[0.14] hover:border-white/35 text-white transition-all duration-200 hover:-translate-y-0.5 shadow-sm">
+                <XIcon className="w-[18px] h-[18px] flex-shrink-0" /><span className="text-xs font-semibold tracking-wide">X</span>
               </a>
             )}
             {card.socials.tiktok && (
-              <a
-                href={formatSocialUrl('tiktok', card.socials.tiktok)}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="TikTok"
-                title="TikTok"
-                className="w-10 h-10 rounded-full bg-white/[0.08] hover:bg-black hover:border-pink-500 border border-white/[0.1] flex items-center justify-center text-white transition hover:scale-110 shadow-sm"
-              >
-                <span className="text-xs font-black">Tk</span>
+              <a href={formatSocialUrl('tiktok', card.socials.tiktok)} target="_blank" rel="noopener noreferrer" aria-label="TikTok" title="TikTok" className="inline-flex items-center gap-2 min-h-10 px-3 rounded-xl bg-white/[0.08] hover:bg-cyan-500/10 border border-white/[0.14] hover:border-cyan-300/40 text-white transition-all duration-200 hover:-translate-y-0.5 shadow-sm">
+                <span className="w-[18px] h-[18px] flex items-center justify-center text-sm font-black text-cyan-200 flex-shrink-0">♪</span><span className="text-xs font-semibold tracking-wide">TikTok</span>
               </a>
             )}
             {card.socials.linkedin && (
-              <a
-                href={formatSocialUrl('linkedin', card.socials.linkedin)}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="LinkedIn"
-                title="LinkedIn"
-                className="w-10 h-10 rounded-full bg-white/[0.08] hover:bg-sky-600 border border-white/[0.1] flex items-center justify-center text-white transition hover:scale-110 shadow-sm"
-              >
-                <Linkedin className="w-4 h-4" />
+              <a href={formatSocialUrl('linkedin', card.socials.linkedin)} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn" className="inline-flex items-center gap-2 min-h-10 px-3 rounded-xl bg-white/[0.08] hover:bg-sky-500/15 border border-white/[0.14] hover:border-sky-400/50 text-white transition-all duration-200 hover:-translate-y-0.5 shadow-sm">
+                <Linkedin className="w-[18px] h-[18px] text-sky-300 flex-shrink-0" /><span className="text-xs font-semibold tracking-wide">LinkedIn</span>
               </a>
             )}
             {card.socials.telegram && (
-              <a
-                href={formatSocialUrl('telegram', card.socials.telegram)}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Telegram"
-                title="Telegram"
-                className="w-10 h-10 rounded-full bg-white/[0.08] hover:bg-sky-500 border border-white/[0.1] flex items-center justify-center text-white transition hover:scale-110 shadow-sm"
-              >
-                <Send className="w-4 h-4" />
+              <a href={formatSocialUrl('telegram', card.socials.telegram)} target="_blank" rel="noopener noreferrer" aria-label="Telegram" title="Telegram" className="inline-flex items-center gap-2 min-h-10 px-3 rounded-xl bg-white/[0.08] hover:bg-sky-500/15 border border-white/[0.14] hover:border-sky-400/50 text-white transition-all duration-200 hover:-translate-y-0.5 shadow-sm">
+                <Send className="w-[18px] h-[18px] text-sky-300 flex-shrink-0" /><span className="text-xs font-semibold tracking-wide">Telegram</span>
               </a>
             )}
           </div>
