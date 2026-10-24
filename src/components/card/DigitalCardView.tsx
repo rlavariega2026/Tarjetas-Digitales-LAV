@@ -412,14 +412,14 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
   const isGradientFinish = design.backgroundFinish === 'gradient' || (!design.backgroundFinish && ['urban-gradient','color-motion','aurora-glass','soft-gradient','bold-gradient','aurora-flow','prismatic-light'].includes(design.theme));
   const isMetallicFinish = design.backgroundFinish === 'metallic' || (!design.backgroundFinish && ['executive-black','champagne-gold','royal-navy','black-gold','platinum-edition','liquid-metal','lawyer-elite','elegance-luxury'].includes(design.theme));
   // El acabado elegido tiene prioridad y las texturas no bloquean los controles.
-  const cardBackgroundImage = design.backgroundFinish === 'solid'
-    ? getPatternBg()
-    : design.backgroundFinish === 'gradient'
+  const cardBackgroundImage = design.backgroundFinish === 'gradient'
     ? `linear-gradient(135deg,${design.primaryColor || '#06b6d4'},${design.secondaryColor || '#7c3aed'},${design.accentColor || '#ec4899'})`
     : design.backgroundFinish === 'metallic'
     ? 'linear-gradient(115deg,#27272a 0%,#d4d4d8 14%,#71717a 28%,#fef3c7 43%,#a16207 56%,#f8fafc 70%,#52525b 84%,#e5e7eb 100%)'
     : design.backgroundTextureUrl
     ? `url("${design.backgroundTextureUrl}")`
+    : design.backgroundFinish === 'solid'
+    ? getPatternBg()
     : isMetallicFinish
     ? 'linear-gradient(115deg,#27272a 0%,#d4d4d8 14%,#71717a 28%,#fef3c7 43%,#a16207 56%,#f8fafc 70%,#52525b 84%,#e5e7eb 100%)'
     : isGradientFinish
@@ -915,8 +915,8 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
       }}
     >
       <style>{`
-        .lav-card-preview :is(div,h1,h2,h3,h4,p,span,strong,em,label,small,li,a,button):not(.social-icon-btn):not(.text-emerald-400):not(.text-amber-400) {
-          color: var(--card-text-color) !important;
+        .lav-card-preview :is(h1,h2,h3,h4,p,span,strong,em,label,small,li,a,button):not(.social-icon-btn):not(.text-emerald-400):not(.text-amber-400) {
+          color: var(--card-text-color);
         }
       `}</style>
       {/* Background Ambient Floating Orbs for Glass & Motion */}
