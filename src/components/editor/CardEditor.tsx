@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   CardData,
   CardTheme,
@@ -132,6 +132,11 @@ export const CardEditor: React.FC<CardEditorProps> = ({
   const [card, setCard] = useState<CardData>(initialCard);
   // Conserva la última portada válida al cambiar de tema/diseño.
   const coverImageRef = useRef<string>(initialCard.design?.bannerUrl || '');
+  // Mantiene la referencia sincronizada con la portada real de la tarjeta.
+  // Así, al cambiar tema o composición, no se recupera una URL vieja ni se pierde la portada actual.
+  useEffect(() => {
+    coverImageRef.current = card.design?.bannerUrl || '';
+  }, [card.design?.bannerUrl]);
   const [activeTab, setActiveTab] = useState<
     'info' | 'socials' | 'design' | 'media' | 'buttons' | 'catalog' | 'gallery' | 'reviews' | 'banking' | 'paypal' | 'physical' | 'ai'
   >('info');
