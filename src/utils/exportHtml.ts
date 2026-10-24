@@ -99,7 +99,7 @@ export function generateStandaloneHtml(card: CardData): string {
   <meta name="theme-color" content="${card.design.primaryColor}">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700;800&family=Space+Grotesk:wght@600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700;800&family=Space+Grotesk:wght@600;700&family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700;800&family=Lora:wght@400;500;600;700&family=Cormorant+Garamond:wght@500;600;700&family=Oswald:wght@400;500;600;700&family=Roboto+Slab:wght@400;500;600;700&family=Raleway:wght@400;500;600;700&family=Bebas+Neue&family=Merriweather:wght@400;700&family=Roboto:wght@400;500;700&family=Lato:wght@400;700&family=Open+Sans:wght@400;600;700&family=Nunito+Sans:wght@400;600;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     :root { --card-text-color: ${/^#[0-9a-fA-F]{6}$/.test(card.design.textColor || '') ? card.design.textColor : '#f8fafc'}; }
@@ -118,7 +118,7 @@ export function generateStandaloneHtml(card: CardData): string {
       color: var(--card-text-color) !important;
       width: 100%;
       max-width: 440px;
-      background: ${card.design.backgroundColor};
+      background: ${card.design.backgroundTextureUrl ? `url("${card.design.backgroundTextureUrl}") center / cover fixed` : card.design.backgroundFinish === 'metallic' || ['executive-black','champagne-gold','royal-navy','black-gold','platinum-edition','liquid-metal','lawyer-elite'].includes(card.design.theme) ? 'linear-gradient(115deg,#27272a 0%,#d4d4d8 14%,#71717a 28%,#fef3c7 43%,#a16207 56%,#f8fafc 70%,#52525b 84%,#e5e7eb 100%)' : card.design.backgroundFinish === 'gradient' || ['urban-gradient','color-motion','aurora-glass','soft-gradient','bold-gradient','aurora-flow','prismatic-light'].includes(card.design.theme) ? `linear-gradient(135deg,${card.design.primaryColor},${card.design.secondaryColor},${card.design.accentColor})` : card.design.backgroundColor};
       border-radius: 28px;
       overflow: hidden;
       box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.08);
@@ -290,7 +290,7 @@ export function generateStandaloneHtml(card: CardData): string {
       width: 100%;
       height: ${card.design.coverHeight === 'sm' ? '120px' : card.design.coverHeight === 'lg' ? '200px' : '150px'};
       background: linear-gradient(135deg, ${card.design.primaryColor}, ${card.design.secondaryColor});
-      background-image: ${card.design.bannerUrl ? `url('${card.design.bannerUrl}')` : 'none'};
+      background-image: ${card.design.bannerUrl ? `url("${card.design.bannerUrl}")` : `linear-gradient(135deg,${card.design.primaryColor},${card.design.secondaryColor})`};
       background-size: cover;
       background-position: center;
       position: relative;
