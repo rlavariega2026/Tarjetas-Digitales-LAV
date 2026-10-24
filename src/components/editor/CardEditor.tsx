@@ -130,12 +130,14 @@ export const CardEditor: React.FC<CardEditorProps> = ({
   onPreviewStandalone,
 }) => {
   const [card, setCard] = useState<CardData>(initialCard);
-  // Conserva la última portada válida al cambiar de tema/diseño.
+  // Conserva la última portada válida. No borres esta copia de respaldo si
+  // algún cambio de diseño deja temporalmente bannerUrl vacío.
   const coverImageRef = useRef<string>(initialCard.design?.bannerUrl || '');
-  // Mantiene la referencia sincronizada con la portada real de la tarjeta.
-  // Así, al cambiar tema o composición, no se recupera una URL vieja ni se pierde la portada actual.
   useEffect(() => {
-    coverImageRef.current = card.design?.bannerUrl || '';
+    const currentBanner = card.design?.bannerUrl;
+    if (typeof currentBanner === 'string' && currentBanner.trim() !== '') {
+      coverImageRef.current = currentBanner;
+    }
   }, [card.design?.bannerUrl]);
   const [activeTab, setActiveTab] = useState<
     'info' | 'socials' | 'design' | 'media' | 'buttons' | 'catalog' | 'gallery' | 'reviews' | 'banking' | 'paypal' | 'physical' | 'ai'
