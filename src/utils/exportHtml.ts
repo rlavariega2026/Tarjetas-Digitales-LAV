@@ -156,14 +156,23 @@ export function generateStandaloneHtml(card: CardData): string {
       .footer-brand { font-size: 10px; opacity: .38; }
       .social-row { gap: 10px; margin: 18px 0 12px; display: flex !important; visibility: visible !important; opacity: 1 !important; flex-wrap: wrap; overflow: visible; }
       .social-icon-btn {
-        width: 46px;
-        height: 46px;
-        border-radius: 15px;
-        flex: 0 0 46px;
+        width: auto !important;
+        height: auto !important;
+        min-width: 0;
+        min-height: 42px;
+        flex: 0 1 auto !important;
+        padding: 8px 10px;
+        gap: 7px;
+        border-radius: 12px;
+        display: inline-flex !important;
+        align-items: center;
+        justify-content: center;
+        visibility: visible !important;
+        opacity: 1 !important;
         -webkit-tap-highlight-color: transparent;
       }
-      .social-icon-btn { width: 46px !important; height: 46px !important; min-width: 46px; min-height: 46px; flex: 0 0 46px !important; display: flex !important; align-items: center; justify-content: center; visibility: visible !important; opacity: 1 !important; }
-      .social-icon-btn svg { display: block !important; visibility: visible !important; opacity: 1 !important; width: 23px; height: 23px; flex-shrink: 0; }
+      .social-icon-btn .social-label { display: inline-block !important; font-size: 11px; }
+      .social-icon-btn svg { display: block !important; visibility: visible !important; opacity: 1 !important; width: 18px; height: 18px; flex: 0 0 18px; }
       .save-contact-btn, .quick-btn, .custom-link-btn { -webkit-tap-highlight-color: transparent; }
       .content-body { padding: 0 22px 26px; }
       .cover-banner { height: ${card.design.coverHeight === 'sm' ? '110px' : card.design.coverHeight === 'lg' ? '170px' : '135px'}; }
