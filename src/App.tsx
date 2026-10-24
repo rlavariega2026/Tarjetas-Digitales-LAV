@@ -303,27 +303,11 @@ export default function App() {
 
     if (targetCard) {
       return (
-        <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-3 sm:p-6">
+        <main className="min-h-[100svh] w-full flex items-start sm:items-center justify-center px-3 py-4 sm:p-6 bg-[#070b14]">
           <div className="w-full max-w-[430px]">
             <DigitalCardView card={targetCard} isStandalone={true} />
           </div>
-
-          <div className="mt-4 text-center">
-            <button
-              onClick={() => {
-                window.location.hash = '';
-                if (window.location.pathname.startsWith('/c/')) {
-                  window.history.pushState(null, '', '/');
-                }
-                setStandaloneCardSlug(null);
-              }}
-              className="text-xs text-slate-400 hover:text-white flex items-center gap-1 mx-auto"
-            >
-              <ArrowLeft className="w-3.5 h-3.5" />
-              <span>Abrir panel de administración LAV Digital</span>
-            </button>
-          </div>
-        </div>
+        </main>
       );
     } else {
       return (
