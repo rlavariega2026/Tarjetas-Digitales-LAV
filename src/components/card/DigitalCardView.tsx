@@ -945,10 +945,10 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
         </div>
       )}
 
-      {/* Cover Banner with Center Logo & Top-Right Logo support */}
+      {/* Cover Banner: render the uploaded cover as a real image so theme CSS cannot hide it. */}
       {(!!design.bannerUrl || (photoComp !== 'top-large' && photoComp !== 'vertical-large' && photoComp !== 'card-bg')) && (
         <div
-          className={`relative w-full transition-all ${
+          className={`relative w-full overflow-hidden transition-all ${
             isYoungCreative && !design.bannerUrl ? 'anim-liquid-flow' : ''
           } ${
             design.coverHeight === 'sm'
@@ -961,13 +961,18 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
           }`}
           style={{
             background: `linear-gradient(135deg, ${design.primaryColor}, ${design.secondaryColor})`,
-            backgroundImage: design.bannerUrl ? `url('${design.bannerUrl}')` : undefined,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
           }}
         >
+          {design.bannerUrl && (
+            <img
+              src={design.bannerUrl}
+              alt={`Portada de ${card.name || card.businessName || 'la tarjeta'}`}
+              className="absolute inset-0 z-0 h-full w-full object-cover"
+              style={{ objectPosition: 'center' }}
+            />
+          )}
           {/* Subtle gradient vignette */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
+          <div className="absolute inset-0 z-[1] bg-gradient-to-t from-black/60 via-transparent to-black/20 pointer-events-none" />
 
           {/* Centered Banner Logo */}
           {renderLogo('center-banner') && (
