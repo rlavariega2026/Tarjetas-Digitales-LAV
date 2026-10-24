@@ -208,28 +208,42 @@ export const CardEditor: React.FC<CardEditorProps> = ({
     }));
   };
 
-  // Image upload handling with automatic compression, transparency and aspect ratio preservation
+  // Image upload handling with validation, compression and visible errors
   const handleFileUpload = async (
     e: React.ChangeEvent<HTMLInputElement>,
     target: 'avatar' | 'logo' | 'banner'
   ) => {
-    const file = e.target.files?.[0];
+    const input = e.currentTarget;
+    const file = input.files?.[0];
     if (!file) return;
 
+    setAiError('');
+    if (!file.type.startsWith('image/')) {
+      window.alert('El archivo seleccionado no es una imagen. Elige JPG, PNG o WebP.');
+      input.value = '';
+      return;
+    }
     if (file.size > 8 * 1024 * 1024) {
-      setAiError('La imagen supera los 8 MB. Por favor elige una imagen más ligera.');
+      window.alert('La imagen supera los 8 MB. Elige una imagen más ligera.');
+      input.value = '';
       return;
     }
 
     try {
-      const maxDim = target === 'avatar' ? 400 : target === 'logo' ? 500 : 1000;
-      const optimizedDataUrl = await optimizeImageFile(file, maxDim, maxDim, 0.88);
+      const maxDim = target === 'avatar' ? 400 : target === 'logo' ? 500 : 1600;
+      const optimizedDataUrl = await optimizeImageFile(file, maxDim, maxDim, 0.82);
+      if (!optimizedDataUrl || !optimizedDataUrl.startsWith('data:image/')) {
+        throw new Error('No se pudo procesar el archivo de imagen.');
+      }
 
       if (target === 'avatar') updateDesignField('avatarUrl', optimizedDataUrl);
       if (target === 'logo') updateDesignField('logoUrl', optimizedDataUrl);
       if (target === 'banner') updateDesignField('bannerUrl', optimizedDataUrl);
+      input.value = '';
     } catch (err) {
-      console.error('Error optimizing image:', err);
+      console.error('Error al cargar la imagen:', err);
+      window.alert('No se pudo cargar esa imagen. Prueba con un archivo JPG, PNG o WebP de menos de 8 MB.');
+      input.value = '';
     }
   };
 
@@ -1747,9 +1761,20 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                         <input
                           type="text"
                           value={card.design.textColor || '#f8fafc'}
-                          onChange={(e) => updateDesignField('textColor', e.target.value)}
+                          onChange={(e) => {
+                            const nextColor = e.target.value.trim();
+                            if (/^#[0-9a-fA-F]{0,6}$/.test(nextColor)) {
+                              updateDesignField('textColor', nextColor);
+                            }
+                          }}
+                          onBlur={() => {
+                            if (!/^#[0-9a-fA-F]{6}$/.test(card.design.textColor || '')) {
+                              updateDesignField('textColor', '#f8fafc');
+                            }
+                          }}
                           aria-label="Código hexadecimal del color de texto"
                           placeholder="#FFFFFF"
+                          maxLength={7}
                           className="w-full px-2 py-1 bg-slate-800 border border-slate-700 rounded-lg text-xs font-mono text-slate-200"
                         />
                       </div>
@@ -2086,26 +2111,38 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                     Foto de Portada / Banner
                   </h3>
                   <div className="space-y-3">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-wrap">
                       <label className="cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-700 hover:bg-slate-600 text-white text-xs font-semibold transition">
                         <span>Subir Imagen de Portada</span>
                         <input
                           type="file"
-                          accept="image/*"
+                          accept="image/png,image/jpeg,image/webp,image/svg+xml"
                           onChange={(e) => handleFileUpload(e, 'banner')}
                           className="hidden"
                         />
                       </label>
                       {card.design.bannerUrl && (
                         <button
+                          type="button"
                           onClick={() => updateDesignField('bannerUrl', '')}
                           className="p-1.5 rounded-lg text-rose-400 hover:bg-rose-950/40"
                           title="Quitar portada"
                         >
                           <Trash2 className="w-4 h-4" />
+                          <span className="sr-only">Quitar portada</span>
                         </button>
                       )}
                     </div>
+                    {card.design.bannerUrl && (
+                      <div className="rounded-xl overflow-hidden border border-slate-700 bg-slate-950">
+                        <img
+                          src={card.design.bannerUrl}
+                          alt="Vista previa de la foto de portada"
+                          className="block w-full h-28 object-cover"
+                        />
+                        <p className="px-2 py-1.5 text-[10px] text-emerald-300">Portada cargada. Guarda la tarjeta para conservar el cambio.</p>
+                      </div>
+                    )}
                     <div>
                       <label className="block text-xs font-medium text-slate-400 mb-1">Altura de Portada</label>
                       <select
