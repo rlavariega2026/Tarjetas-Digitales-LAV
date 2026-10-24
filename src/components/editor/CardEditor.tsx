@@ -1803,8 +1803,8 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                       {card.design.backgroundTextureUrl && <img src={card.design.backgroundTextureUrl} alt="Textura de fondo" className="mt-2 h-20 w-full object-cover rounded-lg border border-slate-700" />}
                       <p className="text-[10px] text-slate-400 mt-2">La textura y el acabado no reemplazan ni borran la foto de portada.</p>
                     </div>
-                    <div>
-                      <label className="block text-[11px] font-medium text-slate-400 mb-1">Color de Texto Independiente de la Paleta</label>
+                    <div className="col-span-2 rounded-xl border border-cyan-500/40 bg-slate-900 p-3">
+                      <label className="block text-xs font-bold text-white mb-2">COLOR DEL TEXTO DE LA TARJETA</label>
                       <div className="flex items-center gap-2">
                         <input
                           type="color"
@@ -1833,9 +1833,9 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                           className="w-full px-2 py-1 bg-slate-800 border border-slate-700 rounded-lg text-xs font-mono text-slate-200"
                         />
                       </div>
-                      <p className="mt-1 text-[10px] text-slate-500">Este color se conserva por separado: cambiar una paleta no lo modifica.</p>
+                      <p className="mt-2 text-[10px] text-slate-300">Elige el color del nombre, descripción y textos. No modifica ni elimina la portada.</p>
                       <div className="flex flex-wrap gap-2 mt-2" aria-label="Colores rápidos para el texto">
-                        {['#FFFFFF', '#111827', '#FDE68A', '#F87171', '#34D399', '#60A5FA', '#C084FC', '#F9A8D4'].map((color) => (
+                        {['#FFFFFF', '#111827', '#FDE68A', '#F87171', '#34D399', '#60A5FA', '#C084FC', '#F9A8D4', '#FB923C', '#14B8A6', '#E879F9', '#D1D5DB'].map((color) => (
                           <button
                             key={color}
                             type="button"
