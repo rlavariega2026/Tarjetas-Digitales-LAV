@@ -409,9 +409,22 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
   const isYoungCreative = ['young-creative','urban-gradient','pop-creative','color-motion'].includes(design.theme) || design.animationStyle === 'liquid-flow';
   const isMinimalStudio = ['minimal-studio','pure-white','soft-beige','modern-monochrome'].includes(design.theme) || design.animationStyle === 'subtle-fade';
   const isBusinessSignature = ['business-signature','corporate-executive','modern-consultant','lawyer-elite'].includes(design.theme);
-  const isGradientFinish = design.backgroundFinish === 'gradient' || ['urban-gradient','color-motion','aurora-glass','soft-gradient','bold-gradient','aurora-flow','prismatic-light'].includes(design.theme);
-  const isMetallicFinish = design.backgroundFinish === 'metallic' || ['executive-black','champagne-gold','royal-navy','black-gold','platinum-edition','liquid-metal','lawyer-elite'].includes(design.theme);
-  const cardBackgroundImage = design.backgroundTextureUrl ? `url("${design.backgroundTextureUrl}")` : isMetallicFinish ? 'linear-gradient(115deg,#27272a 0%,#d4d4d8 14%,#71717a 28%,#fef3c7 43%,#a16207 56%,#f8fafc 70%,#52525b 84%,#e5e7eb 100%)' : isGradientFinish ? `linear-gradient(135deg,${design.primaryColor || '#06b6d4'},${design.secondaryColor || '#7c3aed'},${design.accentColor || '#ec4899'})` : getPatternBg();
+  const isGradientFinish = design.backgroundFinish === 'gradient' || (!design.backgroundFinish && ['urban-gradient','color-motion','aurora-glass','soft-gradient','bold-gradient','aurora-flow','prismatic-light'].includes(design.theme));
+  const isMetallicFinish = design.backgroundFinish === 'metallic' || (!design.backgroundFinish && ['executive-black','champagne-gold','royal-navy','black-gold','platinum-edition','liquid-metal','lawyer-elite','elegance-luxury'].includes(design.theme));
+  // El acabado elegido tiene prioridad y las texturas no bloquean los controles.
+  const cardBackgroundImage = design.backgroundFinish === 'solid'
+    ? getPatternBg()
+    : design.backgroundFinish === 'gradient'
+    ? `linear-gradient(135deg,${design.primaryColor || '#06b6d4'},${design.secondaryColor || '#7c3aed'},${design.accentColor || '#ec4899'})`
+    : design.backgroundFinish === 'metallic'
+    ? 'linear-gradient(115deg,#27272a 0%,#d4d4d8 14%,#71717a 28%,#fef3c7 43%,#a16207 56%,#f8fafc 70%,#52525b 84%,#e5e7eb 100%)'
+    : design.backgroundTextureUrl
+    ? `url("${design.backgroundTextureUrl}")`
+    : isMetallicFinish
+    ? 'linear-gradient(115deg,#27272a 0%,#d4d4d8 14%,#71717a 28%,#fef3c7 43%,#a16207 56%,#f8fafc 70%,#52525b 84%,#e5e7eb 100%)'
+    : isGradientFinish
+    ? `linear-gradient(135deg,${design.primaryColor || '#06b6d4'},${design.secondaryColor || '#7c3aed'},${design.accentColor || '#ec4899'})`
+    : getPatternBg();
 
   const avatarUrl = design.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500';
   const photoComp = design.photoComposition || 'circle-portrait';
