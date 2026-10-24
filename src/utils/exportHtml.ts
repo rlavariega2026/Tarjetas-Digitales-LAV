@@ -503,40 +503,50 @@ export function generateStandaloneHtml(card: CardData): string {
       width: 100%;
       align-items: center;
       justify-content: center;
-      gap: 12px;
+      gap: 10px;
       margin: 22px 0;
       flex-wrap: wrap;
       overflow: visible;
     }
     .social-icon-btn {
-      width: 48px;
-      height: 48px;
-      flex: 0 0 48px;
-      border-radius: 16px;
-      background: linear-gradient(145deg, rgba(255,255,255,.12), rgba(255,255,255,.035));
-      border: 1px solid rgba(255,255,255,.16);
-      display: flex !important;
+      min-width: 108px;
+      min-height: 44px;
+      flex: 0 1 auto;
+      padding: 9px 13px;
+      gap: 9px;
+      border-radius: 13px;
+      background: linear-gradient(145deg, rgba(255,255,255,.105), rgba(255,255,255,.045));
+      border: 1px solid rgba(255,255,255,.17);
+      display: inline-flex !important;
       visibility: visible !important;
       opacity: 1 !important;
       align-items: center;
       justify-content: center;
-      color: white !important;
+      color: var(--card-text-color, white) !important;
       text-decoration: none;
       position: relative;
       z-index: 6;
-      overflow: visible;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 8px 20px rgba(0,0,0,.16);
-      transition: transform .18s ease, background .18s ease;
+      overflow: hidden;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 5px 14px rgba(0,0,0,.14);
+      transition: transform .18s ease, background .18s ease, border-color .18s ease, box-shadow .18s ease;
     }
-    .social-icon-btn:active { transform: scale(.94); }
-    .social-icon-btn svg { display: block; }
-    .social-instagram { color: #f4a7c7; }
-    .social-facebook { color: #7db2ff; }
-    .social-youtube { color: #ff7777; }
-    .social-x-twitter, .social-xtwitter { color: #fff; }
-    .social-tiktok { color: #8ef2e9; }
-    .social-linkedin { color: #86c8ff; }
-    .social-telegram { color: #79d2ff; }
+    .social-icon-btn:hover { transform: translateY(-2px); border-color: rgba(255,255,255,.34); box-shadow: 0 9px 20px rgba(0,0,0,.2); }
+    .social-icon-btn:active { transform: scale(.97); }
+    .social-icon-btn svg { display: block; width: 20px; height: 20px; flex: 0 0 20px; }
+    .social-icon-btn .social-label { display: inline-block; font-size: 12px; line-height: 1; font-weight: 700; letter-spacing: .01em; white-space: nowrap; }
+    .social-instagram svg { color: #f4a7c7; }
+    .social-facebook svg { color: #7db2ff; }
+    .social-youtube svg { color: #ff7777; }
+    .social-x-twitter svg, .social-xtwitter svg { color: var(--card-text-color, white); }
+    .social-tiktok svg { color: #8ef2e9; }
+    .social-linkedin svg { color: #86c8ff; }
+    .social-telegram svg { color: #79d2ff; }
+    @media (max-width: 600px) {
+      .social-row { gap: 8px; }
+      .social-icon-btn { min-width: 0; min-height: 42px; padding: 8px 10px; gap: 7px; border-radius: 12px; }
+      .social-icon-btn .social-label { font-size: 11px; }
+      .social-icon-btn svg { width: 18px; height: 18px; flex-basis: 18px; }
+    }
     .footer-brand {
       text-align: center;
       font-size: 11px;
@@ -605,7 +615,7 @@ export function generateStandaloneHtml(card: CardData): string {
       ${socialLinks.length > 0 ? `
       <div class="social-row">
         ${socialLinks.map(s => `
-          <a href="${s.url}" target="_blank" rel="noopener noreferrer" class="social-icon-btn social-${s.name.toLowerCase().replace(/[^a-z]/g, '')}" title="${s.name}" aria-label="${s.name}">${socialSvg(s.name)}</a>
+          <a href="${s.url}" target="_blank" rel="noopener noreferrer" class="social-icon-btn social-${s.name.toLowerCase().replace(/[^a-z]/g, '')}" title="${s.name}" aria-label="${s.name}">${socialSvg(s.name)}<span class="social-label">${s.name === 'X / Twitter' ? 'X' : s.name}</span></a>
         `).join('')}
       </div>` : ''}
 
