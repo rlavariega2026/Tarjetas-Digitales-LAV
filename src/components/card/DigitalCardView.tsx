@@ -403,12 +403,15 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
     }
   }
 
-  const isEleganceLuxury = design.theme === 'elegance-luxury' || design.animationStyle === 'metallic-sheen';
-  const isFutureTech = design.theme === 'future-tech' || design.animationStyle === 'tech-scan';
-  const isGlassMotion = design.theme === 'glass-motion' || design.animationStyle === 'floating-glow' || design.animationStyle === 'glass-parallax';
-  const isYoungCreative = design.theme === 'young-creative' || design.animationStyle === 'liquid-flow';
-  const isMinimalStudio = design.theme === 'minimal-studio' || design.animationStyle === 'subtle-fade';
-  const isBusinessSignature = design.theme === 'business-signature';
+  const isEleganceLuxury = ['elegance-luxury','executive-black','champagne-gold','royal-navy'].includes(design.theme) || design.animationStyle === 'metallic-sheen';
+  const isFutureTech = ['future-tech','cyber-blue','neon-purple','digital-glass'].includes(design.theme) || design.animationStyle === 'tech-scan';
+  const isGlassMotion = ['glass-motion','aurora-glass','frosted-depth','crystal-prism'].includes(design.theme) || design.animationStyle === 'floating-glow' || design.animationStyle === 'glass-parallax';
+  const isYoungCreative = ['young-creative','urban-gradient','pop-creative','color-motion'].includes(design.theme) || design.animationStyle === 'liquid-flow';
+  const isMinimalStudio = ['minimal-studio','pure-white','soft-beige','modern-monochrome'].includes(design.theme) || design.animationStyle === 'subtle-fade';
+  const isBusinessSignature = ['business-signature','corporate-executive','modern-consultant','lawyer-elite'].includes(design.theme);
+  const isGradientFinish = design.backgroundFinish === 'gradient' || ['urban-gradient','color-motion','aurora-glass','soft-gradient','bold-gradient','aurora-flow','prismatic-light'].includes(design.theme);
+  const isMetallicFinish = design.backgroundFinish === 'metallic' || ['executive-black','champagne-gold','royal-navy','black-gold','platinum-edition','liquid-metal','lawyer-elite'].includes(design.theme);
+  const cardBackgroundImage = design.backgroundTextureUrl ? `url("${design.backgroundTextureUrl}")` : isMetallicFinish ? 'linear-gradient(115deg,#27272a 0%,#d4d4d8 14%,#71717a 28%,#fef3c7 43%,#a16207 56%,#f8fafc 70%,#52525b 84%,#e5e7eb 100%)' : isGradientFinish ? `linear-gradient(135deg,${design.primaryColor || '#06b6d4'},${design.secondaryColor || '#7c3aed'},${design.accentColor || '#ec4899'})` : getPatternBg();
 
   const avatarUrl = design.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500';
   const photoComp = design.photoComposition || 'circle-portrait';
@@ -891,7 +894,9 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
       style={{
         backgroundColor: design.backgroundColor || '#0f172a',
         color: design.textColor || '#f8fafc',
-        backgroundImage: getPatternBg(),
+        backgroundImage: cardBackgroundImage,
+        backgroundSize: design.backgroundTextureUrl ? 'cover' : 'auto',
+        backgroundPosition: 'center',
         ['--beam-color' as any]: design.primaryColor || '#06b6d4',
         ['--card-text-color' as any]: /^#[0-9a-fA-F]{6}$/.test(design.textColor || '') ? design.textColor : '#f8fafc',
       }}
