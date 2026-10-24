@@ -230,8 +230,8 @@ export const CardEditor: React.FC<CardEditorProps> = ({
     }
 
     try {
-      const maxDim = target === 'avatar' ? 400 : target === 'logo' ? 500 : 1600;
-      const optimizedDataUrl = await optimizeImageFile(file, maxDim, maxDim, 0.82);
+      const maxDim = target === 'avatar' ? 400 : target === 'logo' ? 500 : 1000;
+      const optimizedDataUrl = await optimizeImageFile(file, maxDim, maxDim, target === 'banner' ? 0.68 : 0.82);
       if (!optimizedDataUrl || !optimizedDataUrl.startsWith('data:image/')) {
         throw new Error('No se pudo procesar el archivo de imagen.');
       }
@@ -250,12 +250,18 @@ export const CardEditor: React.FC<CardEditorProps> = ({
   // Save Card
   const handleSave = () => {
     setIsSaving(true);
-    saveOrUpdateCard(card);
-    onSave(card);
-    setIsSaving(false);
-    setSaveSuccess(true);
-    confetti({ particleCount: 35, spread: 60, origin: { y: 0.7 } });
-    setTimeout(() => setSaveSuccess(false), 2500);
+    try {
+      saveOrUpdateCard(card);
+      onSave(card);
+      setSaveSuccess(true);
+      confetti({ particleCount: 35, spread: 60, origin: { y: 0.7 } });
+      setTimeout(() => setSaveSuccess(false), 2500);
+    } catch (err) {
+      console.error('No se pudo guardar la tarjeta:', err);
+      window.alert('No se pudieron guardar los cambios. La imagen puede ser demasiado pesada; vuelve a cargarla en JPG o WebP.');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   // Add Custom Button
@@ -1779,6 +1785,19 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                         />
                       </div>
                       <p className="mt-1 text-[10px] text-slate-500">Este color se conserva por separado: cambiar una paleta no lo modifica.</p>
+                      <div className="flex flex-wrap gap-2 mt-2" aria-label="Colores rápidos para el texto">
+                        {['#FFFFFF', '#111827', '#FDE68A', '#F87171', '#34D399', '#60A5FA', '#C084FC', '#F9A8D4'].map((color) => (
+                          <button
+                            key={color}
+                            type="button"
+                            onClick={() => updateDesignField('textColor', color)}
+                            title={color}
+                            aria-label={'Usar color de texto ' + color}
+                            className={'w-7 h-7 rounded-full border-2 transition ' + (card.design.textColor?.toUpperCase() === color ? 'border-white scale-110 ring-2 ring-indigo-400' : 'border-slate-600 hover:border-white')}
+                            style={{ backgroundColor: color }}
+                          />
+                        ))}
+                      </div>
                     </div>
                   </div>
                 </div>
