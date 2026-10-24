@@ -159,9 +159,10 @@ export const CardEditor: React.FC<CardEditorProps> = ({
   };
 
   const updateDesignField = <K extends keyof CardData['design']>(field: K, value: CardData['design'][K]) => {
-    if (field === 'bannerUrl') {
-      // La referencia acompaña la portada elegida; un borrado explícito también la limpia.
-      coverImageRef.current = typeof value === 'string' ? value : '';
+    if (field === 'bannerUrl' && typeof value === 'string' && value.trim() !== '') {
+      // Mantener siempre una copia de respaldo de la última portada válida.
+      // Un estado temporal vacío no debe destruirla al cambiar de colección.
+      coverImageRef.current = value;
     }
     setCard((prev) => ({
       ...prev,
@@ -1574,7 +1575,13 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                                 backgroundColor: preset.background,
                               }
                             : {}),
-                          bannerUrl: prev.design.bannerUrl || coverImageRef.current,
+                          // Cambiar colección/tema nunca debe borrar la portada elegida.
+                          bannerUrl:
+                            (typeof prev.design.bannerUrl === 'string' && prev.design.bannerUrl.trim() !== ''
+                              ? prev.design.bannerUrl
+                              : '') ||
+                            coverImageRef.current ||
+                            (typeof initialCard.design?.bannerUrl === 'string' ? initialCard.design.bannerUrl : ''),
                           backgroundTextureUrl: prev.design.backgroundTextureUrl,
                           textColor: prev.design.textColor,
                           photoComposition: prev.design.photoComposition,
