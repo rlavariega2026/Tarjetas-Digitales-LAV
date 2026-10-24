@@ -230,7 +230,7 @@ export const CardEditor: React.FC<CardEditorProps> = ({
     }
 
     try {
-      const maxDim = target === 'avatar' ? 400 : target === 'logo' ? 500 : target === 'texture' ? 1400 : 1000;
+      const maxDim = target === 'avatar' ? 400 : target === 'logo' ? 500 : target === 'texture' ? 900 : 1000;
       const optimizedDataUrl = await optimizeImageFile(file, maxDim, maxDim, target === 'banner' ? 0.68 : 0.82);
       if (!optimizedDataUrl || !optimizedDataUrl.startsWith('data:image/')) {
         throw new Error('No se pudo procesar el archivo de imagen.');
