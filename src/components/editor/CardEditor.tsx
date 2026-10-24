@@ -1547,7 +1547,26 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                         'bank-transfer-spei': { primary: '#22c55e', secondary: '#166534', accent: '#86efac', background: '#07160f' }
                       };
                       const preset = presets[theme];
-                      setCard((prev) => ({ ...prev, design: { ...prev.design, theme, backgroundFinish: undefined, ...(preset ? { primaryColor: preset.primary, secondaryColor: preset.secondary, accentColor: preset.accent, backgroundColor: preset.background } : {}), bannerUrl: prev.design.bannerUrl, backgroundTextureUrl: prev.design.backgroundTextureUrl } }));
+                      setCard((prev) => ({
+                        ...prev,
+                        design: {
+                          ...prev.design,
+                          theme,
+                          backgroundFinish: undefined,
+                          ...(preset
+                            ? {
+                                primaryColor: preset.primary,
+                                secondaryColor: preset.secondary,
+                                accentColor: preset.accent,
+                                backgroundColor: preset.background,
+                              }
+                            : {}),
+                          bannerUrl: prev.design.bannerUrl,
+                          backgroundTextureUrl: prev.design.backgroundTextureUrl,
+                          textColor: prev.design.textColor,
+                          photoComposition: prev.design.photoComposition,
+                        },
+                      }));
                     }}
                     className="w-full px-3 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs font-medium focus:ring-2 focus:ring-indigo-500 focus:outline-none"
                   >
