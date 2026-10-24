@@ -266,8 +266,22 @@ export const CardEditor: React.FC<CardEditorProps> = ({
   const handleSave = () => {
     setIsSaving(true);
     try {
-      saveOrUpdateCard(card);
-      onSave(card);
+      // Si otro control deja bannerUrl vacío durante un cambio de estilo,
+      // recuperar la última portada válida antes de persistir la tarjeta.
+      const cardToSave: CardData = {
+        ...card,
+        design: {
+          ...card.design,
+          bannerUrl:
+            (typeof card.design.bannerUrl === 'string' && card.design.bannerUrl.trim() !== ''
+              ? card.design.bannerUrl
+              : '') ||
+            coverImageRef.current ||
+            (typeof initialCard.design?.bannerUrl === 'string' ? initialCard.design.bannerUrl : ''),
+        },
+      };
+      saveOrUpdateCard(cardToSave);
+      onSave(cardToSave);
       setSaveSuccess(true);
       confetti({ particleCount: 35, spread: 60, origin: { y: 0.7 } });
       setTimeout(() => setSaveSuccess(false), 2500);
@@ -3257,7 +3271,13 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                 {/* Notch / Dynamic Island */}
                 <div className="w-28 h-4 bg-slate-950 rounded-full mx-auto mb-2" />
                 <div className="max-h-[720px] overflow-y-auto no-scrollbar rounded-[32px]">
-                  <DigitalCardView card={card} />
+                  <DigitalCardView card={{
+                    ...card,
+                    design: {
+                      ...card.design,
+                      bannerUrl: card.design.bannerUrl || coverImageRef.current || initialCard.design?.bannerUrl || '',
+                    },
+                  }} />
                 </div>
               </div>
             )}
