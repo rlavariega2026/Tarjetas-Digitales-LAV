@@ -65,10 +65,10 @@ export function generateStandaloneHtml(card: CardData): string {
     card.socials.spotify && { name: 'Spotify', url: toUrl(card.socials.spotify, 'https://open.spotify.com/') },
   ].filter(Boolean) as Array<{ name: string; url: string }>;
 
-  const isEleganceLuxury = card.design.theme === 'elegance-luxury' || card.design.animationStyle === 'metallic-sheen';
-  const isFutureTech = card.design.theme === 'future-tech' || card.design.animationStyle === 'tech-scan';
-  const isGlassMotion = card.design.theme === 'glass-motion' || card.design.animationStyle === 'floating-glow' || card.design.animationStyle === 'glass-parallax';
-  const isYoungCreative = card.design.theme === 'young-creative' || card.design.animationStyle === 'liquid-flow';
+  const isEleganceLuxury = ['elegance-luxury','executive-black','champagne-gold','royal-navy'].includes(card.design.theme) || card.design.animationStyle === 'metallic-sheen';
+  const isFutureTech = ['future-tech','cyber-blue','neon-purple','digital-glass'].includes(card.design.theme) || card.design.animationStyle === 'tech-scan';
+  const isGlassMotion = ['glass-motion','aurora-glass','frosted-depth','crystal-prism'].includes(card.design.theme) || card.design.animationStyle === 'floating-glow' || card.design.animationStyle === 'glass-parallax';
+  const isYoungCreative = ['young-creative','urban-gradient','pop-creative','color-motion'].includes(card.design.theme) || card.design.animationStyle === 'liquid-flow';
 
   return `<!DOCTYPE html>
 <html lang="es">
