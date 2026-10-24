@@ -928,7 +928,7 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
       )}
 
       {/* Cover Banner with Center Logo & Top-Right Logo support */}
-      {photoComp !== 'top-large' && photoComp !== 'vertical-large' && photoComp !== 'card-bg' && (
+      {(!!design.bannerUrl || (photoComp !== 'top-large' && photoComp !== 'vertical-large' && photoComp !== 'card-bg')) && (
         <div
           className={`relative w-full transition-all ${
             isYoungCreative && !design.bannerUrl ? 'anim-liquid-flow' : ''
