@@ -1575,6 +1575,17 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                         'bank-transfer-spei': { primary: '#22c55e', secondary: '#166534', accent: '#86efac', background: '#07160f' }
                       };
                       const preset = presets[theme];
+
+                      // Guardar la portada actual ANTES de cambiar la colección.
+                      const preservedBanner =
+                        (typeof card.design.bannerUrl === 'string' && card.design.bannerUrl.trim() !== ''
+                          ? card.design.bannerUrl
+                          : '') ||
+                        coverImageRef.current ||
+                        (typeof initialCard.design?.bannerUrl === 'string' ? initialCard.design.bannerUrl : '');
+
+                      if (preservedBanner) coverImageRef.current = preservedBanner;
+
                       setCard((prev) => ({
                         ...prev,
                         design: {
@@ -1589,13 +1600,7 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                                 backgroundColor: preset.background,
                               }
                             : {}),
-                          // Cambiar colección/tema nunca debe borrar la portada elegida.
-                          bannerUrl:
-                            (typeof prev.design.bannerUrl === 'string' && prev.design.bannerUrl.trim() !== ''
-                              ? prev.design.bannerUrl
-                              : '') ||
-                            coverImageRef.current ||
-                            (typeof initialCard.design?.bannerUrl === 'string' ? initialCard.design.bannerUrl : ''),
+                          bannerUrl: preservedBanner,
                           backgroundTextureUrl: prev.design.backgroundTextureUrl,
                           textColor: prev.design.textColor,
                           photoComposition: prev.design.photoComposition,
