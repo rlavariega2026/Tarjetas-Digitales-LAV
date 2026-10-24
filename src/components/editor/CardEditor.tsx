@@ -1547,7 +1547,7 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                         'bank-transfer-spei': { primary: '#22c55e', secondary: '#166534', accent: '#86efac', background: '#07160f' }
                       };
                       const preset = presets[theme];
-                      setCard((prev) => ({ ...prev, design: { ...prev.design, theme, ...(preset ? { primaryColor: preset.primary, secondaryColor: preset.secondary, accentColor: preset.accent, backgroundColor: preset.background } : {}), bannerUrl: prev.design.bannerUrl, backgroundTextureUrl: prev.design.backgroundTextureUrl } }));
+                      setCard((prev) => ({ ...prev, design: { ...prev.design, theme, backgroundFinish: undefined, ...(preset ? { primaryColor: preset.primary, secondaryColor: preset.secondary, accentColor: preset.accent, backgroundColor: preset.background } : {}), bannerUrl: prev.design.bannerUrl, backgroundTextureUrl: prev.design.backgroundTextureUrl } }));
                     }}
                     className="w-full px-3 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs font-medium focus:ring-2 focus:ring-indigo-500 focus:outline-none"
                   >
@@ -1791,9 +1791,9 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                     <div className="col-span-2 rounded-xl border border-indigo-500/30 bg-slate-900/70 p-3">
                       <label className="block text-[11px] font-semibold text-slate-200 mb-2">Acabado del fondo</label>
                       <div className="grid grid-cols-3 gap-2">
-                        <button type="button" onClick={() => updateDesignField('backgroundFinish', 'solid')} className={'rounded-lg px-2 py-2 text-[11px] border ' + ((card.design.backgroundFinish || 'solid') === 'solid' ? 'border-white bg-slate-700' : 'border-slate-700 bg-slate-800')}>Sólido</button>
-                        <button type="button" onClick={() => updateDesignField('backgroundFinish', 'gradient')} className={'rounded-lg px-2 py-2 text-[11px] border ' + (card.design.backgroundFinish === 'gradient' ? 'border-white' : 'border-slate-700')} style={{ backgroundImage: 'linear-gradient(120deg,#06b6d4,#7c3aed,#ec4899)' }}>Degradado</button>
-                        <button type="button" onClick={() => updateDesignField('backgroundFinish', 'metallic')} className={'rounded-lg px-2 py-2 text-[11px] border text-slate-950 font-semibold ' + (card.design.backgroundFinish === 'metallic' ? 'border-white' : 'border-slate-700')} style={{ backgroundImage: 'linear-gradient(115deg,#4b5563,#f8fafc,#9ca3af,#fef3c7,#a16207)' }}>Metálico</button>
+                        <button type="button" onClick={() => setCard((prev) => ({ ...prev, design: { ...prev.design, backgroundFinish: 'solid', backgroundTextureUrl: '' } }))} className={'rounded-lg px-2 py-2 text-[11px] border ' + ((card.design.backgroundFinish || 'solid') === 'solid' ? 'border-white bg-slate-700' : 'border-slate-700 bg-slate-800')}>Sólido</button>
+                        <button type="button" onClick={() => setCard((prev) => ({ ...prev, design: { ...prev.design, backgroundFinish: 'gradient', backgroundTextureUrl: '' } }))} className={'rounded-lg px-2 py-2 text-[11px] border ' + (card.design.backgroundFinish === 'gradient' ? 'border-white' : 'border-slate-700')} style={{ backgroundImage: 'linear-gradient(120deg,#06b6d4,#7c3aed,#ec4899)' }}>Degradado</button>
+                        <button type="button" onClick={() => setCard((prev) => ({ ...prev, design: { ...prev.design, backgroundFinish: 'metallic', backgroundTextureUrl: '' } }))} className={'rounded-lg px-2 py-2 text-[11px] border text-slate-950 font-semibold ' + (card.design.backgroundFinish === 'metallic' ? 'border-white' : 'border-slate-700')} style={{ backgroundImage: 'linear-gradient(115deg,#4b5563,#f8fafc,#9ca3af,#fef3c7,#a16207)' }}>Metálico</button>
                       </div>
                       <label className="block text-[11px] font-semibold text-slate-200 mt-3 mb-2">Textura propia para el fondo principal</label>
                       <div className="flex items-center gap-2 flex-wrap">
