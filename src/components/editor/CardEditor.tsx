@@ -211,7 +211,7 @@ export const CardEditor: React.FC<CardEditorProps> = ({
   // Image upload handling with validation, compression and visible errors
   const handleFileUpload = async (
     e: React.ChangeEvent<HTMLInputElement>,
-    target: 'avatar' | 'logo' | 'banner'
+    target: 'avatar' | 'logo' | 'banner' | 'texture'
   ) => {
     const input = e.currentTarget;
     const file = input.files?.[0];
@@ -230,7 +230,7 @@ export const CardEditor: React.FC<CardEditorProps> = ({
     }
 
     try {
-      const maxDim = target === 'avatar' ? 400 : target === 'logo' ? 500 : 1000;
+      const maxDim = target === 'avatar' ? 400 : target === 'logo' ? 500 : target === 'texture' ? 1400 : 1000;
       const optimizedDataUrl = await optimizeImageFile(file, maxDim, maxDim, target === 'banner' ? 0.68 : 0.82);
       if (!optimizedDataUrl || !optimizedDataUrl.startsWith('data:image/')) {
         throw new Error('No se pudo procesar el archivo de imagen.');
@@ -239,6 +239,7 @@ export const CardEditor: React.FC<CardEditorProps> = ({
       if (target === 'avatar') updateDesignField('avatarUrl', optimizedDataUrl);
       if (target === 'logo') updateDesignField('logoUrl', optimizedDataUrl);
       if (target === 'banner') updateDesignField('bannerUrl', optimizedDataUrl);
+      if (target === 'texture') updateDesignField('backgroundTextureUrl', optimizedDataUrl);
       input.value = '';
     } catch (err) {
       console.error('Error al cargar la imagen:', err);
@@ -1514,7 +1515,40 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                   </div>
                   <select
                     value={card.design.theme}
-                    onChange={(e) => updateDesignField('theme', e.target.value as CardTheme)}
+                    onChange={(e) => {
+                      const theme = e.target.value as CardTheme;
+                      const presets: Record<string, { primary: string; secondary: string; accent: string; background: string }> = {
+                        'elegance-luxury': { primary: '#d4af37', secondary: '#7c4a03', accent: '#f5d76e', background: '#090909' },
+                        'executive-black': { primary: '#d4af37', secondary: '#4b3621', accent: '#f6e27a', background: '#080808' },
+                        'champagne-gold': { primary: '#c6a15b', secondary: '#f3e7c9', accent: '#a67c37', background: '#211a12' },
+                        'royal-navy': { primary: '#60a5fa', secondary: '#1e3a8a', accent: '#fbbf24', background: '#071426' },
+                        'future-tech': { primary: '#06b6d4', secondary: '#2563eb', accent: '#67e8f9', background: '#030712' },
+                        'cyber-blue': { primary: '#00e5ff', secondary: '#0057ff', accent: '#8be9fd', background: '#020617' },
+                        'neon-purple': { primary: '#d946ef', secondary: '#7c3aed', accent: '#f0abfc', background: '#10051f' },
+                        'digital-glass': { primary: '#67e8f9', secondary: '#818cf8', accent: '#c4b5fd', background: '#0b1224' },
+                        'young-creative': { primary: '#f97316', secondary: '#ec4899', accent: '#facc15', background: '#1a0b18' },
+                        'urban-gradient': { primary: '#fb7185', secondary: '#8b5cf6', accent: '#fbbf24', background: '#190b2e' },
+                        'pop-creative': { primary: '#f43f5e', secondary: '#7c3aed', accent: '#facc15', background: '#190d25' },
+                        'color-motion': { primary: '#22d3ee', secondary: '#d946ef', accent: '#fde047', background: '#09051b' },
+                        'minimal-studio': { primary: '#64748b', secondary: '#cbd5e1', accent: '#0f172a', background: '#f8fafc' },
+                        'pure-white': { primary: '#334155', secondary: '#cbd5e1', accent: '#2563eb', background: '#ffffff' },
+                        'soft-beige': { primary: '#a16207', secondary: '#e7d7bd', accent: '#78350f', background: '#f8f1e7' },
+                        'modern-monochrome': { primary: '#52525b', secondary: '#18181b', accent: '#a1a1aa', background: '#fafafa' },
+                        'glass-motion': { primary: '#67e8f9', secondary: '#818cf8', accent: '#f0abfc', background: '#090e1d' },
+                        'aurora-glass': { primary: '#34d399', secondary: '#8b5cf6', accent: '#67e8f9', background: '#061523' },
+                        'frosted-depth': { primary: '#bae6fd', secondary: '#64748b', accent: '#e2e8f0', background: '#0f172a' },
+                        'crystal-prism': { primary: '#c4b5fd', secondary: '#67e8f9', accent: '#f9a8d4', background: '#0c1024' },
+                        'business-signature': { primary: '#2563eb', secondary: '#1e3a8a', accent: '#34d399', background: '#07111f' },
+                        'corporate-executive': { primary: '#3b82f6', secondary: '#1d4ed8', accent: '#94a3b8', background: '#0b1220' },
+                        'modern-consultant': { primary: '#059669', secondary: '#334155', accent: '#6ee7b7', background: '#0f172a' },
+                        'lawyer-elite': { primary: '#9f1239', secondary: '#78350f', accent: '#d6b779', background: '#160b13' },
+                        'restaurant-menu': { primary: '#f97316', secondary: '#7f1d1d', accent: '#fbbf24', background: '#1c100b' },
+                        'google-reviews-pro': { primary: '#facc15', secondary: '#2563eb', accent: '#22c55e', background: '#0f172a' },
+                        'bank-transfer-spei': { primary: '#22c55e', secondary: '#166534', accent: '#86efac', background: '#07160f' }
+                      };
+                      const preset = presets[theme];
+                      setCard((prev) => ({ ...prev, design: { ...prev.design, theme, ...(preset ? { primaryColor: preset.primary, secondaryColor: preset.secondary, accentColor: preset.accent, backgroundColor: preset.background } : {}), bannerUrl: prev.design.bannerUrl, backgroundTextureUrl: prev.design.backgroundTextureUrl } }));
+                    }}
                     className="w-full px-3 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs font-medium focus:ring-2 focus:ring-indigo-500 focus:outline-none"
                   >
                     <optgroup label="✨ Colección A: Elegance Luxury">
@@ -1754,6 +1788,21 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                         />
                       </div>
                     </div>
+                    <div className="col-span-2 rounded-xl border border-indigo-500/30 bg-slate-900/70 p-3">
+                      <label className="block text-[11px] font-semibold text-slate-200 mb-2">Acabado del fondo</label>
+                      <div className="grid grid-cols-3 gap-2">
+                        <button type="button" onClick={() => updateDesignField('backgroundFinish', 'solid')} className={'rounded-lg px-2 py-2 text-[11px] border ' + ((card.design.backgroundFinish || 'solid') === 'solid' ? 'border-white bg-slate-700' : 'border-slate-700 bg-slate-800')}>Sólido</button>
+                        <button type="button" onClick={() => updateDesignField('backgroundFinish', 'gradient')} className={'rounded-lg px-2 py-2 text-[11px] border ' + (card.design.backgroundFinish === 'gradient' ? 'border-white' : 'border-slate-700')} style={{ backgroundImage: 'linear-gradient(120deg,#06b6d4,#7c3aed,#ec4899)' }}>Degradado</button>
+                        <button type="button" onClick={() => updateDesignField('backgroundFinish', 'metallic')} className={'rounded-lg px-2 py-2 text-[11px] border text-slate-950 font-semibold ' + (card.design.backgroundFinish === 'metallic' ? 'border-white' : 'border-slate-700')} style={{ backgroundImage: 'linear-gradient(115deg,#4b5563,#f8fafc,#9ca3af,#fef3c7,#a16207)' }}>Metálico</button>
+                      </div>
+                      <label className="block text-[11px] font-semibold text-slate-200 mt-3 mb-2">Textura propia para el fondo principal</label>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <label className="cursor-pointer rounded-lg px-3 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold">Subir imagen de textura<input type="file" accept="image/png,image/jpeg,image/webp" className="hidden" onChange={(e) => handleFileUpload(e, 'texture')} /></label>
+                        {card.design.backgroundTextureUrl && <button type="button" onClick={() => updateDesignField('backgroundTextureUrl', '')} className="rounded-lg px-3 py-2 bg-rose-950 text-rose-200 text-xs">Quitar textura</button>}
+                      </div>
+                      {card.design.backgroundTextureUrl && <img src={card.design.backgroundTextureUrl} alt="Textura de fondo" className="mt-2 h-20 w-full object-cover rounded-lg border border-slate-700" />}
+                      <p className="text-[10px] text-slate-400 mt-2">La textura y el acabado no reemplazan ni borran la foto de portada.</p>
+                    </div>
                     <div>
                       <label className="block text-[11px] font-medium text-slate-400 mb-1">Color de Texto Independiente de la Paleta</label>
                       <div className="flex items-center gap-2">
@@ -1818,7 +1867,7 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                         <option value="Playfair Display">Playfair Display (Elegante Serif, Gastronomía & Moda)</option>
                         <option value="Cinzel">Cinzel (Clásica Romana, Legal & Prestigio)</option>
                         <option value="Space Grotesk">Space Grotesk (Tech, Creativa, Futuro)</option>
-                        <option value="Montserrat">Montserrat (Contemporánea, Alta Legibilidad)</option>
+                        <option value="Montserrat">Montserrat (Contemporánea, Alta Legibilidad)</option><option value="DM Sans">DM Sans (Minimalista)</option><option value="Lora">Lora (Editorial)</option><option value="Cormorant Garamond">Cormorant Garamond (Lujo)</option><option value="Oswald">Oswald (Impacto)</option><option value="Roboto Slab">Roboto Slab (Serif moderna)</option><option value="Raleway">Raleway (Elegante)</option><option value="Bebas Neue">Bebas Neue (Display)</option><option value="Merriweather">Merriweather (Clásica)</option>
                       </select>
                     </div>
                     <div>
@@ -1830,7 +1879,7 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                       >
                         <option value="Inter">Inter (Óptima para celulares)</option>
                         <option value="DM Sans">DM Sans (Suave y legible)</option>
-                        <option value="Outfit">Outfit (Moderna y continua)</option>
+                        <option value="Outfit">Outfit (Moderna y continua)</option><option value="Roboto">Roboto</option><option value="Lato">Lato</option><option value="Montserrat">Montserrat</option><option value="Open Sans">Open Sans</option><option value="Nunito Sans">Nunito Sans</option><option value="Source Sans 3">Source Sans 3</option><option value="Lora">Lora</option><option value="Merriweather">Merriweather</option>
                       </select>
                     </div>
                   </div>
