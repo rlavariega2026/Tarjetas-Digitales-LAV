@@ -62,10 +62,10 @@ export type CardTheme =
   | 'bold-creative'
   | 'gastro-menu'
   | 'google-reviews-pro'
-  | 'bank-transfer-direct';
+  | 'bank-transfer-direct' | 'executive-black' | 'champagne-gold' | 'royal-navy' | 'cyber-blue' | 'neon-purple' | 'digital-glass' | 'urban-gradient' | 'pop-creative' | 'color-motion' | 'pure-white' | 'soft-beige' | 'modern-monochrome' | 'aurora-glass' | 'frosted-depth' | 'crystal-prism' | 'corporate-executive' | 'modern-consultant' | 'lawyer-elite' | 'restaurant-menu' | 'bank-transfer-spei';
 
-export type FontHeadline = 'Outfit' | 'Inter' | 'Playfair Display' | 'Cinzel' | 'Space Grotesk' | 'Montserrat';
-export type FontBody = 'Inter' | 'DM Sans' | 'Outfit';
+export type FontHeadline = 'Outfit' | 'Inter' | 'Playfair Display' | 'Cinzel' | 'Space Grotesk' | 'Montserrat' | 'DM Sans' | 'Lora' | 'Cormorant Garamond' | 'Oswald' | 'Roboto Slab' | 'Raleway' | 'Bebas Neue' | 'Merriweather';
+export type FontBody = 'Inter' | 'DM Sans' | 'Outfit' | 'Roboto' | 'Lato' | 'Montserrat' | 'Open Sans' | 'Nunito Sans' | 'Source Sans 3' | 'Lora' | 'Merriweather';
 export type ButtonStyle = 'solid' | 'glass' | 'outline' | 'gradient';
 export type CardShape = 'rounded-3xl' | 'rounded-2xl' | 'rounded-xl' | 'rounded-none';
 export type BackgroundPattern = 'none' | 'dots' | 'mesh' | 'geometric' | 'waves' | 'carbon';
@@ -166,6 +166,8 @@ export interface CardDesign {
   accentColor: string;
   backgroundColor: string;
   textColor: string;
+  backgroundFinish?: 'solid' | 'gradient' | 'metallic';
+  backgroundTextureUrl?: string;
   backgroundPattern: BackgroundPattern;
   fontHeadline: FontHeadline;
   fontBody: FontBody;
