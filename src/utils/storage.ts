@@ -211,6 +211,7 @@ export function saveCards(cards: CardData[]): void {
     localStorage.setItem(STORAGE_KEYS.CARDS, JSON.stringify(cards));
   } catch (err) {
     console.error('Failed saving cards to storage', err);
+    throw err;
   }
 }
 
