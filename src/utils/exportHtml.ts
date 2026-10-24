@@ -115,6 +115,7 @@ export function generateStandaloneHtml(card: CardData): string {
       -webkit-font-smoothing: antialiased;
     }
     .card-container {
+      color: var(--card-text-color) !important;
       width: 100%;
       max-width: 440px;
       background: ${card.design.backgroundColor};
