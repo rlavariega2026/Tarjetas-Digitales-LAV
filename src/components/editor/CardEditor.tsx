@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   CardData,
   CardTheme,
@@ -130,6 +130,8 @@ export const CardEditor: React.FC<CardEditorProps> = ({
   onPreviewStandalone,
 }) => {
   const [card, setCard] = useState<CardData>(initialCard);
+  // Conserva la última portada válida al cambiar de tema/diseño.
+  const coverImageRef = useRef<string>(initialCard.design?.bannerUrl || '');
   const [activeTab, setActiveTab] = useState<
     'info' | 'socials' | 'design' | 'media' | 'buttons' | 'catalog' | 'gallery' | 'reviews' | 'banking' | 'paypal' | 'physical' | 'ai'
   >('info');
@@ -150,6 +152,10 @@ export const CardEditor: React.FC<CardEditorProps> = ({
   };
 
   const updateDesignField = <K extends keyof CardData['design']>(field: K, value: CardData['design'][K]) => {
+    if (field === 'bannerUrl') {
+      // La referencia acompaña la portada elegida; un borrado explícito también la limpia.
+      coverImageRef.current = typeof value === 'string' ? value : '';
+    }
     setCard((prev) => ({
       ...prev,
       design: { ...prev.design, [field]: value },
@@ -1561,7 +1567,7 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                                 backgroundColor: preset.background,
                               }
                             : {}),
-                          bannerUrl: prev.design.bannerUrl,
+                          bannerUrl: prev.design.bannerUrl || coverImageRef.current,
                           backgroundTextureUrl: prev.design.backgroundTextureUrl,
                           textColor: prev.design.textColor,
                           photoComposition: prev.design.photoComposition,
@@ -2211,7 +2217,10 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                       {card.design.bannerUrl && (
                         <button
                           type="button"
-                          onClick={() => updateDesignField('bannerUrl', '')}
+                          onClick={() => {
+                            coverImageRef.current = '';
+                            updateDesignField('bannerUrl', '');
+                          }}
                           className="p-1.5 rounded-lg text-rose-400 hover:bg-rose-950/40"
                           title="Quitar portada"
                         >
