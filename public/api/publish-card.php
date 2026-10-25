@@ -76,8 +76,9 @@ INSTALL_JS;
             $manifest = ['id'=>'./','name'=>ucwords(str_replace(['-','_'],' ',$clientFolder)) . ' — Tarjeta Digital','short_name'=>substr(ucwords(str_replace(['-','_'],' ',$clientFolder)),0,20),'description'=>'Tarjeta digital profesional e interactiva','start_url'=>'./index.html','scope'=>'./','display'=>'standalone','display_override'=>['standalone','minimal-ui'],'orientation'=>'portrait','background_color'=>'#070b14','theme_color'=>'#0f172a','icons'=>[['src'=>'/tarjetas-digitales/pwa-192x192.png','sizes'=>'192x192','type'=>'image/png','purpose'=>'any'],['src'=>'/tarjetas-digitales/pwa-512x512.png','sizes'=>'512x512','type'=>'image/png','purpose'=>'any']] ];
             $manifestJson = json_encode($manifest, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
             if ($manifestJson !== false) { @file_put_contents($cardDir . '/manifest.json', $manifestJson, LOCK_EX); @chmod($cardDir . '/manifest.json', 0644); }
-            $swName = 'lav-card-shell-' . substr(hash('sha256', $clientFolder . '/' . $cardFolder), 0, 12) . '-v2';
-            $sw = "const CACHE_NAME = '" . $swName . "';\nself.addEventListener('install',e=>{self.skipWaiting();e.waitUntil(caches.open(CACHE_NAME).then(c=>c.add('./index.html')))});\nself.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('lav-card-shell-')&&k!==CACHE_NAME).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));\nself.addEventListener('fetch',e=>{if(e.request.method!=='GET'||new URL(e.request.url).origin!==self.location.origin)return;if(e.request.mode==='navigate')e.respondWith(fetch(e.request).then(r=>{if(r.ok){const copy=r.clone();caches.open(CACHE_NAME).then(c=>c.put('./index.html',copy))}return r}).catch(()=>caches.match('./index.html')))});";
+            $cachePrefix = 'lav-card-' . substr(hash('sha256', $clientFolder . '/' . $cardFolder), 0, 12) . '-shell-';
+            $swName = $cachePrefix . 'v2';
+            $sw = "const CACHE_NAME = '" . $swName . "';\nconst CACHE_PREFIX = '" . $cachePrefix . "';\nself.addEventListener('install',e=>{self.skipWaiting();e.waitUntil(caches.open(CACHE_NAME).then(c=>c.add('./index.html')))});\nself.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith(CACHE_PREFIX)&&k!==CACHE_NAME).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));\nself.addEventListener('fetch',e=>{if(e.request.method!=='GET'||new URL(e.request.url).origin!==self.location.origin)return;if(e.request.mode==='navigate')e.respondWith(fetch(e.request).then(r=>{if(r.ok){const copy=r.clone();caches.open(CACHE_NAME).then(c=>c.put('./index.html',copy))}return r}).catch(()=>caches.match('./index.html')))});";
             @file_put_contents($cardDir . '/sw.js', $sw, LOCK_EX); @chmod($cardDir . '/sw.js', 0644);
             $tmp = tempnam(dirname($path), 'fix');
             if ($tmp && file_put_contents($tmp, $html, LOCK_EX) !== false && @chmod($tmp, 0644) && @rename($tmp, $path)) {
@@ -179,7 +180,9 @@ self.addEventListener('fetch', event => {
   }
 });
 SW;
-$serviceWorker = str_replace('lav-card-shell-v1', 'lav-card-shell-' . substr(hash('sha256', $clientFolder . '/' . $cardFolder), 0, 12) . '-v1', $serviceWorker);
+$cachePrefix = 'lav-card-' . substr(hash('sha256', $clientFolder . '/' . $cardFolder), 0, 12) . '-shell-';
+$serviceWorker = str_replace('lav-card-shell-v1', $cachePrefix . 'v1', $serviceWorker);
+$serviceWorker = str_replace("keys.filter(key => key !== CACHE_NAME)", "keys.filter(key => key.startsWith('" . $cachePrefix . "') && key !== CACHE_NAME)", $serviceWorker);
 file_put_contents($dir . '/sw.js', $serviceWorker, LOCK_EX);
 @chmod($dir . '/sw.js', 0644);
 $host = $_SERVER['HTTP_HOST'] ?? 'lavdigitalmkt.com';
