@@ -181,32 +181,27 @@ export async function triggerNativeContactSave(card: CardData): Promise<{
   const safeName = card.name.replace(/[^a-zA-Z0-9]/g, '_');
   const fileName = `${safeName}.vcf`;
 
-  // 2. Web Share API Nivel 2 con archivo vCard (abre hoja nativa de Contactos en iOS / navegadores compatibles)
-  if (typeof navigator !== 'undefined' && typeof navigator.share === 'function') {
-    try {
-      const file = new File([vcardText], fileName, { type: 'text/vcard' });
-      if (typeof navigator.canShare === 'function' && navigator.canShare({ files: [file] })) {
-        await navigator.share({
-          files: [file],
-          title: card.name,
-          text: `Contacto de ${card.name}`,
-        });
-        return { method: 'share', success: true };
-      }
-    } catch (err: any) {
-      if (err.name === 'AbortError') {
-        return { method: 'share', success: false };
-      }
-      console.warn('Web Share API failed, trying direct navigation', err);
-    }
-  }
-
-  // 3. iOS Safari: Mostrar ficha de contacto nativa en pantalla
+  // 2. iPhone/iPad: abrir primero la vCard para que Safari muestre la ficha de Contactos.
+  // No lanzar navigator.share antes: eso muestra una hoja genérica de compartir, no Contactos.
   if (isIOS) {
     const blob = new Blob([vcardText], { type: 'text/vcard;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     window.location.href = url;
     return { method: 'ios', success: true };
+  }
+
+  // 3. Otros navegadores compatibles: compartir el archivo vCard como alternativa.
+  if (typeof navigator !== 'undefined' && typeof navigator.share === 'function') {
+    try {
+      const file = new File([vcardText], fileName, { type: 'text/vcard;charset=utf-8' });
+      if (typeof navigator.canShare === 'function' && navigator.canShare({ files: [file] })) {
+        await navigator.share({ files: [file], title: card.name, text: `Contacto de ${card.name}` });
+        return { method: 'share', success: true };
+      }
+    } catch (err: any) {
+      if (err.name === 'AbortError') return { method: 'share', success: false };
+      console.warn('Web Share API failed, falling back to vCard download', err);
+    }
   }
 
   // 4. Desktop / Fallback manual
