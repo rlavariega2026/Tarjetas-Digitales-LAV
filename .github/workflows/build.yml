@@ -43,6 +43,9 @@ jobs:
       - name: Instalar dependencias
         run: npm install --no-audit --no-fund
 
+      - name: Validar tipos TypeScript
+        run: npm run lint
+
       - name: Construir aplicacion
         run: npm run build
         env:
