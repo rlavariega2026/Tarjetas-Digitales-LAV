@@ -686,13 +686,17 @@ export function generateStandaloneHtml(card: CardData): string {
         </div>
       </div>` : ''}
 
-      <!-- PayPal Module -->
+      <!-- PayPal: datos editables para recibir cobros -->
       ${card.paypal?.enabled ? `
       <div class="paypal-card">
-        <div style="font-weight:800; font-size:14px; color:#fff; margin-bottom:8px;">💳 Pago con PayPal</div>
-        <a href="${card.paypal.paymentLink || 'https://paypal.me'}" target="_blank" style="display:inline-block; padding:12px 24px; background:#0070ba; color:#fff; border-radius:14px; font-weight:700; font-size:13px; text-decoration:none;">
-          ${escapeHtml(card.paypal.buttonText || card.paypal.buttonLabel || 'Pagar con PayPal')}
-        </a>
+        <div style="font-weight:800; font-size:14px; color:#fff; margin-bottom:8px;">💳 Recibir pagos con PayPal</div>
+        ${card.paypal.businessEmail ? `<div style="font-size:12px; margin:8px 0; color:#fff;">Correo para recibir pagos: <strong>${escapeHtml(card.paypal.businessEmail)}</strong> <button type="button" onclick="copyText(${JSON.stringify(card.paypal.businessEmail)}, 'Correo PayPal')" style="margin-left:6px;padding:5px 9px;background:#1e293b;color:#fff;border:0;border-radius:8px;font-weight:700;cursor:pointer;">Copiar correo</button></div>` : ''}
+        ${card.paypal.description ? `<div style="font-size:12px; margin:8px 0; color:#e2e8f0;">Concepto: ${escapeHtml(card.paypal.description)}</div>` : ''}
+        ${card.paypal.amount ? `<div style="font-size:18px; font-weight:800; margin:8px 0; color:#fff;">Monto sugerido: ${escapeHtml(card.paypal.currency || 'USD')} ${escapeHtml(card.paypal.amount)}</div>` : ''}
+        ${card.paypal.paymentLink ? `<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;">
+          <a href="${card.paypal.paymentLink}" target="_blank" rel="noopener noreferrer" style="display:inline-block;padding:12px 18px;background:#0070ba;color:#fff;border-radius:12px;font-weight:700;font-size:13px;text-decoration:none;">${escapeHtml(card.paypal.buttonText || card.paypal.buttonLabel || 'Pagarme por PayPal')}</a>
+          <button type="button" onclick="copyText(${JSON.stringify(card.paypal.paymentLink)}, 'Enlace de cobro PayPal')" style="padding:12px 14px;background:#1e293b;color:#fff;border:0;border-radius:12px;font-weight:700;font-size:12px;cursor:pointer;">Copiar enlace de cobro</button>
+        </div>` : (card.paypal.businessEmail ? '<p style="font-size:12px;color:#e2e8f0;margin-top:8px;">Puedes enviar el pago al correo de PayPal mostrado arriba.</p>' : '<p style="font-size:12px;color:#e2e8f0;margin-top:8px;">Configura el correo receptor o el enlace de cobro de PayPal en el editor.</p>')}
       </div>` : ''}
 
       <!-- Embedded Video (YouTube / Shorts) -->
@@ -745,12 +749,29 @@ export function generateStandaloneHtml(card: CardData): string {
     }
 
     function copyText(val, label) {
-      if (navigator.clipboard) {
-        navigator.clipboard.writeText(val).then(function() {
+      var text = String(val == null ? '' : val);
+      if (!text) { showToast('No hay datos para copiar'); return; }
+      function fallbackCopy() {
+        var field = document.createElement('textarea');
+        field.value = text;
+        field.setAttribute('readonly', '');
+        field.style.position = 'fixed';
+        field.style.opacity = '0';
+        field.style.left = '-9999px';
+        document.body.appendChild(field);
+        field.select();
+        field.setSelectionRange(0, field.value.length);
+        var ok = false;
+        try { ok = document.execCommand('copy'); } catch (e) {}
+        document.body.removeChild(field);
+        showToast(ok ? '¡' + label + ' copiado!' : 'No se pudo copiar; mantén presionado el dato para copiarlo');
+      }
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).then(function() {
           showToast('¡' + label + ' copiado!');
-        }).catch(function() {
-          showToast('¡' + label + ' copiado!');
-        });
+        }).catch(fallbackCopy);
+      } else {
+        fallbackCopy();
       }
     }
 
@@ -766,11 +787,7 @@ export function generateStandaloneHtml(card: CardData): string {
         ${JSON.stringify(card.bankTransfer?.reference ? `Referencia: ${card.bankTransfer.reference}` : '')},
         ${JSON.stringify(card.bankTransfer?.instructions ? `Concepto: ${card.bankTransfer.instructions}` : '')}
       ].filter(Boolean).join('\\n');
-      if (navigator.clipboard) {
-        navigator.clipboard.writeText(lines).then(function() {
-          showToast('¡Todos los datos copiados!');
-        });
-      }
+      copyText(lines, 'Todos los datos bancarios');
     }
 
     function shareBankWhatsApp() {
