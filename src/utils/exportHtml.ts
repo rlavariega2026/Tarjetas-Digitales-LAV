@@ -65,10 +65,13 @@ export function generateStandaloneHtml(card: CardData): string {
     card.socials.spotify && { name: 'Spotify', url: toUrl(card.socials.spotify, 'https://open.spotify.com/') },
   ].filter(Boolean) as Array<{ name: string; url: string }>;
 
-  const isEleganceLuxury = ['elegance-luxury','executive-black','champagne-gold','royal-navy'].includes(card.design.theme) || card.design.animationStyle === 'metallic-sheen';
-  const isFutureTech = ['future-tech','cyber-blue','neon-purple','digital-glass'].includes(card.design.theme) || card.design.animationStyle === 'tech-scan';
-  const isGlassMotion = ['glass-motion','aurora-glass','frosted-depth','crystal-prism'].includes(card.design.theme) || card.design.animationStyle === 'floating-glow' || card.design.animationStyle === 'glass-parallax';
-  const isYoungCreative = ['young-creative','urban-gradient','pop-creative','color-motion'].includes(card.design.theme) || card.design.animationStyle === 'liquid-flow';
+  // Keep the published HTML visually aligned with the React preview for every premium collection.
+  const isEleganceLuxury = ['elegance-luxury','executive-black','champagne-gold','royal-navy','black-gold','platinum-edition','liquid-metal','royal-velvet'].includes(card.design.theme) || card.design.animationStyle === 'metallic-sheen';
+  const isFutureTech = ['future-tech','cyber-blue','neon-purple','digital-glass','cyber-chrome','neon-grid','digital-orbit','holographic-future','liquid-glass'].includes(card.design.theme) || card.design.animationStyle === 'tech-scan';
+  const isGlassMotion = ['glass-motion','aurora-glass','frosted-depth','crystal-prism','aurora-flow','prismatic-light','dynamic-layers'].includes(card.design.theme) || card.design.animationStyle === 'floating-glow' || card.design.animationStyle === 'glass-parallax';
+  const isYoungCreative = ['young-creative','urban-gradient','pop-creative','color-motion','asymmetric-flow','bold-creative','editorial-cover'].includes(card.design.theme) || card.design.animationStyle === 'liquid-flow';
+  const isMinimalStudio = ['minimal-studio','pure-white','soft-beige','modern-monochrome','swiss-minimal','monochrome-studio','architectural-lines'].includes(card.design.theme) || card.design.animationStyle === 'subtle-fade';
+  const isBusinessSignature = ['business-signature','corporate-executive','modern-consultant','lawyer-elite','architectural-lines'].includes(card.design.theme);
 
   return `<!DOCTYPE html>
 <html lang="es">
@@ -227,6 +230,26 @@ export function generateStandaloneHtml(card: CardData): string {
     .anim-border-beam {
       border: 1px solid rgba(6, 182, 212, 0.5) !important;
       box-shadow: 0 0 35px rgba(6, 182, 212, 0.25) !important;
+    }
+    .anim-minimal-frame {
+      border: 1px solid rgba(148,163,184,.42) !important;
+      box-shadow: 0 22px 58px rgba(0,0,0,.22), inset 0 0 0 1px rgba(255,255,255,.16) !important;
+    }
+    .anim-business-frame {
+      border: 1px solid rgba(96,165,250,.36) !important;
+      box-shadow: 0 26px 68px rgba(2,6,23,.38), 0 0 0 1px rgba(255,255,255,.035) !important;
+    }
+    .theme-glass-motion::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(circle at 12% 8%, ${card.design.primaryColor}22, transparent 35%), radial-gradient(circle at 92% 68%, ${card.design.accentColor}1f, transparent 36%);
+      mix-blend-mode: screen;
+    }
+    .theme-young-creative .cover-banner {
+      background-size: 220% 220%;
+      animation: liquid-flow 9s ease infinite;
     }
     .anim-scanline {
       position: absolute;
@@ -589,7 +612,7 @@ export function generateStandaloneHtml(card: CardData): string {
   </style>
 </head>
 <body>
-  <div class="card-container ${isEleganceLuxury ? 'anim-shimmer-sweep' : ''} ${isFutureTech ? 'anim-border-beam' : ''}">
+  <div class="card-container ${isEleganceLuxury ? 'anim-shimmer-sweep' : ''} ${isFutureTech ? 'anim-border-beam' : ''} ${isMinimalStudio ? 'anim-minimal-frame' : ''} ${isBusinessSignature ? 'anim-business-frame' : ''} ${isGlassMotion ? 'theme-glass-motion' : ''} ${isYoungCreative ? 'theme-young-creative' : ''}">
     ${isGlassMotion ? '<div class="anim-float-orb-1"></div><div class="anim-float-orb-2"></div>' : ''}
     ${isFutureTech ? '<div class="anim-scanline"></div>' : ''}
     <div class="cover-banner ${isYoungCreative && !card.design.bannerUrl ? 'anim-liquid-flow' : ''}"></div>
