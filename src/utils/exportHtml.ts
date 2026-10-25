@@ -134,33 +134,31 @@ export function generateStandaloneHtml(card: CardData): string {
       position: relative;
       margin-bottom: 30px;
     }
-    /* En móviles, presenta una tarjeta premium independiente, no una página a pantalla completa */
+    /* En móviles, la tarjeta ocupa todo el ancho y alto disponible: sin marco de página alrededor. */
     @media (max-width: 600px) {
-      html, body { width: 100%; min-height: 100%; margin: 0; }
+      html, body { width: 100%; min-height: 100%; margin: 0; padding: 0; }
       body {
         min-height: 100vh;
         min-height: 100dvh;
-        padding: max(18px, env(safe-area-inset-top)) 12px max(24px, env(safe-area-inset-bottom));
-        align-items: flex-start;
-        justify-content: center;
+        padding: 0;
+        align-items: stretch;
+        justify-content: flex-start;
         overflow-x: hidden;
-        background:
-          radial-gradient(ellipse at 50% 0%, rgba(56,189,248,.12), transparent 52%),
-          radial-gradient(ellipse at 100% 65%, rgba(129,140,248,.08), transparent 42%),
-          #070b14;
+        background: ${card.design.backgroundColor || '#070b14'};
       }
       .card-container {
         width: 100%;
-        max-width: 420px;
-        min-height: 0;
-        border-radius: 26px;
-        border: 1px solid rgba(255,255,255,.12);
-        box-shadow: 0 28px 75px rgba(0,0,0,.52), 0 0 0 1px rgba(255,255,255,.035);
-        margin: 0 auto;
+        max-width: none;
+        min-height: 100vh;
+        min-height: 100dvh;
+        border-radius: 0;
+        border: 0;
+        box-shadow: none;
+        margin: 0;
         isolation: isolate;
         overflow: hidden;
       }
-      .cover-banner { border-radius: 25px 25px 0 0; }
+      .cover-banner { border-radius: 0; }
       .footer-brand { font-size: 10px; opacity: .38; }
       .social-row { gap: 10px; margin: 18px 0 12px; display: flex !important; visibility: visible !important; opacity: 1 !important; flex-wrap: wrap; overflow: visible; }
       .social-icon-btn {
@@ -182,7 +180,7 @@ export function generateStandaloneHtml(card: CardData): string {
       .social-icon-btn .social-label { display: inline-block !important; font-size: 11px; }
       .social-icon-btn svg { display: block !important; visibility: visible !important; opacity: 1 !important; width: 18px; height: 18px; flex: 0 0 18px; }
       .save-contact-btn, .quick-btn, .custom-link-btn { -webkit-tap-highlight-color: transparent; }
-      .content-body { padding: 0 22px 26px; }
+      .content-body { padding: 0 22px calc(26px + env(safe-area-inset-bottom)); }
       .cover-banner { height: ${card.design.coverHeight === 'sm' ? '110px' : card.design.coverHeight === 'lg' ? '170px' : '135px'}; }
     }
 
