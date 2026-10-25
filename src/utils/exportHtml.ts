@@ -6,7 +6,6 @@ import { generateVCardString } from './vcard';
  */
 export function generateStandaloneHtml(card: CardData): string {
   const vcardEncoded = encodeURIComponent(generateVCardString(card));
-  const photoComposition = card.design.photoComposition || 'circle-portrait';
   const cardUrl = card.website || `https://lavdigitalmkt.com/c/${card.slug || card.id}`;
   const absolutePublicImage = [card.design.avatarUrl, card.design.logoUrl, card.design.bannerUrl]
     .find((value) => typeof value === 'string' && /^https:\/\//i.test(value) && !value.startsWith('data:'));
@@ -97,13 +96,7 @@ export function generateStandaloneHtml(card: CardData): string {
   <meta name="twitter:description" content="${escapeHtml(previewDescription)}">
   <meta name="twitter:image" content="${escapeHtml(previewImageUrl)}">
   <link rel="canonical" href="${escapeHtml(cardUrl)}">
-  <link rel="manifest" href="./manifest.json">
-  <link rel="apple-touch-icon" href="/tarjetas-digitales/apple-touch-icon.png">
-  <script>if("serviceWorker" in navigator){window.addEventListener("load",function(){navigator.serviceWorker.register("./sw.js",{scope:"./",updateViaCache:"none"}).catch(function(e){console.error("PWA de tarjeta:",e)})})}</script>
   <meta name="theme-color" content="${card.design.primaryColor}">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700;800&family=Space+Grotesk:wght@600;700&family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700;800&family=Lora:wght@400;500;600;700&family=Cormorant+Garamond:wght@500;600;700&family=Oswald:wght@400;500;600;700&family=Roboto+Slab:wght@400;500;600;700&family=Raleway:wght@400;500;600;700&family=Bebas+Neue&family=Merriweather:wght@400;700&family=Roboto:wght@400;500;700&family=Lato:wght@400;700&family=Open+Sans:wght@400;600;700&family=Nunito+Sans:wght@400;600;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
@@ -118,47 +111,48 @@ export function generateStandaloneHtml(card: CardData): string {
       display: flex;
       justify-content: center;
       align-items: flex-start;
-      padding: 0;
-      width: 100%;
+      padding: 16px;
       -webkit-font-smoothing: antialiased;
     }
     .card-container {
       color: var(--card-text-color) !important;
       width: 100%;
-      max-width: 480px;
-      min-height: 100svh;
-      background: ${card.design.backgroundTextureUrl ? `url("${card.design.backgroundTextureUrl}") center / cover` : card.design.backgroundFinish === 'metallic' || ['executive-black','champagne-gold','royal-navy','black-gold','platinum-edition','liquid-metal','lawyer-elite'].includes(card.design.theme) ? 'linear-gradient(115deg,#27272a 0%,#d4d4d8 14%,#71717a 28%,#fef3c7 43%,#a16207 56%,#f8fafc 70%,#52525b 84%,#e5e7eb 100%)' : card.design.backgroundFinish === 'gradient' || ['urban-gradient','color-motion','aurora-glass','soft-gradient','bold-gradient','aurora-flow','prismatic-light'].includes(card.design.theme) ? `linear-gradient(135deg,${card.design.primaryColor},${card.design.secondaryColor},${card.design.accentColor})` : card.design.backgroundColor};
+      max-width: 440px;
+      background: ${card.design.backgroundTextureUrl ? `url("${card.design.backgroundTextureUrl}") center / cover fixed` : card.design.backgroundFinish === 'metallic' || ['executive-black','champagne-gold','royal-navy','black-gold','platinum-edition','liquid-metal','lawyer-elite'].includes(card.design.theme) ? 'linear-gradient(115deg,#27272a 0%,#d4d4d8 14%,#71717a 28%,#fef3c7 43%,#a16207 56%,#f8fafc 70%,#52525b 84%,#e5e7eb 100%)' : card.design.backgroundFinish === 'gradient' || ['urban-gradient','color-motion','aurora-glass','soft-gradient','bold-gradient','aurora-flow','prismatic-light'].includes(card.design.theme) ? `linear-gradient(135deg,${card.design.primaryColor},${card.design.secondaryColor},${card.design.accentColor})` : card.design.backgroundColor};
       border-radius: 28px;
       overflow: hidden;
       box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.08);
       position: relative;
       margin-bottom: 30px;
     }
-    /* En móviles, la tarjeta ocupa todo el ancho y alto disponible: sin marco de página alrededor. */
+    /* En móviles, presenta una tarjeta premium independiente, no una página a pantalla completa */
     @media (max-width: 600px) {
-      html, body { width: 100%; min-height: 100%; margin: 0; padding: 0; }
+      html, body { width: 100%; min-height: 100%; margin: 0; }
       body {
         min-height: 100vh;
         min-height: 100dvh;
-        padding: 0;
-        align-items: stretch;
-        justify-content: flex-start;
+        padding: max(18px, env(safe-area-inset-top)) 12px max(24px, env(safe-area-inset-bottom));
+        align-items: flex-start;
+        justify-content: center;
         overflow-x: hidden;
-        background: ${card.design.backgroundColor || '#070b14'};
+        background:
+          radial-gradient(ellipse at 50% 0%, rgba(56,189,248,.12), transparent 52%),
+          radial-gradient(ellipse at 100% 65%, rgba(129,140,248,.08), transparent 42%),
+          #070b14;
       }
       .card-container {
         width: 100%;
-        max-width: none;
-        min-height: 100vh;
-        min-height: 100dvh;
-        border-radius: 0;
-        border: 0;
-        box-shadow: none;
-        margin: 0;
+        max-width: 420px;
+        min-height: 0;
+        border-radius: 26px;
+        background: ${card.design.backgroundColor};
+        border: 1px solid rgba(255,255,255,.12);
+        box-shadow: 0 28px 75px rgba(0,0,0,.52), 0 0 0 1px rgba(255,255,255,.035);
+        margin: 0 auto;
         isolation: isolate;
         overflow: hidden;
       }
-      .cover-banner { border-radius: 0; }
+      .cover-banner { border-radius: 25px 25px 0 0; }
       .footer-brand { font-size: 10px; opacity: .38; }
       .social-row { gap: 10px; margin: 18px 0 12px; display: flex !important; visibility: visible !important; opacity: 1 !important; flex-wrap: wrap; overflow: visible; }
       .social-icon-btn {
@@ -180,7 +174,7 @@ export function generateStandaloneHtml(card: CardData): string {
       .social-icon-btn .social-label { display: inline-block !important; font-size: 11px; }
       .social-icon-btn svg { display: block !important; visibility: visible !important; opacity: 1 !important; width: 18px; height: 18px; flex: 0 0 18px; }
       .save-contact-btn, .quick-btn, .custom-link-btn { -webkit-tap-highlight-color: transparent; }
-      .content-body { padding: 0 22px calc(26px + env(safe-area-inset-bottom)); }
+      .content-body { padding: 0 22px 26px; }
       .cover-banner { height: ${card.design.coverHeight === 'sm' ? '110px' : card.design.coverHeight === 'lg' ? '170px' : '135px'}; }
     }
 
@@ -320,26 +314,6 @@ export function generateStandaloneHtml(card: CardData): string {
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
-    }
-    /* Composiciones fotográficas principales también se respetan en la tarjeta publicada. */
-    /* Composición Hero: la foto es el encabezado, sin etiquetas promocionales superpuestas. */
-    .photo-top-large .cover-banner { display: none; }
-    .photo-top-large .profile-featured-label,
-    .photo-top-large .featured-profile,
-    .photo-top-large [data-label="Perfil Destacado"],
-    .photo-bottom-compact .active-card-label,
-    .photo-bottom-compact .digital-card-active,
-    .photo-bottom-compact [data-label="Tarjeta Digital Activa"] { display: none !important; }
-    .photo-top-large .content-body { padding-top: 0; }
-    .photo-top-large .avatar-wrapper { display: block; position: relative; margin: 0 -22px 18px; }
-    .photo-top-large .avatar { display: block; width: 100%; height: 270px; border: 0; border-radius: 0; box-shadow: none; }
-    .photo-top-large .business-logo { position: absolute; right: 16px; bottom: 14px; max-width: 120px; max-height: 52px; padding: 6px; border-radius: 8px; background: rgba(0,0,0,.35); }
-    .photo-bottom-compact .avatar-wrapper { display: none; }
-    .bottom-compact-photo { width: 100%; aspect-ratio: 16 / 9; margin: 8px 0 20px; border-radius: 16px; overflow: hidden; border: 1px solid rgba(255,255,255,.12); box-shadow: 0 12px 28px rgba(0,0,0,.25); }
-    .bottom-compact-photo img { display: block; width: 100%; height: 100%; object-fit: cover; }
-    @media (max-width: 600px) {
-      .photo-top-large .avatar-wrapper { margin-left: -22px; margin-right: -22px; }
-      .photo-top-large .avatar { height: 34svh; min-height: 220px; max-height: 340px; }
     }
     .avatar {
       width: 100px;
@@ -608,27 +582,6 @@ export function generateStandaloneHtml(card: CardData): string {
       display: none;
       z-index: 9999;
     }
-    @media (max-width: 600px) {
-      html, body { width: 100%; min-height: 100%; min-height: 100dvh; padding: 0; margin: 0; }
-      body { align-items: stretch; min-height: 100dvh; }
-      .card-container { width: 100%; max-width: none !important; min-height: 100svh; min-height: 100dvh; border-radius: 0 !important; box-shadow: none !important; }
-    }
-    @media (display-mode: standalone), (display-mode: fullscreen) {
-      html, body { width: 100%; min-height: 100%; min-height: 100dvh; margin: 0; padding: 0; }
-      body { justify-content: flex-start; align-items: stretch; }
-      .card-container { width: 100%; max-width: none !important; min-height: 100dvh; border-radius: 0 !important; box-shadow: none !important; }
-      #pwaInstallBar, #pwaInstallHelp { display: none !important; }
-    }
-    /* lav-card-pwa-install-v1 */
-    #pwaInstallBar { position: fixed; z-index: 9997; top: max(10px, env(safe-area-inset-top)); right: 10px; }
-    #pwaInstallButton { border: 1px solid rgba(255,255,255,.28); border-radius: 999px; padding: 10px 14px; background: rgba(10,15,28,.88); color: #fff !important; font: 700 12px/1.2 Arial,sans-serif; box-shadow: 0 6px 20px rgba(0,0,0,.25); backdrop-filter: blur(12px); cursor: pointer; }
-    #pwaInstallHelp { position: fixed; inset: 0; z-index: 9998; display: none; align-items: center; justify-content: center; padding: 20px; background: rgba(0,0,0,.72); backdrop-filter: blur(8px); }
-    #pwaInstallHelp.is-open { display: flex; }
-    #pwaInstallPanel { position: relative; width: min(100%, 380px); padding: 24px; border-radius: 22px; background: #101827; color: #f8fafc; border: 1px solid rgba(255,255,255,.14); box-shadow: 0 24px 80px rgba(0,0,0,.5); font: 14px/1.55 Arial,sans-serif; }
-    #pwaInstallPanel h2 { margin: 0 30px 12px 0; font-size: 20px; line-height: 1.2; color: #fff !important; }
-    #pwaInstallPanel p { margin: 8px 0; color: #e2e8f0 !important; }
-    #pwaInstallClose { position: absolute; top: 10px; right: 12px; border: 0; background: transparent; color: #fff !important; font-size: 26px; cursor: pointer; }
-    #pwaInstallOk { display: block; width: 100%; margin-top: 16px; padding: 12px; border: 0; border-radius: 12px; background: #4f46e5; color: #fff !important; font-weight: 700; cursor: pointer; }
     /* El color de texto es independiente de la paleta y se aplica a la tarjeta publicada. */
     .card-container :is(div,h1,h2,h3,h4,p,span,strong,em,label,small,li,a,button):not(.social-icon-btn) {
       color: var(--card-text-color) !important;
@@ -636,7 +589,7 @@ export function generateStandaloneHtml(card: CardData): string {
   </style>
 </head>
 <body>
-  <div class="card-container photo-${photoComposition} ${isEleganceLuxury ? 'anim-shimmer-sweep' : ''} ${isFutureTech ? 'anim-border-beam' : ''}">
+  <div class="card-container ${isEleganceLuxury ? 'anim-shimmer-sweep' : ''} ${isFutureTech ? 'anim-border-beam' : ''}">
     ${isGlassMotion ? '<div class="anim-float-orb-1"></div><div class="anim-float-orb-2"></div>' : ''}
     ${isFutureTech ? '<div class="anim-scanline"></div>' : ''}
     <div class="cover-banner ${isYoungCreative && !card.design.bannerUrl ? 'anim-liquid-flow' : ''}"></div>
@@ -651,8 +604,6 @@ export function generateStandaloneHtml(card: CardData): string {
       ${card.jobTitle ? `<div class="job-title card-stagger-2">${escapeHtml(card.jobTitle)}</div>` : ''}
 
       ${card.bio ? `<div class="bio-text card-stagger-2">${escapeHtml(card.bio)}</div>` : ''}
-
-      ${photoComposition === 'bottom-compact' ? `<div class="bottom-compact-photo card-stagger-2"><img src="${card.design.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=700'}" alt="${escapeHtml(card.name)}"></div>` : ''}
 
       <!-- Quick Action Grid -->
       <div class="action-grid card-stagger-3">
@@ -700,61 +651,48 @@ export function generateStandaloneHtml(card: CardData): string {
         </a>
       </div>` : ''}
 
-      <!-- Bank Transfer SPEI Module: datos para recibir pagos -->
+      <!-- Bank Transfer SPEI Module -->
       ${card.bankTransfer?.enabled ? `
       <div class="bank-card">
-        <div style="font-weight:800; font-size:14px; color:#34d399; margin-bottom:10px;">🏦 Datos para recibir transferencia SPEI</div>
+        <div style="font-weight:800; font-size:14px; color:#34d399; margin-bottom:10px;">🏦 Transferencia SPEI</div>
         ${card.bankTransfer.bankName ? `
         <div class="bank-field-row">
           <span><strong>Banco:</strong> ${escapeHtml(card.bankTransfer.bankName)}</span>
-          <button class="bank-copy-btn" onclick="copyText(${escapeHtml(JSON.stringify(card.bankTransfer.bankName))}, 'Banco')">Copiar</button>
+          <button class="bank-copy-btn" onclick="copyText('${escapeHtml(card.bankTransfer.bankName)}', 'Banco')">Copiar</button>
         </div>` : ''}
         ${card.bankTransfer.accountHolder ? `
         <div class="bank-field-row">
           <span><strong>Titular:</strong> ${escapeHtml(card.bankTransfer.accountHolder)}</span>
-          <button class="bank-copy-btn" onclick="copyText(${escapeHtml(JSON.stringify(card.bankTransfer.accountHolder))}, 'Titular')">Copiar</button>
+          <button class="bank-copy-btn" onclick="copyText('${escapeHtml(card.bankTransfer.accountHolder)}', 'Titular')">Copiar</button>
         </div>` : ''}
         ${card.bankTransfer.clabe ? `
         <div class="bank-field-row">
           <span><strong>CLABE:</strong> ${escapeHtml(card.bankTransfer.clabe)}</span>
-          <button class="bank-copy-btn" onclick="copyText(${escapeHtml(JSON.stringify(card.bankTransfer.clabe))}, 'CLABE')">Copiar</button>
+          <button class="bank-copy-btn" onclick="copyText('${escapeHtml(card.bankTransfer.clabe)}', 'CLABE')">Copiar</button>
         </div>` : ''}
         ${card.bankTransfer.accountNumber ? `
         <div class="bank-field-row">
           <span><strong>Cuenta:</strong> ${escapeHtml(card.bankTransfer.accountNumber)}</span>
-          <button class="bank-copy-btn" onclick="copyText(${escapeHtml(JSON.stringify(card.bankTransfer.accountNumber))}, 'Cuenta')">Copiar</button>
+          <button class="bank-copy-btn" onclick="copyText('${escapeHtml(card.bankTransfer.accountNumber)}', 'Cuenta')">Copiar</button>
         </div>` : ''}
         ${card.bankTransfer.cardNumber ? `
         <div class="bank-field-row">
           <span><strong>Tarjeta:</strong> ${escapeHtml(card.bankTransfer.cardNumber)}</span>
-          <button class="bank-copy-btn" onclick="copyText(${escapeHtml(JSON.stringify(card.bankTransfer.cardNumber))}, 'Tarjeta')">Copiar</button>
+          <button class="bank-copy-btn" onclick="copyText('${escapeHtml(card.bankTransfer.cardNumber)}', 'Tarjeta')">Copiar</button>
         </div>` : ''}
-        ${card.bankTransfer.reference ? `
-        <div class="bank-field-row">
-          <span><strong>Referencia:</strong> ${escapeHtml(card.bankTransfer.reference)}</span>
-          <button class="bank-copy-btn" onclick="copyText(${escapeHtml(JSON.stringify(card.bankTransfer.reference))}, 'Referencia')">Copiar</button>
-        </div>` : ''}
-        ${card.bankTransfer.instructions ? `<p style="font-size:12px; margin-top:8px; color:#cbd5e1;"><strong>Concepto/instrucciones:</strong> ${escapeHtml(card.bankTransfer.instructions)}</p>` : ''}
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:10px;">
-          <button onclick="copyAllBank()" style="padding:10px; background:#1e293b; color:#fff; border:none; border-radius:10px; font-weight:700; font-size:12px; cursor:pointer;">Copiar todos los datos</button>
-          <button onclick="shareBankWhatsApp()" style="padding:10px; background:#10b981; color:#fff; border:none; border-radius:10px; font-weight:700; font-size:12px; cursor:pointer;">Compartir por WhatsApp</button>
+          <button onclick="copyAllBank()" style="padding:10px; background:#1e293b; color:#fff; border:none; border-radius:10px; font-weight:700; font-size:12px; cursor:pointer;">Copiar todo</button>
+          <button onclick="shareBankWhatsApp()" style="padding:10px; background:#10b981; color:#fff; border:none; border-radius:10px; font-weight:700; font-size:12px; cursor:pointer;">WhatsApp</button>
         </div>
       </div>` : ''}
 
-      <!-- PayPal: datos del titular para recibir pagos, no flujo de pago saliente -->
+      <!-- PayPal Module -->
       ${card.paypal?.enabled ? `
       <div class="paypal-card">
-        <div style="font-weight:800; font-size:14px; color:#fff; margin-bottom:10px;">💳 Datos para recibir pagos por PayPal</div>
-        ${card.paypal.businessEmail ? `
-        <div class="bank-field-row">
-          <span><strong>Cuenta PayPal:</strong> ${escapeHtml(card.paypal.businessEmail)}</span>
-          <button class="bank-copy-btn" onclick="copyText(${escapeHtml(JSON.stringify(card.paypal.businessEmail))}, 'Cuenta PayPal')">Copiar</button>
-        </div>` : ''}
-        ${card.paypal.defaultAmount || card.paypal.amount ? `<div class="bank-field-row"><span><strong>Importe:</strong> ${escapeHtml(String(card.paypal.defaultAmount || card.paypal.amount))} ${escapeHtml(card.paypal.currency || 'MXN')}</span><button class="bank-copy-btn" onclick="copyText(${escapeHtml(JSON.stringify(String(card.paypal.defaultAmount || card.paypal.amount) + ' ' + (card.paypal.currency || 'MXN')))}, 'Importe')">Copiar</button></div>` : ''}
-        ${card.paypal.description ? `<p style="font-size:12px; margin:8px 0; color:#cbd5e1;"><strong>Concepto:</strong> ${escapeHtml(card.paypal.description)}</p>` : ''}
-        ${card.paypal.paymentLink ? `<div class="bank-field-row"><span><strong>Enlace para recibir el pago:</strong> <a href="${escapeHtml(card.paypal.paymentLink)}" target="_blank" rel="noopener noreferrer" style="color:#93c5fd; text-decoration:underline;">Abrir enlace PayPal</a></span><button class="bank-copy-btn" onclick="copyText(${escapeHtml(JSON.stringify(card.paypal.paymentLink))}, 'Enlace PayPal')">Copiar enlace</button></div>` : ''}
-        ${!card.paypal.businessEmail && !card.paypal.paymentLink && !card.paypal.clientId ? `<p style="font-size:12px; color:#cbd5e1;">Configura el correo de la cuenta PayPal o el enlace para recibir pagos.</p>` : ''}
-        ${card.paypal.paymentLink ? `<button onclick="copyText(${escapeHtml(JSON.stringify(card.paypal.paymentLink))}, 'Enlace de cobro PayPal')" style="display:block; width:100%; margin-top:10px; padding:12px 16px; background:#0070ba; color:#fff; border:0; border-radius:12px; font-weight:700; font-size:13px; cursor:pointer;">Copiar enlace de cobro PayPal</button>` : ''}
+        <div style="font-weight:800; font-size:14px; color:#fff; margin-bottom:8px;">💳 Pago con PayPal</div>
+        <a href="${card.paypal.paymentLink || 'https://paypal.me'}" target="_blank" style="display:inline-block; padding:12px 24px; background:#0070ba; color:#fff; border-radius:14px; font-weight:700; font-size:13px; text-decoration:none;">
+          ${escapeHtml(card.paypal.buttonText || card.paypal.buttonLabel || 'Pagar con PayPal')}
+        </a>
       </div>` : ''}
 
       <!-- Embedded Video (YouTube / Shorts) -->
@@ -796,63 +734,8 @@ export function generateStandaloneHtml(card: CardData): string {
     </div>
   </div>
   <div id="toastNotice"></div>
-  <div id="pwaInstallBar"><button id="pwaInstallButton" type="button">Instalar como app</button></div>
-  <div id="pwaInstallHelp" role="dialog" aria-modal="true" aria-labelledby="pwaInstallTitle">
-    <div id="pwaInstallPanel">
-      <button id="pwaInstallClose" type="button" aria-label="Cerrar">×</button>
-      <h2 id="pwaInstallTitle">Abre esta tarjeta como una app</h2>
-      <p id="pwaInstallInstructions">Instala esta tarjeta en tu celular para abrirla desde un icono, sin la barra normal del navegador.</p>
-      <p id="pwaInstallSteps"></p>
-      <button id="pwaInstallOk" type="button">Entendido</button>
-    </div>
-  </div>
 
-  <script id="lav-pwa-install-v1">
-    (function () {
-      var installButton = document.getElementById('pwaInstallButton');
-      var installBar = document.getElementById('pwaInstallBar');
-      var help = document.getElementById('pwaInstallHelp');
-      var closeButton = document.getElementById('pwaInstallClose');
-      var okButton = document.getElementById('pwaInstallOk');
-      var steps = document.getElementById('pwaInstallSteps');
-      var deferredPrompt = null;
-      var ua = navigator.userAgent || '';
-      var isIOS = /iphone|ipad|ipod/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-      var isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.matchMedia('(display-mode: fullscreen)').matches || navigator.standalone === true;
-      if (isStandalone && installBar) installBar.style.display = 'none';
-      window.addEventListener('beforeinstallprompt', function (event) {
-        event.preventDefault();
-        deferredPrompt = event;
-      });
-      window.addEventListener('appinstalled', function () {
-        if (installBar) installBar.style.display = 'none';
-        if (help) help.classList.remove('is-open');
-      });
-      function closeHelp() { if (help) help.classList.remove('is-open'); }
-      if (closeButton) closeButton.addEventListener('click', closeHelp);
-      if (okButton) okButton.addEventListener('click', closeHelp);
-      if (help) help.addEventListener('click', function (event) { if (event.target === help) closeHelp(); });
-      if (installButton) installButton.addEventListener('click', async function () {
-        if (isStandalone) { installBar.style.display = 'none'; return; }
-        if (deferredPrompt) {
-          deferredPrompt.prompt();
-          await deferredPrompt.userChoice;
-          deferredPrompt = null;
-          return;
-        }
-        if (steps) {
-          if (isIOS) {
-            steps.textContent = 'En Safari: pulsa Compartir, elige “Añadir a pantalla de inicio”, activa “Abrir como app” si aparece y pulsa Añadir. Si abriste el enlace desde WhatsApp, primero ábrelo en Safari.';
-          } else if (/android/i.test(ua)) {
-            steps.textContent = 'En Chrome: pulsa el menú ⋮ y elige “Instalar aplicación” o “Añadir a pantalla de inicio”. Si abriste el enlace dentro de otra app, elige Abrir en Chrome y repite estos pasos.';
-          } else {
-            steps.textContent = 'Abre este enlace en Chrome o Edge y utiliza la opción Instalar aplicación del menú del navegador.';
-          }
-        }
-        if (help) help.classList.add('is-open');
-      });
-    })();
-
+  <script>
     function showToast(msg) {
       var t = document.getElementById('toastNotice');
       if (!t) return;
@@ -862,29 +745,12 @@ export function generateStandaloneHtml(card: CardData): string {
     }
 
     function copyText(val, label) {
-      val = String(val == null ? '' : val);
-      function fallbackCopy(text) {
-        var field = document.createElement('textarea');
-        field.value = text;
-        field.setAttribute('readonly', '');
-        field.style.position = 'fixed';
-        field.style.opacity = '0';
-        field.style.pointerEvents = 'none';
-        document.body.appendChild(field);
-        field.select();
-        field.setSelectionRange(0, field.value.length);
-        var ok = false;
-        try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
-        document.body.removeChild(field);
-        if (ok) showToast('¡' + label + ' copiado!');
-        else showToast('No se pudo copiar. Mantén presionado el dato para copiarlo.');
-      }
-      if (navigator.clipboard && window.isSecureContext) {
+      if (navigator.clipboard) {
         navigator.clipboard.writeText(val).then(function() {
           showToast('¡' + label + ' copiado!');
-        }).catch(function() { fallbackCopy(val); });
-      } else {
-        fallbackCopy(val);
+        }).catch(function() {
+          showToast('¡' + label + ' copiado!');
+        });
       }
     }
 
@@ -900,7 +766,11 @@ export function generateStandaloneHtml(card: CardData): string {
         ${JSON.stringify(card.bankTransfer?.reference ? `Referencia: ${card.bankTransfer.reference}` : '')},
         ${JSON.stringify(card.bankTransfer?.instructions ? `Concepto: ${card.bankTransfer.instructions}` : '')}
       ].filter(Boolean).join('\\n');
-      copyText(lines, 'Todos los datos bancarios');
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(lines).then(function() {
+          showToast('¡Todos los datos copiados!');
+        });
+      }
     }
 
     function shareBankWhatsApp() {
@@ -915,14 +785,8 @@ export function generateStandaloneHtml(card: CardData): string {
         ${JSON.stringify(card.bankTransfer?.reference ? `*Referencia:* ${card.bankTransfer.reference}` : '')},
         ${JSON.stringify(card.bankTransfer?.instructions ? `*Concepto:* ${card.bankTransfer.instructions}` : '')}
       ].filter(Boolean).join('\\n');
-      window.open('https://wa.me/?text=' + encodeURIComponent(lines), '_blank', 'noopener');
+      window.open('https://wa.me/?text=' + encodeURIComponent(lines), '_blank');
     }
-
-    // Los botones usan onclick en el HTML exportado; exponer las funciones en window
-    // garantiza que funcionen también cuando el script esté encapsulado.
-    window.copyText = copyText;
-    window.copyAllBank = copyAllBank;
-    window.shareBankWhatsApp = shareBankWhatsApp;
 
     const CARD_DATA = {
       name: ${JSON.stringify(card.name)},
@@ -961,24 +825,18 @@ export function generateStandaloneHtml(card: CardData): string {
         return;
       }
 
-      // En iPhone/iPad, abrir la vCard directamente antes de intentar compartirla.
-      // navigator.share muestra una hoja genérica; no lleva directamente a la ficha de Contactos.
-      const isIOS = /iphone|ipad|ipod/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-      if (isIOS) {
-        const blob = new Blob([CARD_DATA.vcard], { type: 'text/vcard;charset=utf-8' });
-        const url = URL.createObjectURL(blob);
-        window.location.href = url;
-        return;
-      }
-
-      // En otros navegadores, compartir el archivo vCard si el sistema lo admite.
+      // 2. Web Share API Nivel 2 con archivo vCard en memoria (abre la hoja nativa con opción directa a "Contactos")
       if (navigator.share && window.File) {
         try {
           const file = new File([CARD_DATA.vcard], (CARD_DATA.name.replace(/[^a-zA-Z0-9]/g, '_') || 'contacto') + '.vcf', {
             type: 'text/vcard;charset=utf-8'
           });
           if (navigator.canShare && navigator.canShare({ files: [file] })) {
-            await navigator.share({ files: [file], title: CARD_DATA.name, text: 'Contacto de ' + CARD_DATA.name });
+            await navigator.share({
+              files: [file],
+              title: CARD_DATA.name,
+              text: 'Contacto de ' + CARD_DATA.name
+            });
             return;
           }
         } catch (e) {
@@ -986,7 +844,9 @@ export function generateStandaloneHtml(card: CardData): string {
         }
       }
 
-      // Escritorio y navegadores sin soporte: descarga vCard como alternativa manual.
+      // 3. iOS Safari: Abre directamente la ficha de contacto en pantalla sin descargar archivos sueltos
+      // 3. iPhone/iPad y navegadores sin Web Share: ofrecer la ficha vCard como archivo
+      // para que el sistema muestre la vista previa/importación nativa de Contactos.
       const blob = new Blob([CARD_DATA.vcard], { type: 'text/vcard;charset=utf-8' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -999,29 +859,6 @@ export function generateStandaloneHtml(card: CardData): string {
       window.setTimeout(function() { URL.revokeObjectURL(url); }, 60000);
     }
   </script>
-<script>
-/* Limpia etiquetas heredadas de versiones anteriores en tarjetas exportadas. */
-(function () {
-  var unwanted = ['Perfil Destacado', 'Tarjeta Digital Activa'];
-  function removeLegacyLabels() {
-    var nodes = document.querySelectorAll('body *');
-    nodes.forEach(function (el) {
-      if (el.children.length > 2) return;
-      var text = (el.textContent || '').replace(/\\s+/g, ' ').trim();
-      if (!text || !unwanted.some(function (label) { return text === label || text.indexOf(label) !== -1; })) return;
-      var target = el;
-      for (var i = 0; i < 3 && target.parentElement && target.parentElement !== document.body; i++) {
-        var parent = target.parentElement;
-        if (parent.children.length <= 3 && parent.textContent.trim().length < 100) target = parent;
-        else break;
-      }
-      target.style.setProperty('display', 'none', 'important');
-    });
-  }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', removeLegacyLabels);
-  else removeLegacyLabels();
-})();
-</script>
 </body>
 </html>`;
 }
