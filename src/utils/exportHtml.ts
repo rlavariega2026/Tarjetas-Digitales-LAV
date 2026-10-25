@@ -100,6 +100,9 @@ export function generateStandaloneHtml(card: CardData): string {
   <link rel="apple-touch-icon" href="/tarjetas-digitales/apple-touch-icon.png">
   <script>if("serviceWorker" in navigator){window.addEventListener("load",function(){navigator.serviceWorker.register("./sw.js",{scope:"./",updateViaCache:"none"}).catch(function(e){console.error("PWA de tarjeta:",e)})})}</script>
   <meta name="theme-color" content="${card.design.primaryColor}">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700;800&family=Space+Grotesk:wght@600;700&family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700;800&family=Lora:wght@400;500;600;700&family=Cormorant+Garamond:wght@500;600;700&family=Oswald:wght@400;500;600;700&family=Roboto+Slab:wght@400;500;600;700&family=Raleway:wght@400;500;600;700&family=Bebas+Neue&family=Merriweather:wght@400;700&family=Roboto:wght@400;500;700&family=Lato:wght@400;700&family=Open+Sans:wght@400;600;700&family=Nunito+Sans:wght@400;600;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
@@ -150,7 +153,6 @@ export function generateStandaloneHtml(card: CardData): string {
         max-width: 420px;
         min-height: 0;
         border-radius: 26px;
-        background: ${card.design.backgroundColor};
         border: 1px solid rgba(255,255,255,.12);
         box-shadow: 0 28px 75px rgba(0,0,0,.52), 0 0 0 1px rgba(255,255,255,.035);
         margin: 0 auto;
