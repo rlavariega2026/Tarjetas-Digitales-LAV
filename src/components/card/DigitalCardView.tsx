@@ -794,11 +794,7 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
                 alt={card.name}
                 className="w-12 h-12 rounded-full object-cover ring-2 ring-white/20 shadow-md"
               />
-              <div>
-                <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block">
-                  Perfil Verificado
-                </span>
-              </div>
+
             </div>
             {renderLogo('header')}
           </div>
