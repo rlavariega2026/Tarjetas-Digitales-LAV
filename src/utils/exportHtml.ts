@@ -700,48 +700,61 @@ export function generateStandaloneHtml(card: CardData): string {
         </a>
       </div>` : ''}
 
-      <!-- Bank Transfer SPEI Module -->
+      <!-- Bank Transfer SPEI Module: datos para recibir pagos -->
       ${card.bankTransfer?.enabled ? `
       <div class="bank-card">
-        <div style="font-weight:800; font-size:14px; color:#34d399; margin-bottom:10px;">🏦 Transferencia SPEI</div>
+        <div style="font-weight:800; font-size:14px; color:#34d399; margin-bottom:10px;">🏦 Datos para recibir transferencia SPEI</div>
         ${card.bankTransfer.bankName ? `
         <div class="bank-field-row">
           <span><strong>Banco:</strong> ${escapeHtml(card.bankTransfer.bankName)}</span>
-          <button class="bank-copy-btn" onclick="copyText('${escapeHtml(card.bankTransfer.bankName)}', 'Banco')">Copiar</button>
+          <button class="bank-copy-btn" onclick="copyText(${escapeHtml(JSON.stringify(card.bankTransfer.bankName))}, 'Banco')">Copiar</button>
         </div>` : ''}
         ${card.bankTransfer.accountHolder ? `
         <div class="bank-field-row">
           <span><strong>Titular:</strong> ${escapeHtml(card.bankTransfer.accountHolder)}</span>
-          <button class="bank-copy-btn" onclick="copyText('${escapeHtml(card.bankTransfer.accountHolder)}', 'Titular')">Copiar</button>
+          <button class="bank-copy-btn" onclick="copyText(${escapeHtml(JSON.stringify(card.bankTransfer.accountHolder))}, 'Titular')">Copiar</button>
         </div>` : ''}
         ${card.bankTransfer.clabe ? `
         <div class="bank-field-row">
           <span><strong>CLABE:</strong> ${escapeHtml(card.bankTransfer.clabe)}</span>
-          <button class="bank-copy-btn" onclick="copyText('${escapeHtml(card.bankTransfer.clabe)}', 'CLABE')">Copiar</button>
+          <button class="bank-copy-btn" onclick="copyText(${escapeHtml(JSON.stringify(card.bankTransfer.clabe))}, 'CLABE')">Copiar</button>
         </div>` : ''}
         ${card.bankTransfer.accountNumber ? `
         <div class="bank-field-row">
           <span><strong>Cuenta:</strong> ${escapeHtml(card.bankTransfer.accountNumber)}</span>
-          <button class="bank-copy-btn" onclick="copyText('${escapeHtml(card.bankTransfer.accountNumber)}', 'Cuenta')">Copiar</button>
+          <button class="bank-copy-btn" onclick="copyText(${escapeHtml(JSON.stringify(card.bankTransfer.accountNumber))}, 'Cuenta')">Copiar</button>
         </div>` : ''}
         ${card.bankTransfer.cardNumber ? `
         <div class="bank-field-row">
           <span><strong>Tarjeta:</strong> ${escapeHtml(card.bankTransfer.cardNumber)}</span>
-          <button class="bank-copy-btn" onclick="copyText('${escapeHtml(card.bankTransfer.cardNumber)}', 'Tarjeta')">Copiar</button>
+          <button class="bank-copy-btn" onclick="copyText(${escapeHtml(JSON.stringify(card.bankTransfer.cardNumber))}, 'Tarjeta')">Copiar</button>
         </div>` : ''}
+        ${card.bankTransfer.reference ? `
+        <div class="bank-field-row">
+          <span><strong>Referencia:</strong> ${escapeHtml(card.bankTransfer.reference)}</span>
+          <button class="bank-copy-btn" onclick="copyText(${escapeHtml(JSON.stringify(card.bankTransfer.reference))}, 'Referencia')">Copiar</button>
+        </div>` : ''}
+        ${card.bankTransfer.instructions ? `<p style="font-size:12px; margin-top:8px; color:#cbd5e1;"><strong>Concepto/instrucciones:</strong> ${escapeHtml(card.bankTransfer.instructions)}</p>` : ''}
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:10px;">
-          <button onclick="copyAllBank()" style="padding:10px; background:#1e293b; color:#fff; border:none; border-radius:10px; font-weight:700; font-size:12px; cursor:pointer;">Copiar todo</button>
-          <button onclick="shareBankWhatsApp()" style="padding:10px; background:#10b981; color:#fff; border:none; border-radius:10px; font-weight:700; font-size:12px; cursor:pointer;">WhatsApp</button>
+          <button onclick="copyAllBank()" style="padding:10px; background:#1e293b; color:#fff; border:none; border-radius:10px; font-weight:700; font-size:12px; cursor:pointer;">Copiar todos los datos</button>
+          <button onclick="shareBankWhatsApp()" style="padding:10px; background:#10b981; color:#fff; border:none; border-radius:10px; font-weight:700; font-size:12px; cursor:pointer;">Compartir por WhatsApp</button>
         </div>
       </div>` : ''}
 
-      <!-- PayPal Module -->
+      <!-- PayPal: datos del titular para recibir pagos, no flujo de pago saliente -->
       ${card.paypal?.enabled ? `
       <div class="paypal-card">
-        <div style="font-weight:800; font-size:14px; color:#fff; margin-bottom:8px;">💳 Pago con PayPal</div>
-        <a href="${card.paypal.paymentLink || 'https://paypal.me'}" target="_blank" style="display:inline-block; padding:12px 24px; background:#0070ba; color:#fff; border-radius:14px; font-weight:700; font-size:13px; text-decoration:none;">
-          ${escapeHtml(card.paypal.buttonText || card.paypal.buttonLabel || 'Pagar con PayPal')}
-        </a>
+        <div style="font-weight:800; font-size:14px; color:#fff; margin-bottom:10px;">💳 Datos para recibir pagos por PayPal</div>
+        ${card.paypal.businessEmail ? `
+        <div class="bank-field-row">
+          <span><strong>Cuenta PayPal:</strong> ${escapeHtml(card.paypal.businessEmail)}</span>
+          <button class="bank-copy-btn" onclick="copyText(${escapeHtml(JSON.stringify(card.paypal.businessEmail))}, 'Cuenta PayPal')">Copiar</button>
+        </div>` : ''}
+        ${card.paypal.defaultAmount || card.paypal.amount ? `<div class="bank-field-row"><span><strong>Importe:</strong> ${escapeHtml(String(card.paypal.defaultAmount || card.paypal.amount))} ${escapeHtml(card.paypal.currency || 'MXN')}</span><button class="bank-copy-btn" onclick="copyText(${escapeHtml(JSON.stringify(String(card.paypal.defaultAmount || card.paypal.amount) + ' ' + (card.paypal.currency || 'MXN')))}, 'Importe')">Copiar</button></div>` : ''}
+        ${card.paypal.description ? `<p style="font-size:12px; margin:8px 0; color:#cbd5e1;"><strong>Concepto:</strong> ${escapeHtml(card.paypal.description)}</p>` : ''}
+        ${card.paypal.paymentLink ? `<div class="bank-field-row"><span><strong>Enlace para recibir el pago:</strong> <a href="${escapeHtml(card.paypal.paymentLink)}" target="_blank" rel="noopener noreferrer" style="color:#93c5fd; text-decoration:underline;">Abrir enlace PayPal</a></span><button class="bank-copy-btn" onclick="copyText(${escapeHtml(JSON.stringify(card.paypal.paymentLink))}, 'Enlace PayPal')">Copiar enlace</button></div>` : ''}
+        ${!card.paypal.businessEmail && !card.paypal.paymentLink && !card.paypal.clientId ? `<p style="font-size:12px; color:#cbd5e1;">Configura el correo de la cuenta PayPal o el enlace para recibir pagos.</p>` : ''}
+        ${card.paypal.paymentLink ? `<button onclick="window.open(${escapeHtml(JSON.stringify(card.paypal.paymentLink))}, '_blank', 'noopener')" style="display:block; width:100%; margin-top:10px; padding:12px 16px; background:#0070ba; color:#fff; border:0; border-radius:12px; font-weight:700; font-size:13px; cursor:pointer;">Enviar pago a esta cuenta PayPal</button>` : ''}
       </div>` : ''}
 
       <!-- Embedded Video (YouTube / Shorts) -->
@@ -849,12 +862,29 @@ export function generateStandaloneHtml(card: CardData): string {
     }
 
     function copyText(val, label) {
-      if (navigator.clipboard) {
+      val = String(val == null ? '' : val);
+      function fallbackCopy(text) {
+        var field = document.createElement('textarea');
+        field.value = text;
+        field.setAttribute('readonly', '');
+        field.style.position = 'fixed';
+        field.style.opacity = '0';
+        field.style.pointerEvents = 'none';
+        document.body.appendChild(field);
+        field.select();
+        field.setSelectionRange(0, field.value.length);
+        var ok = false;
+        try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+        document.body.removeChild(field);
+        if (ok) showToast('¡' + label + ' copiado!');
+        else showToast('No se pudo copiar. Mantén presionado el dato para copiarlo.');
+      }
+      if (navigator.clipboard && window.isSecureContext) {
         navigator.clipboard.writeText(val).then(function() {
           showToast('¡' + label + ' copiado!');
-        }).catch(function() {
-          showToast('¡' + label + ' copiado!');
-        });
+        }).catch(function() { fallbackCopy(val); });
+      } else {
+        fallbackCopy(val);
       }
     }
 
@@ -870,11 +900,7 @@ export function generateStandaloneHtml(card: CardData): string {
         ${JSON.stringify(card.bankTransfer?.reference ? `Referencia: ${card.bankTransfer.reference}` : '')},
         ${JSON.stringify(card.bankTransfer?.instructions ? `Concepto: ${card.bankTransfer.instructions}` : '')}
       ].filter(Boolean).join('\\n');
-      if (navigator.clipboard) {
-        navigator.clipboard.writeText(lines).then(function() {
-          showToast('¡Todos los datos copiados!');
-        });
-      }
+      copyText(lines, 'Todos los datos bancarios');
     }
 
     function shareBankWhatsApp() {
@@ -889,7 +915,7 @@ export function generateStandaloneHtml(card: CardData): string {
         ${JSON.stringify(card.bankTransfer?.reference ? `*Referencia:* ${card.bankTransfer.reference}` : '')},
         ${JSON.stringify(card.bankTransfer?.instructions ? `*Concepto:* ${card.bankTransfer.instructions}` : '')}
       ].filter(Boolean).join('\\n');
-      window.open('https://wa.me/?text=' + encodeURIComponent(lines), '_blank');
+      window.open('https://wa.me/?text=' + encodeURIComponent(lines), '_blank', 'noopener');
     }
 
     const CARD_DATA = {
