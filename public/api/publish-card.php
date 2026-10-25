@@ -92,6 +92,7 @@ self.addEventListener('fetch', event => {
   }
 });
 SW;
+$serviceWorker = str_replace('lav-card-shell-v1', 'lav-card-shell-' . substr(hash('sha256', $clientFolder . '/' . $cardFolder), 0, 12) . '-v1', $serviceWorker);
 file_put_contents($dir . '/sw.js', $serviceWorker, LOCK_EX);
 @chmod($dir . '/sw.js', 0644);
 $host = $_SERVER['HTTP_HOST'] ?? 'lavdigitalmkt.com';
