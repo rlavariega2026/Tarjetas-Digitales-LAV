@@ -2036,6 +2036,46 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                       className="rounded border-slate-700 text-indigo-600 focus:ring-indigo-500"
                     />
                   </label>
+
+                  <div className="mt-3 border-t border-slate-700 pt-3">
+                    <h4 className="text-[11px] font-bold uppercase tracking-wide text-slate-300 mb-2">Pagos y reputación</h4>
+                    <label className="flex items-center justify-between gap-3 p-2 rounded-xl bg-amber-950/30 border border-amber-900/40 text-xs mb-2">
+                      <span>Calificar en Google</span>
+                      <input
+                        type="checkbox"
+                        checked={card.googleReviews?.enabled ?? false}
+                        onChange={(e) => updateGoogleReviews('enabled', e.target.checked)}
+                        className="rounded border-slate-700 text-amber-500 focus:ring-amber-500"
+                      />
+                    </label>
+                    <button type="button" onClick={() => setActiveTab('reviews')} className="w-full text-left text-[11px] text-amber-300 hover:text-amber-200 px-2 pb-3">
+                      Configurar enlace, título y calificación de Google →
+                    </button>
+                    <label className="flex items-center justify-between gap-3 p-2 rounded-xl bg-emerald-950/30 border border-emerald-900/40 text-xs mb-2">
+                      <span>Pago por transferencia bancaria</span>
+                      <input
+                        type="checkbox"
+                        checked={card.bankTransfer?.enabled ?? false}
+                        onChange={(e) => updateBankTransfer('enabled', e.target.checked)}
+                        className="rounded border-slate-700 text-emerald-500 focus:ring-emerald-500"
+                      />
+                    </label>
+                    <button type="button" onClick={() => setActiveTab('banking')} className="w-full text-left text-[11px] text-emerald-300 hover:text-emerald-200 px-2 pb-3">
+                      Editar banco, titular, CLABE, cuenta y referencia →
+                    </button>
+                    <label className="flex items-center justify-between gap-3 p-2 rounded-xl bg-sky-950/30 border border-sky-900/40 text-xs mb-2">
+                      <span>Pago con PayPal</span>
+                      <input
+                        type="checkbox"
+                        checked={card.paypal?.enabled ?? false}
+                        onChange={(e) => updatePayPal('enabled', e.target.checked)}
+                        className="rounded border-slate-700 text-sky-500 focus:ring-sky-500"
+                      />
+                    </label>
+                    <button type="button" onClick={() => setActiveTab('paypal')} className="w-full text-left text-[11px] text-sky-300 hover:text-sky-200 px-2">
+                      Editar enlace de cobro, moneda, monto y correo de PayPal →
+                    </button>
+                  </div>
                 </div>
               </div>
             )}
