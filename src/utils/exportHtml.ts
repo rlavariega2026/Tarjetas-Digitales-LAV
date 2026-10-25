@@ -858,18 +858,25 @@ export function generateStandaloneHtml(card: CardData): string {
         return;
       }
 
-      // 2. Web Share API Nivel 2 con archivo vCard en memoria (abre la hoja nativa con opción directa a "Contactos")
+      // En iPhone/iPad, abrir la vCard directamente antes de intentar compartirla.
+      // navigator.share muestra una hoja genérica; no lleva directamente a la ficha de Contactos.
+      const ua = navigator.userAgent || '';
+      const isIOS = /iPhone|iPad|iPod/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+      if (isIOS) {
+        const blob = new Blob([CARD_DATA.vcard], { type: 'text/vcard;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        window.location.href = url;
+        return;
+      }
+
+      // En otros navegadores, compartir el archivo vCard si el sistema lo admite.
       if (navigator.share && window.File) {
         try {
           const file = new File([CARD_DATA.vcard], (CARD_DATA.name.replace(/[^a-zA-Z0-9]/g, '_') || 'contacto') + '.vcf', {
             type: 'text/vcard;charset=utf-8'
           });
           if (navigator.canShare && navigator.canShare({ files: [file] })) {
-            await navigator.share({
-              files: [file],
-              title: CARD_DATA.name,
-              text: 'Contacto de ' + CARD_DATA.name
-            });
+            await navigator.share({ files: [file], title: CARD_DATA.name, text: 'Contacto de ' + CARD_DATA.name });
             return;
           }
         } catch (e) {
@@ -877,9 +884,7 @@ export function generateStandaloneHtml(card: CardData): string {
         }
       }
 
-      // 3. iOS Safari: Abre directamente la ficha de contacto en pantalla sin descargar archivos sueltos
-      // 3. iPhone/iPad y navegadores sin Web Share: ofrecer la ficha vCard como archivo
-      // para que el sistema muestre la vista previa/importación nativa de Contactos.
+      // Escritorio y navegadores sin soporte: descarga vCard como alternativa manual.
       const blob = new Blob([CARD_DATA.vcard], { type: 'text/vcard;charset=utf-8' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
