@@ -23,6 +23,11 @@ if (is_array($data) && ($data['action'] ?? '') === 'repairExistingCards') {
     $cardsRoot = dirname(__DIR__, 2) . '/tarjetas';
     if (!is_dir($cardsRoot)) out(200, ['ok'=>true,'repaired'=>0,'message'=>'No existe todavía la carpeta de tarjetas publicadas.']);
     $style = '<style id="lav-card-repair-v2">@media(max-width:600px){html,body{width:100%!important;min-height:100%!important;margin:0!important;padding:0!important}body{min-height:100vh!important;min-height:100dvh!important;padding:0!important;display:flex!important;align-items:stretch!important;justify-content:flex-start!important;overflow-x:hidden!important}.card-container{width:100%!important;max-width:none!important;min-height:100vh!important;min-height:100dvh!important;margin:0!important;border-radius:0!important;border:0!important;box-shadow:none!important;overflow:hidden!important}.cover-banner{border-radius:0!important}}@media(display-mode:standalone){html,body{margin:0!important;padding:0!important}.card-container{max-width:none!important;margin:0!important;border-radius:0!important;box-shadow:none!important}}.photo-top-large .profile-featured-label,.photo-top-large .featured-profile,.photo-top-large [data-label="Perfil Destacado"],.photo-bottom-compact .active-card-label,.photo-bottom-compact .digital-card-active,.photo-bottom-compact [data-label="Tarjeta Digital Activa"]{display:none!important}</style><script>(function(){var labels=["Perfil Destacado","Tarjeta Digital Activa"];function clean(){document.querySelectorAll("body *").forEach(function(e){if(e.children.length>2)return;var t=(e.textContent||"").replace(/\\s+/g," ").trim();if(!t||!labels.some(function(x){return t===x||t.indexOf(x)!==-1}))return;var n=e;for(var i=0;i<3&&n.parentElement&&n.parentElement!==document.body;i++){var p=n.parentElement;if(p.children.length<=3&&p.textContent.trim().length<100)n=p;else break;}n.style.setProperty("display","none","important");});}if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",clean);else clean();})();</script>';
+    $installStyle = '<style id="lav-card-pwa-install-v1">@media(display-mode:standalone),(display-mode:fullscreen){html,body{width:100%;min-height:100dvh;margin:0;padding:0}.card-container{width:100%;max-width:none!important;min-height:100dvh;border-radius:0!important;box-shadow:none!important}#pwaInstallBar,#pwaInstallHelp{display:none!important}}#pwaInstallBar{position:fixed;z-index:9997;top:max(10px,env(safe-area-inset-top));right:10px}#pwaInstallButton{border:1px solid rgba(255,255,255,.28);border-radius:999px;padding:10px 14px;background:rgba(10,15,28,.9);color:#fff!important;font:700 12px/1.2 Arial,sans-serif;box-shadow:0 6px 20px rgba(0,0,0,.25);backdrop-filter:blur(12px)}#pwaInstallHelp{position:fixed;inset:0;z-index:9998;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(0,0,0,.72);backdrop-filter:blur(8px)}#pwaInstallHelp.is-open{display:flex}#pwaInstallPanel{position:relative;width:min(100%,380px);padding:24px;border-radius:22px;background:#101827;color:#f8fafc;border:1px solid rgba(255,255,255,.14);font:14px/1.55 Arial,sans-serif}#pwaInstallPanel h2{margin:0 30px 12px 0;font-size:20px;color:#fff!important}#pwaInstallPanel p{margin:8px 0;color:#e2e8f0!important}#pwaInstallClose{position:absolute;top:10px;right:12px;border:0;background:transparent;color:#fff!important;font-size:26px}#pwaInstallOk{display:block;width:100%;margin-top:16px;padding:12px;border:0;border-radius:12px;background:#4f46e5;color:#fff!important;font-weight:700}</style>';
+    $installMarkup = \'<div id="pwaInstallBar"><button id="pwaInstallButton" type="button">Instalar como app</button></div><div id="pwaInstallHelp" role="dialog" aria-modal="true" aria-labelledby="pwaInstallTitle"><div id="pwaInstallPanel"><button id="pwaInstallClose" type="button" aria-label="Cerrar">×</button><h2 id="pwaInstallTitle">Abre esta tarjeta como una app</h2><p>Instala esta tarjeta en tu celular para abrirla desde un icono, sin la barra normal del navegador.</p><p id="pwaInstallSteps"></p><button id="pwaInstallOk" type="button">Entendido</button></div></div>\';
+    $installScript = <<<'INSTALL_JS'
+<script id="lav-pwa-install-v1">(function(){var b=document.getElementById('pwaInstallButton'),bar=document.getElementById('pwaInstallBar'),h=document.getElementById('pwaInstallHelp'),x=document.getElementById('pwaInstallClose'),ok=document.getElementById('pwaInstallOk'),s=document.getElementById('pwaInstallSteps'),p=null,u=navigator.userAgent||'',ios=/iphone|ipad|ipod/i.test(u)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1),stand=matchMedia('(display-mode:standalone)').matches||matchMedia('(display-mode:fullscreen)').matches||navigator.standalone===true;if(stand&&bar)bar.style.display='none';addEventListener('beforeinstallprompt',function(e){e.preventDefault();p=e});addEventListener('appinstalled',function(){if(bar)bar.style.display='none';if(h)h.classList.remove('is-open')});function close(){if(h)h.classList.remove('is-open')}if(x)x.addEventListener('click',close);if(ok)ok.addEventListener('click',close);if(h)h.addEventListener('click',function(e){if(e.target===h)close()});if(b)b.addEventListener('click',async function(){if(stand){bar.style.display='none';return}if(p){p.prompt();await p.userChoice;p=null;return}if(s)s.textContent=ios?'En Safari: pulsa Compartir, elige “Añadir a pantalla de inicio”, activa “Abrir como app” si aparece y pulsa Añadir. Si abriste el enlace desde WhatsApp, primero ábrelo en Safari.':(/android/i.test(u)?'En Chrome: pulsa el menú ⋮ y elige “Instalar aplicación” o “Añadir a pantalla de inicio”. Si abriste el enlace dentro de otra app, elige Abrir en Chrome.':'Abre este enlace en Chrome o Edge y utiliza la opción Instalar aplicación del menú del navegador.');if(h)h.classList.add('is-open')})})();</script>
+INSTALL_JS;
     $repaired = 0; $skipped = 0;
     try {
         $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($cardsRoot, FilesystemIterator::SKIP_DOTS));
@@ -31,13 +36,28 @@ if (is_array($data) && ($data['action'] ?? '') === 'repairExistingCards') {
             $path = $file->getPathname();
             $html = @file_get_contents($path);
             if (!is_string($html) || stripos($html, '<html') === false) { $skipped++; continue; }
-            if (strpos($html, 'lav-card-repair-v2') !== false) { $skipped++; continue; }
-            if (stripos($html, '</head>') !== false) {
-                $html = preg_replace('/<\/head>/i', $style . "\n</head>", $html, 1);
-            } elseif (stripos($html, '</style>') !== false) {
-                $html = preg_replace('/<\/style>/i', '</style>' . $style, $html, 1);
-            } else {
-                $html = preg_replace('/<body\b/i', $style . '<body', $html, 1);
+            if (strpos($html, 'lav-card-repair-v2') !== false && strpos($html, 'lav-card-pwa-install-v1') !== false && strpos($html, 'lav-pwa-install-v1') !== false) { $skipped++; continue; }
+            if (strpos($html, 'lav-card-repair-v2') === false) {
+                if (stripos($html, '</head>') !== false) {
+                    $html = preg_replace('/<\/head>/i', $style . "\n</head>", $html, 1);
+                } elseif (stripos($html, '</style>') !== false) {
+                    $html = preg_replace('/<\/style>/i', '</style>' . $style, $html, 1);
+                } else {
+                    $html = preg_replace('/<body\b/i', $style . '<body', $html, 1);
+                }
+            }
+            if (strpos($html, 'lav-card-pwa-install-v1') === false && stripos($html, '</head>') !== false) {
+                $html = preg_replace('/<\/head>/i', $installStyle . "\n</head>", $html, 1);
+            }
+            if (strpos($html, 'pwaInstallBar') === false) {
+                if (strpos($html, '<div id="toastNotice"></div>') !== false) {
+                    $html = str_replace('<div id="toastNotice"></div>', '<div id="toastNotice"></div>' . $installMarkup, $html);
+                } else {
+                    $html = preg_replace('/<body\b[^>]*>/i', '$0' . $installMarkup, $html, 1);
+                }
+            }
+            if (strpos($html, 'lav-pwa-install-v1') === false) {
+                $html = preg_replace('/<\/body>/i', $installScript . "\n</body>", $html, 1);
             }
             $tmp = tempnam(dirname($path), 'fix');
             if ($tmp && file_put_contents($tmp, $html, LOCK_EX) !== false && @chmod($tmp, 0644) && @rename($tmp, $path)) {
