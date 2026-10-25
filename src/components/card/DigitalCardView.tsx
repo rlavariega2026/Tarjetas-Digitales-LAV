@@ -476,11 +476,6 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
               {renderLogo('top-right')}
             </div>
             <div className="absolute bottom-3 left-4 right-4 flex items-end justify-between">
-              <div>
-                <span className="text-[10px] uppercase font-bold tracking-widest text-emerald-400 bg-black/60 px-2 py-0.5 rounded-full backdrop-blur-md">
-                  Perfil Destacado
-                </span>
-              </div>
               {renderLogo('header')}
             </div>
           </div>
@@ -526,12 +521,6 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
       case 'bottom-compact':
         return (
           <div className="flex items-center justify-between -mt-10 mb-4 card-stagger-1">
-            <div className="flex items-center gap-2">
-              <span className="w-3 h-3 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-400">
-                Tarjeta Digital Activa
-              </span>
-            </div>
             {renderLogo('header')}
           </div>
         );
