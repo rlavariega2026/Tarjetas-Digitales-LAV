@@ -14,8 +14,6 @@ const toSafeSlug = (value: string) =>
     .replace(/[^a-z0-9_-]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 80);
 
 export const HostingerExportModal: React.FC<HostingerExportModalProps> = ({ card, onClose }) => {
-  const [clientFolder, setClientFolder] = useState('');
-  const [cardFolder, setCardFolder] = useState('');
   const [publishToken, setPublishToken] = useState(() => {
     try { return window.localStorage.getItem('lav-hostinger-publish-token') || ''; }
     catch { return ''; }
@@ -29,8 +27,8 @@ export const HostingerExportModal: React.FC<HostingerExportModalProps> = ({ card
 
   if (!card) return null;
 
-  const resolvedClientFolder = toSafeSlug(clientFolder || card.businessName || card.name || 'cliente');
-  const resolvedCardFolder = toSafeSlug(cardFolder || card.slug || card.id || 'tarjeta');
+  const resolvedClientFolder = toSafeSlug(card.businessName || card.name || 'cliente') || 'cliente';
+  const resolvedCardFolder = toSafeSlug(card.slug || card.name || card.id || 'tarjeta') || 'tarjeta';
   const finalCardUrl = publishedUrl || `https://lavdigitalmkt.com/tarjetas/${encodeURIComponent(resolvedClientFolder)}/${encodeURIComponent(resolvedCardFolder)}/index.html`;
 
   const handleDownload = (filename: string) => {
@@ -55,7 +53,6 @@ export const HostingerExportModal: React.FC<HostingerExportModalProps> = ({ card
     try {
       if (!publishToken.trim()) throw new Error('Escribe el token configurado en Hostinger.');
       try { window.localStorage.setItem('lav-hostinger-publish-token', publishToken.trim()); } catch {}
-      if (!resolvedClientFolder || !resolvedCardFolder) throw new Error('Indica la carpeta del cliente y la carpeta de la tarjeta.');
       const targetUrl = `https://lavdigitalmkt.com/tarjetas/${encodeURIComponent(resolvedClientFolder)}/${encodeURIComponent(resolvedCardFolder)}/index.html`;
       const html = generateStandaloneHtml({ ...card, website: targetUrl });
       const response = await fetch('/tarjetas-digitales/api/publish-card.php', {
@@ -116,11 +113,14 @@ export const HostingerExportModal: React.FC<HostingerExportModalProps> = ({ card
         <div className="p-6 overflow-y-auto space-y-6">
           <div className="p-4 rounded-2xl bg-indigo-950/40 border border-indigo-500/30 text-xs text-slate-300 space-y-3">
             <p className="font-bold text-indigo-300">Publicación directa</p>
-            <p>Se creará una carpeta para el cliente y otra para esta tarjeta, con un index.html dentro.</p>
-            <label className="block font-bold">Carpeta del cliente</label>
-            <input value={clientFolder || toSafeSlug(card.businessName || card.name || 'cliente')} onChange={e => { setClientFolder(e.target.value); setPublishedUrl(''); }} className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white" placeholder="raul-aguilar" />
-            <label className="block font-bold">Carpeta / nombre de la tarjeta</label>
-            <input value={cardFolder || toSafeSlug(card.slug || card.id || 'tarjeta')} onChange={e => { setCardFolder(e.target.value); setPublishedUrl(''); }} className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white" placeholder="tarjetaraullav" />
+            <p>Las carpetas se generan automáticamente con los datos de esta tarjeta. No necesitas escribir nombres de carpetas.</p>
+            <div className="rounded-xl bg-slate-900/80 border border-slate-700 p-3 space-y-1">
+              <p className="text-slate-400">Carpeta del cliente</p>
+              <p className="font-mono text-white break-all">{resolvedClientFolder}</p>
+              <p className="text-slate-400 pt-2">Carpeta de la tarjeta</p>
+              <p className="font-mono text-white break-all">{resolvedCardFolder}</p>
+              <p className="text-slate-500 pt-2">Se crearán automáticamente dentro de /tarjetas/ junto con index.html.</p>
+            </div>
             <label className="block font-bold pt-1">Token de publicación de Hostinger</label>
             <input type="password" value={publishToken} onChange={e => setPublishToken(e.target.value)} autoComplete="off" placeholder="Token exclusivo para publicar" className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs font-mono" />
             <p className="text-[11px] text-slate-500">El token se recuerda en este navegador para no pedirlo cada vez. No se incluye en el código público.</p>
