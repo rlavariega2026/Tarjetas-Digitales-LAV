@@ -403,12 +403,13 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
     }
   }
 
-  const isEleganceLuxury = ['elegance-luxury','executive-black','champagne-gold','royal-navy'].includes(design.theme) || design.animationStyle === 'metallic-sheen';
-  const isFutureTech = ['future-tech','cyber-blue','neon-purple','digital-glass'].includes(design.theme) || design.animationStyle === 'tech-scan';
-  const isGlassMotion = ['glass-motion','aurora-glass','frosted-depth','crystal-prism'].includes(design.theme) || design.animationStyle === 'floating-glow' || design.animationStyle === 'glass-parallax';
-  const isYoungCreative = ['young-creative','urban-gradient','pop-creative','color-motion'].includes(design.theme) || design.animationStyle === 'liquid-flow';
-  const isMinimalStudio = ['minimal-studio','pure-white','soft-beige','modern-monochrome'].includes(design.theme) || design.animationStyle === 'subtle-fade';
-  const isBusinessSignature = ['business-signature','corporate-executive','modern-consultant','lawyer-elite'].includes(design.theme);
+  // Cada colección nueva debe activar su lenguaje visual también en la vista previa.
+  const isEleganceLuxury = ['elegance-luxury','executive-black','champagne-gold','royal-navy','black-gold','platinum-edition','liquid-metal','royal-velvet'].includes(design.theme) || design.animationStyle === 'metallic-sheen';
+  const isFutureTech = ['future-tech','cyber-blue','neon-purple','digital-glass','cyber-chrome','neon-grid','digital-orbit','holographic-future','liquid-glass'].includes(design.theme) || design.animationStyle === 'tech-scan';
+  const isGlassMotion = ['glass-motion','aurora-glass','frosted-depth','crystal-prism','aurora-flow','prismatic-light','dynamic-layers'].includes(design.theme) || design.animationStyle === 'floating-glow' || design.animationStyle === 'glass-parallax';
+  const isYoungCreative = ['young-creative','urban-gradient','pop-creative','color-motion','asymmetric-flow','bold-creative','editorial-cover'].includes(design.theme) || design.animationStyle === 'liquid-flow';
+  const isMinimalStudio = ['minimal-studio','pure-white','soft-beige','modern-monochrome','swiss-minimal','monochrome-studio','architectural-lines'].includes(design.theme) || design.animationStyle === 'subtle-fade';
+  const isBusinessSignature = ['business-signature','corporate-executive','modern-consultant','lawyer-elite','architectural-lines'].includes(design.theme);
   const isGradientFinish = design.backgroundFinish === 'gradient' || (!design.backgroundFinish && ['urban-gradient','color-motion','aurora-glass','soft-gradient','bold-gradient','aurora-flow','prismatic-light'].includes(design.theme));
   const isMetallicFinish = design.backgroundFinish === 'metallic' || (!design.backgroundFinish && ['executive-black','champagne-gold','royal-navy','black-gold','platinum-edition','liquid-metal','lawyer-elite','elegance-luxury'].includes(design.theme));
   // El acabado elegido tiene prioridad y las texturas no bloquean los controles.
