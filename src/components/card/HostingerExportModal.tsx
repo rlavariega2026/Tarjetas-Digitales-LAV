@@ -31,7 +31,7 @@ export const HostingerExportModal: React.FC<HostingerExportModalProps> = ({ card
 
   const resolvedClientFolder = toSafeSlug(clientFolder || card.businessName || card.name || 'cliente');
   const resolvedCardFolder = toSafeSlug(cardFolder || card.slug || card.id || 'tarjeta');
-  const finalCardUrl = publishedUrl || `https://lavdigitalmkt.com/tarjetas/${encodeURIComponent(resolvedClientFolder)}/${encodeURIComponent(resolvedCardFolder)}/`;
+  const finalCardUrl = publishedUrl || `https://lavdigitalmkt.com/tarjetas/${encodeURIComponent(resolvedClientFolder)}/${encodeURIComponent(resolvedCardFolder)}/index.html`;
 
   const handleDownload = (filename: string) => {
     const updatedCardForExport: CardData = { ...card, website: finalCardUrl };
@@ -56,7 +56,7 @@ export const HostingerExportModal: React.FC<HostingerExportModalProps> = ({ card
       if (!publishToken.trim()) throw new Error('Escribe el token configurado en Hostinger.');
       try { window.localStorage.setItem('lav-hostinger-publish-token', publishToken.trim()); } catch {}
       if (!resolvedClientFolder || !resolvedCardFolder) throw new Error('Indica la carpeta del cliente y la carpeta de la tarjeta.');
-      const targetUrl = `https://lavdigitalmkt.com/tarjetas/${encodeURIComponent(resolvedClientFolder)}/${encodeURIComponent(resolvedCardFolder)}/`;
+      const targetUrl = `https://lavdigitalmkt.com/tarjetas/${encodeURIComponent(resolvedClientFolder)}/${encodeURIComponent(resolvedCardFolder)}/index.html`;
       const html = generateStandaloneHtml({ ...card, website: targetUrl });
       const response = await fetch('/tarjetas-digitales/api/publish-card.php', {
         method: 'POST',
