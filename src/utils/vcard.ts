@@ -87,7 +87,7 @@ export function getDirectVCardUrl(card: CardData): string {
     return new URL('contact.vcf', window.location.href).toString();
   }
   const safeSlug = (value: string) => value.normalize('NFD')
-    .replace(/[\\u0300-\\u036f]/g, '').toLowerCase()
+    .replace(/[\u0300-\u036f]/g, '').toLowerCase()
     .replace(/[^a-z0-9_-]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 80);
   const clientFolder = safeSlug(card.businessName || card.name || 'cliente') || 'cliente';
   const cardFolder = safeSlug(card.slug || card.name || card.id || 'tarjeta') || 'tarjeta';
