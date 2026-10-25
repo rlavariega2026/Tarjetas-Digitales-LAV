@@ -619,6 +619,7 @@ export function generateStandaloneHtml(card: CardData): string {
       .card-container { width: 100%; max-width: none !important; min-height: 100dvh; border-radius: 0 !important; box-shadow: none !important; }
       #pwaInstallBar, #pwaInstallHelp { display: none !important; }
     }
+    /* lav-card-pwa-install-v1 */
     #pwaInstallBar { position: fixed; z-index: 9997; top: max(10px, env(safe-area-inset-top)); right: 10px; }
     #pwaInstallButton { border: 1px solid rgba(255,255,255,.28); border-radius: 999px; padding: 10px 14px; background: rgba(10,15,28,.88); color: #fff !important; font: 700 12px/1.2 Arial,sans-serif; box-shadow: 0 6px 20px rgba(0,0,0,.25); backdrop-filter: blur(12px); cursor: pointer; }
     #pwaInstallHelp { position: fixed; inset: 0; z-index: 9998; display: none; align-items: center; justify-content: center; padding: 20px; background: rgba(0,0,0,.72); backdrop-filter: blur(8px); }
@@ -793,7 +794,7 @@ export function generateStandaloneHtml(card: CardData): string {
     </div>
   </div>
 
-  <script>
+  <script id="lav-pwa-install-v1">
     (function () {
       var installButton = document.getElementById('pwaInstallButton');
       var installBar = document.getElementById('pwaInstallBar');
