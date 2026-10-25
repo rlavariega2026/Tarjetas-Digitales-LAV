@@ -842,7 +842,13 @@ export function generateStandaloneHtml(card: CardData): string {
         return;
       }
 
-      // 2. Web Share API Nivel 2 con archivo vCard en memoria (abre la hoja nativa con opción directa a "Contactos")
+      // En una tarjeta ya publicada existe contact.vcf junto a index.html; dejar que iOS abra su importador nativo.
+      if (isIOS && window.location.pathname.indexOf('/tarjetas/') === 0) {
+        window.location.href = new URL('contact.vcf', window.location.href).href;
+        return;
+      }
+
+      // Compartir la ficha .vcf con el sistema cuando el navegador admite compartir archivos.
       if (navigator.share && window.File) {
         try {
           const file = new File([CARD_DATA.vcard], (CARD_DATA.name.replace(/[^a-zA-Z0-9]/g, '_') || 'contacto') + '.vcf', {
