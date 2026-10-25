@@ -6,6 +6,7 @@ import { generateVCardString } from './vcard';
  */
 export function generateStandaloneHtml(card: CardData): string {
   const vcardEncoded = encodeURIComponent(generateVCardString(card));
+  const photoComposition = card.design.photoComposition || 'circle-portrait';
   const cardUrl = card.website || `https://lavdigitalmkt.com/c/${card.slug || card.id}`;
   const absolutePublicImage = [card.design.avatarUrl, card.design.logoUrl, card.design.bannerUrl]
     .find((value) => typeof value === 'string' && /^https:\/\//i.test(value) && !value.startsWith('data:'));
@@ -322,6 +323,19 @@ export function generateStandaloneHtml(card: CardData): string {
       justify-content: space-between;
       align-items: flex-end;
     }
+    /* Composiciones fotográficas principales también se respetan en la tarjeta publicada. */
+    .photo-top-large .cover-banner { display: none; }
+    .photo-top-large .content-body { padding-top: 0; }
+    .photo-top-large .avatar-wrapper { display: block; position: relative; margin: 0 -22px 18px; }
+    .photo-top-large .avatar { display: block; width: 100%; height: 270px; border: 0; border-radius: 0; box-shadow: none; }
+    .photo-top-large .business-logo { position: absolute; right: 16px; bottom: 14px; max-width: 120px; max-height: 52px; padding: 6px; border-radius: 8px; background: rgba(0,0,0,.35); }
+    .photo-bottom-compact .avatar-wrapper { display: none; }
+    .bottom-compact-photo { width: 100%; aspect-ratio: 16 / 9; margin: 8px 0 20px; border-radius: 16px; overflow: hidden; border: 1px solid rgba(255,255,255,.12); box-shadow: 0 12px 28px rgba(0,0,0,.25); }
+    .bottom-compact-photo img { display: block; width: 100%; height: 100%; object-fit: cover; }
+    @media (max-width: 600px) {
+      .photo-top-large .avatar-wrapper { margin-left: -22px; margin-right: -22px; }
+      .photo-top-large .avatar { height: 34svh; min-height: 220px; max-height: 340px; }
+    }
     .avatar {
       width: 100px;
       height: 100px;
@@ -601,7 +615,7 @@ export function generateStandaloneHtml(card: CardData): string {
   </style>
 </head>
 <body>
-  <div class="card-container ${isEleganceLuxury ? 'anim-shimmer-sweep' : ''} ${isFutureTech ? 'anim-border-beam' : ''}">
+  <div class="card-container photo-${photoComposition} ${isEleganceLuxury ? 'anim-shimmer-sweep' : ''} ${isFutureTech ? 'anim-border-beam' : ''}">
     ${isGlassMotion ? '<div class="anim-float-orb-1"></div><div class="anim-float-orb-2"></div>' : ''}
     ${isFutureTech ? '<div class="anim-scanline"></div>' : ''}
     <div class="cover-banner ${isYoungCreative && !card.design.bannerUrl ? 'anim-liquid-flow' : ''}"></div>
@@ -616,6 +630,8 @@ export function generateStandaloneHtml(card: CardData): string {
       ${card.jobTitle ? `<div class="job-title card-stagger-2">${escapeHtml(card.jobTitle)}</div>` : ''}
 
       ${card.bio ? `<div class="bio-text card-stagger-2">${escapeHtml(card.bio)}</div>` : ''}
+
+      ${photoComposition === 'bottom-compact' ? `<div class="bottom-compact-photo card-stagger-2"><img src="${card.design.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=700'}" alt="${escapeHtml(card.name)}"></div>` : ''}
 
       <!-- Quick Action Grid -->
       <div class="action-grid card-stagger-3">
