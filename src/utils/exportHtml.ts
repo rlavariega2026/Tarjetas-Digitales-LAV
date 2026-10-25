@@ -96,6 +96,9 @@ export function generateStandaloneHtml(card: CardData): string {
   <meta name="twitter:description" content="${escapeHtml(previewDescription)}">
   <meta name="twitter:image" content="${escapeHtml(previewImageUrl)}">
   <link rel="canonical" href="${escapeHtml(cardUrl)}">
+  <link rel="manifest" href="./manifest.json">
+  <link rel="apple-touch-icon" href="/tarjetas-digitales/apple-touch-icon.png">
+  <script>if("serviceWorker" in navigator){window.addEventListener("load",function(){navigator.serviceWorker.register("./sw.js",{scope:"./",updateViaCache:"none"}).catch(function(e){console.error("PWA de tarjeta:",e)})})}</script>
   <meta name="theme-color" content="${card.design.primaryColor}">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -111,14 +114,16 @@ export function generateStandaloneHtml(card: CardData): string {
       display: flex;
       justify-content: center;
       align-items: flex-start;
-      padding: 16px;
+      padding: 0;
+      width: 100%;
       -webkit-font-smoothing: antialiased;
     }
     .card-container {
       color: var(--card-text-color) !important;
       width: 100%;
-      max-width: 440px;
-      background: ${card.design.backgroundTextureUrl ? `url("${card.design.backgroundTextureUrl}") center / cover fixed` : card.design.backgroundFinish === 'metallic' || ['executive-black','champagne-gold','royal-navy','black-gold','platinum-edition','liquid-metal','lawyer-elite'].includes(card.design.theme) ? 'linear-gradient(115deg,#27272a 0%,#d4d4d8 14%,#71717a 28%,#fef3c7 43%,#a16207 56%,#f8fafc 70%,#52525b 84%,#e5e7eb 100%)' : card.design.backgroundFinish === 'gradient' || ['urban-gradient','color-motion','aurora-glass','soft-gradient','bold-gradient','aurora-flow','prismatic-light'].includes(card.design.theme) ? `linear-gradient(135deg,${card.design.primaryColor},${card.design.secondaryColor},${card.design.accentColor})` : card.design.backgroundColor};
+      max-width: 480px;
+      min-height: 100svh;
+      background: ${card.design.backgroundTextureUrl ? `url("${card.design.backgroundTextureUrl}") center / cover` : card.design.backgroundFinish === 'metallic' || ['executive-black','champagne-gold','royal-navy','black-gold','platinum-edition','liquid-metal','lawyer-elite'].includes(card.design.theme) ? 'linear-gradient(115deg,#27272a 0%,#d4d4d8 14%,#71717a 28%,#fef3c7 43%,#a16207 56%,#f8fafc 70%,#52525b 84%,#e5e7eb 100%)' : card.design.backgroundFinish === 'gradient' || ['urban-gradient','color-motion','aurora-glass','soft-gradient','bold-gradient','aurora-flow','prismatic-light'].includes(card.design.theme) ? `linear-gradient(135deg,${card.design.primaryColor},${card.design.secondaryColor},${card.design.accentColor})` : card.design.backgroundColor};
       border-radius: 28px;
       overflow: hidden;
       box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.08);
