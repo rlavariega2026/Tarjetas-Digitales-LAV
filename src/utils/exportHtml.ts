@@ -754,7 +754,7 @@ export function generateStandaloneHtml(card: CardData): string {
         ${card.paypal.description ? `<p style="font-size:12px; margin:8px 0; color:#cbd5e1;"><strong>Concepto:</strong> ${escapeHtml(card.paypal.description)}</p>` : ''}
         ${card.paypal.paymentLink ? `<div class="bank-field-row"><span><strong>Enlace para recibir el pago:</strong> <a href="${escapeHtml(card.paypal.paymentLink)}" target="_blank" rel="noopener noreferrer" style="color:#93c5fd; text-decoration:underline;">Abrir enlace PayPal</a></span><button class="bank-copy-btn" onclick="copyText(${escapeHtml(JSON.stringify(card.paypal.paymentLink))}, 'Enlace PayPal')">Copiar enlace</button></div>` : ''}
         ${!card.paypal.businessEmail && !card.paypal.paymentLink && !card.paypal.clientId ? `<p style="font-size:12px; color:#cbd5e1;">Configura el correo de la cuenta PayPal o el enlace para recibir pagos.</p>` : ''}
-        ${card.paypal.paymentLink ? `<button onclick="window.open(${escapeHtml(JSON.stringify(card.paypal.paymentLink))}, '_blank', 'noopener')" style="display:block; width:100%; margin-top:10px; padding:12px 16px; background:#0070ba; color:#fff; border:0; border-radius:12px; font-weight:700; font-size:13px; cursor:pointer;">Enviar pago a esta cuenta PayPal</button>` : ''}
+        ${card.paypal.paymentLink ? `<button onclick="copyText(${escapeHtml(JSON.stringify(card.paypal.paymentLink))}, 'Enlace de cobro PayPal')" style="display:block; width:100%; margin-top:10px; padding:12px 16px; background:#0070ba; color:#fff; border:0; border-radius:12px; font-weight:700; font-size:13px; cursor:pointer;">Copiar enlace de cobro PayPal</button>` : ''}
       </div>` : ''}
 
       <!-- Embedded Video (YouTube / Shorts) -->
@@ -963,8 +963,7 @@ export function generateStandaloneHtml(card: CardData): string {
 
       // En iPhone/iPad, abrir la vCard directamente antes de intentar compartirla.
       // navigator.share muestra una hoja genérica; no lleva directamente a la ficha de Contactos.
-      const ua = navigator.userAgent || '';
-      const isIOS = /iPhone|iPad|iPod/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+      const isIOS = /iphone|ipad|ipod/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
       if (isIOS) {
         const blob = new Blob([CARD_DATA.vcard], { type: 'text/vcard;charset=utf-8' });
         const url = URL.createObjectURL(blob);
