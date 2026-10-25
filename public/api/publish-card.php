@@ -129,4 +129,4 @@ $serviceWorker = str_replace('lav-card-shell-v1', 'lav-card-shell-' . substr(has
 file_put_contents($dir . '/sw.js', $serviceWorker, LOCK_EX);
 @chmod($dir . '/sw.js', 0644);
 $host = $_SERVER['HTTP_HOST'] ?? 'lavdigitalmkt.com';
-out(200, ['ok'=>true,'url'=>'https://' . $host . '/tarjetas/' . rawurlencode($clientFolder) . '/' . rawurlencode($cardFolder) . '/']);
+out(200, ['ok'=>true,'url'=>'https://' . $host . '/tarjetas/' . rawurlencode($clientFolder) . '/' . rawurlencode($cardFolder) . '/index.html']);
