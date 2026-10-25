@@ -215,7 +215,7 @@ export const CardEditor: React.FC<CardEditorProps> = ({
       paypal: {
         enabled: false,
         currency: 'USD',
-        buttonText: 'Pagar con PayPal',
+        buttonText: 'Pagarme por PayPal',
         ...prev.paypal,
         [field]: value,
       },
@@ -2913,10 +2913,10 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                   </div>
                   <div>
                     <h3 className="text-xs font-bold text-white uppercase tracking-wider">
-                      Integración PayPal
+                      Cobros y datos para recibir pagos por PayPal
                     </h3>
                     <p className="text-[11px] text-slate-400">
-                      Acepta pagos y anticipos con enlace oficial PayPal.me o pasarela de pago.
+                      Configura los datos que verá tu cliente para enviarte un pago. Usa tu correo receptor y/o un enlace de cobro de PayPal.
                     </p>
                   </div>
                 </div>
@@ -2924,8 +2924,8 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                 {/* Enable toggle */}
                 <div className="p-3.5 rounded-2xl bg-slate-800/80 border border-slate-700 flex items-center justify-between">
                   <div>
-                    <p className="text-xs font-bold text-slate-200">Mostrar Botón de Pago PayPal</p>
-                    <p className="text-[11px] text-slate-400">Redirección segura al checkout oficial de PayPal</p>
+                    <p className="text-xs font-bold text-slate-200">Mostrar sección para recibir pagos</p>
+                    <p className="text-[11px] text-slate-400">Muestra tu correo receptor, concepto, monto sugerido y enlace de cobro.</p>
                   </div>
                   <label className="relative inline-flex items-center cursor-pointer">
                     <input
@@ -2941,7 +2941,7 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                 <div className="space-y-3 p-4 rounded-2xl bg-slate-900/60 border border-slate-800">
                   <div>
                     <label className="block text-[11px] font-medium text-slate-300 mb-1">
-                      Enlace de Pago Directo PayPal.me o Enlace Seguro *
+                      Enlace de cobro para recibir pagos (opcional)
                     </label>
                     <input
                       type="url"
@@ -2990,7 +2990,7 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                   <div className="grid grid-cols-2 gap-2.5">
                     <div>
                       <label className="block text-[11px] font-medium text-slate-300 mb-1">
-                        Correo de PayPal (Opcional)
+                        Correo de PayPal que recibe el dinero (opcional)
                       </label>
                       <input
                         type="email"
@@ -3009,7 +3009,7 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                         type="text"
                         value={card.paypal?.buttonText || ''}
                         onChange={(e) => updatePayPal('buttonText', e.target.value)}
-                        placeholder="Pagar con PayPal"
+                        placeholder="Pagarme por PayPal"
                         className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:ring-2 focus:ring-blue-500"
                       />
                     </div>
@@ -3017,7 +3017,7 @@ export const CardEditor: React.FC<CardEditorProps> = ({
 
                   <div>
                     <label className="block text-[11px] font-medium text-slate-300 mb-1">
-                      Concepto o Descripción del Cobro
+                      Concepto que verá quien te pague
                     </label>
                     <input
                       type="text"
