@@ -19,6 +19,39 @@ if (!$token || !preg_match('/^Bearer\\s+(.+)$/i', $auth, $m) || !hash_equals($to
 $raw = file_get_contents('php://input');
 if (!$raw || strlen($raw) > 12000000) out(413, ['ok'=>false,'error'=>'La publicación supera los 12 MB. Reduce el peso de las imágenes e inténtalo otra vez.']);
 $data = json_decode($raw, true);
+if (is_array($data) && ($data['action'] ?? '') === 'repairExistingCards') {
+    $cardsRoot = dirname(__DIR__, 2) . '/tarjetas';
+    if (!is_dir($cardsRoot)) out(200, ['ok'=>true,'repaired'=>0,'message'=>'No existe todavía la carpeta de tarjetas publicadas.']);
+    $style = '<style id="lav-fullscreen-card-fix-v1">@media(max-width:600px){html,body{width:100%!important;min-height:100%!important;margin:0!important;padding:0!important}body{min-height:100vh!important;min-height:100dvh!important;padding:0!important;display:flex!important;align-items:stretch!important;justify-content:flex-start!important;overflow-x:hidden!important}.card-container{width:100%!important;max-width:none!important;min-height:100vh!important;min-height:100dvh!important;margin:0!important;border-radius:0!important;border:0!important;box-shadow:none!important;overflow:hidden!important}.cover-banner{border-radius:0!important}}@media(display-mode:standalone){html,body{margin:0!important;padding:0!important}.card-container{max-width:none!important;margin:0!important;border-radius:0!important;box-shadow:none!important}}</style>';
+    $repaired = 0; $skipped = 0;
+    try {
+        $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($cardsRoot, FilesystemIterator::SKIP_DOTS));
+        foreach ($iterator as $file) {
+            if (!$file->isFile() || strtolower($file->getFilename()) !== 'index.html' || $file->getSize() > 12000000) continue;
+            $path = $file->getPathname();
+            $html = @file_get_contents($path);
+            if (!is_string($html) || stripos($html, '<html') === false) { $skipped++; continue; }
+            if (strpos($html, 'lav-fullscreen-card-fix-v1') !== false) { $skipped++; continue; }
+            if (stripos($html, '</head>') !== false) {
+                $html = preg_replace('/<\/head>/i', $style . "\n</head>", $html, 1);
+            } elseif (stripos($html, '</style>') !== false) {
+                $html = preg_replace('/<\/style>/i', '</style>' . $style, $html, 1);
+            } else {
+                $html = preg_replace('/<body\b/i', $style . '<body', $html, 1);
+            }
+            $tmp = tempnam(dirname($path), 'fix');
+            if ($tmp && file_put_contents($tmp, $html, LOCK_EX) !== false && @chmod($tmp, 0644) && @rename($tmp, $path)) {
+                $repaired++;
+            } else {
+                if ($tmp && file_exists($tmp)) @unlink($tmp);
+                $skipped++;
+            }
+        }
+    } catch (Throwable $e) {
+        out(500, ['ok'=>false,'error'=>'No se pudo recorrer la carpeta de tarjetas publicadas.']);
+    }
+    out(200, ['ok'=>true,'repaired'=>$repaired,'skipped'=>$skipped,'message'=>'Corrección aplicada a las tarjetas existentes.']);
+}
 $clientFolder = (string)($data['clientFolder'] ?? '');
 $cardFolder = (string)($data['cardFolder'] ?? '');
 $html = $data['html'] ?? '';
