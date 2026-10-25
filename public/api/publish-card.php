@@ -17,7 +17,7 @@ if (!$auth && function_exists('getallheaders')) {
 if (!$token || !preg_match('/^Bearer\\s+(.+)$/i', $auth, $m) || !hash_equals($token, trim($m[1]))) out(401, ['ok'=>false,'error'=>'Token incorrecto']);
 
 $raw = file_get_contents('php://input');
-if (!$raw || strlen($raw) > 2000000) out(413, ['ok'=>false,'error'=>'HTML vacío o demasiado grande']);
+if (!$raw || strlen($raw) > 12000000) out(413, ['ok'=>false,'error'=>'La publicación supera los 12 MB. Reduce el peso de las imágenes e inténtalo otra vez.']);
 $data = json_decode($raw, true);
 $clientFolder = (string)($data['clientFolder'] ?? '');
 $cardFolder = (string)($data['cardFolder'] ?? '');
@@ -41,5 +41,58 @@ if (!$tmp || file_put_contents($tmp, $html, LOCK_EX) === false || !@chmod($tmp, 
     if ($tmp && file_exists($tmp)) @unlink($tmp);
     out(500, ['ok'=>false,'error'=>'No se pudo guardar index.html']);
 }
+
+// Cada tarjeta publicada también puede instalarse como PWA independiente.
+$displayName = ucwords(str_replace(['-', '_'], ' ', $clientFolder));
+$manifest = [
+    'id' => './',
+    'name' => $displayName . ' — Tarjeta Digital',
+    'short_name' => substr($displayName, 0, 20),
+    'description' => 'Tarjeta digital profesional e interactiva',
+    'start_url' => './',
+    'scope' => './',
+    'display' => 'standalone',
+    'display_override' => ['standalone', 'minimal-ui'],
+    'orientation' => 'portrait',
+    'background_color' => '#070b14',
+    'theme_color' => '#0f172a',
+    'icons' => [
+        ['src' => '/tarjetas-digitales/pwa-192x192.png', 'sizes' => '192x192', 'type' => 'image/png'],
+        ['src' => '/tarjetas-digitales/pwa-512x512.png', 'sizes' => '512x512', 'type' => 'image/png'],
+    ],
+];
+$manifestJson = json_encode($manifest, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+if ($manifestJson !== false) {
+    file_put_contents($dir . '/manifest.json', $manifestJson, LOCK_EX);
+    @chmod($dir . '/manifest.json', 0644);
+}
+$serviceWorker = <<<'SW'
+const CACHE_NAME = 'lav-card-shell-v1';
+self.addEventListener('install', event => {
+  self.skipWaiting();
+  event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.add('./')));
+});
+self.addEventListener('activate', event => {
+  event.waitUntil(
+    caches.keys().then(keys => Promise.all(keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key))))
+      .then(() => self.clients.claim())
+  );
+});
+self.addEventListener('fetch', event => {
+  const request = event.request;
+  if (request.method !== 'GET' || new URL(request.url).origin !== self.location.origin) return;
+  if (request.mode === 'navigate') {
+    event.respondWith(fetch(request).then(response => {
+      if (response.ok) {
+        const copy = response.clone();
+        caches.open(CACHE_NAME).then(cache => cache.put('./', copy));
+      }
+      return response;
+    }).catch(() => caches.match('./')));
+  }
+});
+SW;
+file_put_contents($dir . '/sw.js', $serviceWorker, LOCK_EX);
+@chmod($dir . '/sw.js', 0644);
 $host = $_SERVER['HTTP_HOST'] ?? 'lavdigitalmkt.com';
 out(200, ['ok'=>true,'url'=>'https://' . $host . '/tarjetas/' . rawurlencode($clientFolder) . '/' . rawurlencode($cardFolder) . '/']);
