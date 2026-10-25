@@ -322,7 +322,14 @@ export function generateStandaloneHtml(card: CardData): string {
       align-items: flex-end;
     }
     /* Composiciones fotográficas principales también se respetan en la tarjeta publicada. */
+    /* Composición Hero: la foto es el encabezado, sin etiquetas promocionales superpuestas. */
     .photo-top-large .cover-banner { display: none; }
+    .photo-top-large .profile-featured-label,
+    .photo-top-large .featured-profile,
+    .photo-top-large [data-label="Perfil Destacado"],
+    .photo-bottom-compact .active-card-label,
+    .photo-bottom-compact .digital-card-active,
+    .photo-bottom-compact [data-label="Tarjeta Digital Activa"] { display: none !important; }
     .photo-top-large .content-body { padding-top: 0; }
     .photo-top-large .avatar-wrapper { display: block; position: relative; margin: 0 -22px 18px; }
     .photo-top-large .avatar { display: block; width: 100%; height: 270px; border: 0; border-radius: 0; box-shadow: none; }
@@ -885,6 +892,29 @@ export function generateStandaloneHtml(card: CardData): string {
       window.setTimeout(function() { URL.revokeObjectURL(url); }, 60000);
     }
   </script>
+<script>
+/* Limpia etiquetas heredadas de versiones anteriores en tarjetas exportadas. */
+(function () {
+  var unwanted = ['Perfil Destacado', 'Tarjeta Digital Activa'];
+  function removeLegacyLabels() {
+    var nodes = document.querySelectorAll('body *');
+    nodes.forEach(function (el) {
+      if (el.children.length > 2) return;
+      var text = (el.textContent || '').replace(/\\s+/g, ' ').trim();
+      if (!text || !unwanted.some(function (label) { return text === label || text.indexOf(label) !== -1; })) return;
+      var target = el;
+      for (var i = 0; i < 3 && target.parentElement && target.parentElement !== document.body; i++) {
+        var parent = target.parentElement;
+        if (parent.children.length <= 3 && parent.textContent.trim().length < 100) target = parent;
+        else break;
+      }
+      target.style.setProperty('display', 'none', 'important');
+    });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', removeLegacyLabels);
+  else removeLegacyLabels();
+})();
+</script>
 </body>
 </html>`;
 }
