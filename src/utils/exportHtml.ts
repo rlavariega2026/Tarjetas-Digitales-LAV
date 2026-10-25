@@ -609,10 +609,25 @@ export function generateStandaloneHtml(card: CardData): string {
       z-index: 9999;
     }
     @media (max-width: 600px) {
-      html, body { width: 100%; min-height: 100%; padding: 0; margin: 0; }
-      body { align-items: stretch; }
-      .card-container { width: 100%; max-width: none !important; min-height: 100svh; border-radius: 0 !important; box-shadow: none !important; }
+      html, body { width: 100%; min-height: 100%; min-height: 100dvh; padding: 0; margin: 0; }
+      body { align-items: stretch; min-height: 100dvh; }
+      .card-container { width: 100%; max-width: none !important; min-height: 100svh; min-height: 100dvh; border-radius: 0 !important; box-shadow: none !important; }
     }
+    @media (display-mode: standalone), (display-mode: fullscreen) {
+      html, body { width: 100%; min-height: 100%; min-height: 100dvh; margin: 0; padding: 0; }
+      body { justify-content: flex-start; align-items: stretch; }
+      .card-container { width: 100%; max-width: none !important; min-height: 100dvh; border-radius: 0 !important; box-shadow: none !important; }
+      #pwaInstallBar, #pwaInstallHelp { display: none !important; }
+    }
+    #pwaInstallBar { position: fixed; z-index: 9997; top: max(10px, env(safe-area-inset-top)); right: 10px; }
+    #pwaInstallButton { border: 1px solid rgba(255,255,255,.28); border-radius: 999px; padding: 10px 14px; background: rgba(10,15,28,.88); color: #fff !important; font: 700 12px/1.2 Arial,sans-serif; box-shadow: 0 6px 20px rgba(0,0,0,.25); backdrop-filter: blur(12px); cursor: pointer; }
+    #pwaInstallHelp { position: fixed; inset: 0; z-index: 9998; display: none; align-items: center; justify-content: center; padding: 20px; background: rgba(0,0,0,.72); backdrop-filter: blur(8px); }
+    #pwaInstallHelp.is-open { display: flex; }
+    #pwaInstallPanel { position: relative; width: min(100%, 380px); padding: 24px; border-radius: 22px; background: #101827; color: #f8fafc; border: 1px solid rgba(255,255,255,.14); box-shadow: 0 24px 80px rgba(0,0,0,.5); font: 14px/1.55 Arial,sans-serif; }
+    #pwaInstallPanel h2 { margin: 0 30px 12px 0; font-size: 20px; line-height: 1.2; color: #fff !important; }
+    #pwaInstallPanel p { margin: 8px 0; color: #e2e8f0 !important; }
+    #pwaInstallClose { position: absolute; top: 10px; right: 12px; border: 0; background: transparent; color: #fff !important; font-size: 26px; cursor: pointer; }
+    #pwaInstallOk { display: block; width: 100%; margin-top: 16px; padding: 12px; border: 0; border-radius: 12px; background: #4f46e5; color: #fff !important; font-weight: 700; cursor: pointer; }
     /* El color de texto es independiente de la paleta y se aplica a la tarjeta publicada. */
     .card-container :is(div,h1,h2,h3,h4,p,span,strong,em,label,small,li,a,button):not(.social-icon-btn) {
       color: var(--card-text-color) !important;
@@ -767,8 +782,63 @@ export function generateStandaloneHtml(card: CardData): string {
     </div>
   </div>
   <div id="toastNotice"></div>
+  <div id="pwaInstallBar"><button id="pwaInstallButton" type="button">Instalar como app</button></div>
+  <div id="pwaInstallHelp" role="dialog" aria-modal="true" aria-labelledby="pwaInstallTitle">
+    <div id="pwaInstallPanel">
+      <button id="pwaInstallClose" type="button" aria-label="Cerrar">×</button>
+      <h2 id="pwaInstallTitle">Abre esta tarjeta como una app</h2>
+      <p id="pwaInstallInstructions">Instala esta tarjeta en tu celular para abrirla desde un icono, sin la barra normal del navegador.</p>
+      <p id="pwaInstallSteps"></p>
+      <button id="pwaInstallOk" type="button">Entendido</button>
+    </div>
+  </div>
 
   <script>
+    (function () {
+      var installButton = document.getElementById('pwaInstallButton');
+      var installBar = document.getElementById('pwaInstallBar');
+      var help = document.getElementById('pwaInstallHelp');
+      var closeButton = document.getElementById('pwaInstallClose');
+      var okButton = document.getElementById('pwaInstallOk');
+      var steps = document.getElementById('pwaInstallSteps');
+      var deferredPrompt = null;
+      var ua = navigator.userAgent || '';
+      var isIOS = /iphone|ipad|ipod/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+      var isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.matchMedia('(display-mode: fullscreen)').matches || navigator.standalone === true;
+      if (isStandalone && installBar) installBar.style.display = 'none';
+      window.addEventListener('beforeinstallprompt', function (event) {
+        event.preventDefault();
+        deferredPrompt = event;
+      });
+      window.addEventListener('appinstalled', function () {
+        if (installBar) installBar.style.display = 'none';
+        if (help) help.classList.remove('is-open');
+      });
+      function closeHelp() { if (help) help.classList.remove('is-open'); }
+      if (closeButton) closeButton.addEventListener('click', closeHelp);
+      if (okButton) okButton.addEventListener('click', closeHelp);
+      if (help) help.addEventListener('click', function (event) { if (event.target === help) closeHelp(); });
+      if (installButton) installButton.addEventListener('click', async function () {
+        if (isStandalone) { installBar.style.display = 'none'; return; }
+        if (deferredPrompt) {
+          deferredPrompt.prompt();
+          await deferredPrompt.userChoice;
+          deferredPrompt = null;
+          return;
+        }
+        if (steps) {
+          if (isIOS) {
+            steps.textContent = 'En Safari: pulsa Compartir, elige “Añadir a pantalla de inicio”, activa “Abrir como app” si aparece y pulsa Añadir. Si abriste el enlace desde WhatsApp, primero ábrelo en Safari.';
+          } else if (/android/i.test(ua)) {
+            steps.textContent = 'En Chrome: pulsa el menú ⋮ y elige “Instalar aplicación” o “Añadir a pantalla de inicio”. Si abriste el enlace dentro de otra app, elige Abrir en Chrome y repite estos pasos.';
+          } else {
+            steps.textContent = 'Abre este enlace en Chrome o Edge y utiliza la opción Instalar aplicación del menú del navegador.';
+          }
+        }
+        if (help) help.classList.add('is-open');
+      });
+    })();
+
     function showToast(msg) {
       var t = document.getElementById('toastNotice');
       if (!t) return;
