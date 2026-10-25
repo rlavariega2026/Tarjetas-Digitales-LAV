@@ -72,6 +72,32 @@ export function generateStandaloneHtml(card: CardData): string {
   const isYoungCreative = ['young-creative','urban-gradient','pop-creative','color-motion','asymmetric-flow','bold-creative','editorial-cover'].includes(card.design.theme) || card.design.animationStyle === 'liquid-flow';
   const isMinimalStudio = ['minimal-studio','pure-white','soft-beige','modern-monochrome','swiss-minimal','monochrome-studio','architectural-lines'].includes(card.design.theme) || card.design.animationStyle === 'subtle-fade';
   const isBusinessSignature = ['business-signature','corporate-executive','modern-consultant','lawyer-elite','architectural-lines'].includes(card.design.theme);
+  const metallicBackground = 'linear-gradient(115deg,#27272a 0%,#d4d4d8 14%,#71717a 28%,#fef3c7 43%,#a16207 56%,#f8fafc 70%,#52525b 84%,#e5e7eb 100%)';
+  const gradientBackground = `linear-gradient(135deg,${card.design.primaryColor || '#06b6d4'},${card.design.secondaryColor || '#7c3aed'},${card.design.accentColor || '#ec4899'})`;
+  const patternBackground = (() => {
+    switch (card.design.backgroundPattern) {
+      case 'dots': return 'radial-gradient(circle, rgba(255,255,255,0.08) 1.5px, transparent 1.5px) 0 0 / 20px 20px';
+      case 'mesh': return 'radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.25) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(236, 72, 153, 0.2) 0px, transparent 50%)';
+      case 'geometric': return 'repeating-linear-gradient(45deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 10px, transparent 10px, transparent 20px)';
+      case 'carbon': return 'radial-gradient(black 15%, transparent 16%) 0 0, radial-gradient(black 15%, transparent 16%) 8px 8px, radial-gradient(rgba(255,255,255,.05) 15%, transparent 20%) 0 1px, radial-gradient(rgba(255,255,255,.05) 15%, transparent 20%) 8px 9px';
+      default: return 'none';
+    }
+  })();
+  const isGradientFinish = card.design.backgroundFinish === 'gradient' || (!card.design.backgroundFinish && ['urban-gradient','color-motion','aurora-glass','soft-gradient','bold-gradient','aurora-flow','prismatic-light','royal-velvet'].includes(card.design.theme));
+  const isMetallicFinish = card.design.backgroundFinish === 'metallic' || (!card.design.backgroundFinish && ['executive-black','champagne-gold','royal-navy','black-gold','platinum-edition','liquid-metal','lawyer-elite','elegance-luxury','cyber-chrome'].includes(card.design.theme));
+  const cardBackgroundImage = card.design.backgroundFinish === 'gradient'
+    ? gradientBackground
+    : card.design.backgroundFinish === 'metallic'
+    ? metallicBackground
+    : card.design.backgroundTextureUrl
+    ? `url("${card.design.backgroundTextureUrl}")`
+    : card.design.backgroundFinish === 'solid'
+    ? patternBackground
+    : isMetallicFinish
+    ? metallicBackground
+    : isGradientFinish
+    ? gradientBackground
+    : patternBackground;
 
   return `<!DOCTYPE html>
 <html lang="es">
@@ -121,7 +147,10 @@ export function generateStandaloneHtml(card: CardData): string {
       color: var(--card-text-color) !important;
       width: 100%;
       max-width: 440px;
-      background: ${card.design.backgroundTextureUrl ? `url("${card.design.backgroundTextureUrl}") center / cover fixed` : card.design.backgroundFinish === 'metallic' || ['executive-black','champagne-gold','royal-navy','black-gold','platinum-edition','liquid-metal','lawyer-elite'].includes(card.design.theme) ? 'linear-gradient(115deg,#27272a 0%,#d4d4d8 14%,#71717a 28%,#fef3c7 43%,#a16207 56%,#f8fafc 70%,#52525b 84%,#e5e7eb 100%)' : card.design.backgroundFinish === 'gradient' || ['urban-gradient','color-motion','aurora-glass','soft-gradient','bold-gradient','aurora-flow','prismatic-light'].includes(card.design.theme) ? `linear-gradient(135deg,${card.design.primaryColor},${card.design.secondaryColor},${card.design.accentColor})` : card.design.backgroundColor};
+      background-color: ${card.design.backgroundColor};
+      background-image: ${cardBackgroundImage};
+      background-size: ${card.design.backgroundTextureUrl ? 'cover' : 'auto'};
+      background-position: center;
       border-radius: 28px;
       overflow: hidden;
       box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.08);
@@ -148,7 +177,7 @@ export function generateStandaloneHtml(card: CardData): string {
         max-width: 420px;
         min-height: 0;
         border-radius: 26px;
-        background: ${card.design.backgroundColor};
+        background-color: ${card.design.backgroundColor};
         border: 1px solid rgba(255,255,255,.12);
         box-shadow: 0 28px 75px rgba(0,0,0,.52), 0 0 0 1px rgba(255,255,255,.035);
         margin: 0 auto;
