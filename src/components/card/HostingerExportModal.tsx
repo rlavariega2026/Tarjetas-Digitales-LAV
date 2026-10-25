@@ -24,6 +24,8 @@ export const HostingerExportModal: React.FC<HostingerExportModalProps> = ({ card
   const [publishError, setPublishError] = useState('');
   const [publishedUrl, setPublishedUrl] = useState('');
   const [copiedUrl, setCopiedUrl] = useState(false);
+  const [repairing, setRepairing] = useState(false);
+  const [repairResult, setRepairResult] = useState('');
 
   if (!card) return null;
 
@@ -73,6 +75,28 @@ export const HostingerExportModal: React.FC<HostingerExportModalProps> = ({ card
     }
   };
 
+  const handleRepairExisting = async () => {
+    setRepairing(true);
+    setRepairResult('');
+    setPublishError('');
+    try {
+      if (!publishToken.trim()) throw new Error('Escribe el token configurado en Hostinger.');
+      try { window.localStorage.setItem('lav-hostinger-publish-token', publishToken.trim()); } catch {}
+      const response = await fetch('/tarjetas-digitales/api/publish-card.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + publishToken.trim() },
+        body: JSON.stringify({ action: 'repairExistingCards' }),
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok || !result.ok) throw new Error(result.error || 'No se pudieron corregir las tarjetas (' + response.status + ').');
+      setRepairResult('Listo: ' + result.repaired + ' tarjeta(s) corregidas' + (result.skipped ? '; ' + result.skipped + ' omitida(s) porque ya estaban corregidas o no se pudieron modificar.' : '.') );
+    } catch (error) {
+      setPublishError(error instanceof Error ? error.message : 'No se pudieron corregir las tarjetas existentes.');
+    } finally {
+      setRepairing(false);
+    }
+  };
+
   const handleCopyUrl = async () => {
     await navigator.clipboard.writeText(finalCardUrl);
     setCopiedUrl(true);
@@ -100,6 +124,12 @@ export const HostingerExportModal: React.FC<HostingerExportModalProps> = ({ card
             <label className="block font-bold pt-1">Token de publicación de Hostinger</label>
             <input type="password" value={publishToken} onChange={e => setPublishToken(e.target.value)} autoComplete="off" placeholder="Token exclusivo para publicar" className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs font-mono" />
             <p className="text-[11px] text-slate-500">El token se recuerda en este navegador para no pedirlo cada vez. No se incluye en el código público.</p>
+          </div>
+          <div className="p-4 rounded-2xl bg-amber-950/30 border border-amber-500/30 text-xs text-slate-300 space-y-3">
+            <p className="font-bold text-amber-200">Corregir tarjetas que ya están publicadas</p>
+            <p>Aplica el diseño de pantalla completa a los archivos que ya existen en la carpeta /tarjetas/, sin volver a publicar cada tarjeta una por una.</p>
+            <button onClick={handleRepairExisting} disabled={repairing} className="w-full p-3 rounded-xl bg-amber-600 hover:bg-amber-500 disabled:opacity-60 text-white font-bold">{repairing ? 'Corrigiendo tarjetas existentes…' : 'Corregir todas las tarjetas publicadas'}</button>
+            {repairResult && <p role="status" className="text-emerald-300">{repairResult}</p>}
           </div>
           <div className="space-y-3">
             <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider">URL de la tarjeta</label>
