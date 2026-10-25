@@ -39,7 +39,12 @@ INSTALL_JS;
             $cardDir = dirname($path);
             $cardFolder = basename($cardDir);
             $clientFolder = basename(dirname($cardDir));
-            if (strpos($html, 'lav-card-pwa-ready-v1') !== false && file_exists($cardDir . '/manifest.json') && file_exists($cardDir . '/sw.js')) { $skipped++; continue; }
+            if (strpos($html, 'lav-card-pwa-ready-v1') !== false && file_exists($cardDir . '/manifest.json') && file_exists($cardDir . '/sw.js') && file_exists($cardDir . '/contact.vcf')) { $skipped++; continue; }
+            $vcardPattern = '/vcard:\\s*("(?:\\\\.|[^"\\\\])*")/s';
+            if (preg_match($vcardPattern, $html, $vcardMatch)) {
+                $vcardText = json_decode($vcardMatch[1], true);
+                if (is_string($vcardText) && strpos($vcardText, 'BEGIN:VCARD') === 0) { @file_put_contents($cardDir . '/contact.vcf', $vcardText, LOCK_EX); @chmod($cardDir . '/contact.vcf', 0644); }
+            }
             if (strpos($html, 'lav-card-repair-v2') === false) {
                 if (stripos($html, '</head>') !== false) {
                     $html = preg_replace('/<\/head>/i', $style . "\n</head>", $html, 1);
@@ -100,6 +105,15 @@ if (!preg_match($validFolder, $clientFolder) || !preg_match($validFolder, $cardF
 $cardsRoot = dirname(__DIR__, 2) . '/tarjetas';
 $dir = $cardsRoot . '/' . $clientFolder . '/' . $cardFolder;
 if (!is_dir($dir) && !mkdir($dir, 0755, true) && !is_dir($dir)) out(500, ['ok'=>false,'error'=>'No se pudo crear la carpeta de la tarjeta']);
+// Save a standards-based vCard beside the published card so phones can open the native contact import flow.
+$vcardPattern = '/vcard:\\s*("(?:\\\\.|[^"\\\\])*")/s';
+if (preg_match($vcardPattern, $html, $vcardMatch)) {
+    $vcardText = json_decode($vcardMatch[1], true);
+    if (is_string($vcardText) && strpos($vcardText, 'BEGIN:VCARD') === 0) {
+        @file_put_contents($dir . '/contact.vcf', $vcardText, LOCK_EX);
+        @chmod($dir . '/contact.vcf', 0644);
+    }
+}
 // Link the manifest and register the per-card service worker before saving the published HTML.
 $pwaHead = '<meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><link rel="apple-touch-icon" href="/tarjetas-digitales/apple-touch-icon.png"><link rel="manifest" href="./manifest.json"><meta name="lav-card-pwa-ready-v1" content="1">';
 if (stripos($html, 'rel="manifest"') === false && stripos($html, '</head>') !== false) $html = preg_replace('/<\/head>/i', $pwaHead . "\n</head>", $html, 1);
