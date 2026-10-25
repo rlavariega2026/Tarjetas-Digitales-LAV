@@ -587,6 +587,11 @@ export function generateStandaloneHtml(card: CardData): string {
       display: none;
       z-index: 9999;
     }
+    @media (max-width: 600px) {
+      html, body { width: 100%; min-height: 100%; padding: 0; margin: 0; }
+      body { align-items: stretch; }
+      .card-container { width: 100%; max-width: none !important; min-height: 100svh; border-radius: 0 !important; box-shadow: none !important; }
+    }
     /* El color de texto es independiente de la paleta y se aplica a la tarjeta publicada. */
     .card-container :is(div,h1,h2,h3,h4,p,span,strong,em,label,small,li,a,button):not(.social-icon-btn) {
       color: var(--card-text-color) !important;
