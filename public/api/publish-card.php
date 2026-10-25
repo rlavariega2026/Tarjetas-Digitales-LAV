@@ -36,7 +36,10 @@ INSTALL_JS;
             $path = $file->getPathname();
             $html = @file_get_contents($path);
             if (!is_string($html) || stripos($html, '<html') === false) { $skipped++; continue; }
-            if (strpos($html, 'lav-card-repair-v2') !== false && strpos($html, 'lav-card-pwa-install-v1') !== false && strpos($html, 'lav-pwa-install-v1') !== false) { $skipped++; continue; }
+            $cardDir = dirname($path);
+            $cardFolder = basename($cardDir);
+            $clientFolder = basename(dirname($cardDir));
+            if (strpos($html, 'lav-card-pwa-ready-v1') !== false && file_exists($cardDir . '/manifest.json') && file_exists($cardDir . '/sw.js')) { $skipped++; continue; }
             if (strpos($html, 'lav-card-repair-v2') === false) {
                 if (stripos($html, '</head>') !== false) {
                     $html = preg_replace('/<\/head>/i', $style . "\n</head>", $html, 1);
@@ -59,6 +62,18 @@ INSTALL_JS;
             if (strpos($html, 'lav-pwa-install-v1') === false) {
                 $html = preg_replace('/<\/body>/i', $installScript . "\n</body>", $html, 1);
             }
+            // Make each existing published card an actually installable PWA: the HTML must link its manifest and register its own scoped service worker.
+            $pwaHead = '<meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><link rel="apple-touch-icon" href="/tarjetas-digitales/apple-touch-icon.png"><link rel="manifest" href="./manifest.json"><meta name="lav-card-pwa-ready-v1" content="1">';
+            if (stripos($html, 'rel="manifest"') === false && stripos($html, '</head>') !== false) $html = preg_replace('/<\/head>/i', $pwaHead . "\n</head>", $html, 1);
+            elseif (strpos($html, 'lav-card-pwa-ready-v1') === false && stripos($html, '</head>') !== false) $html = preg_replace('/<\/head>/i', '<meta name="lav-card-pwa-ready-v1" content="1"></head>', $html, 1);
+            $pwaRegister = '<script id="lav-card-sw-register-v1">if("serviceWorker" in navigator){window.addEventListener("load",function(){navigator.serviceWorker.register("./sw.js",{scope:"./"}).catch(function(e){console.warn("No se pudo registrar la tarjeta instalable",e);});});}</script>';
+            if (strpos($html, 'lav-card-sw-register-v1') === false && stripos($html, '</body>') !== false) $html = preg_replace('/<\/body>/i', $pwaRegister . "\n</body>", $html, 1);
+            $manifest = ['id'=>'./','name'=>ucwords(str_replace(['-','_'],' ',$clientFolder)) . ' — Tarjeta Digital','short_name'=>substr(ucwords(str_replace(['-','_'],' ',$clientFolder)),0,20),'description'=>'Tarjeta digital profesional e interactiva','start_url'=>'./index.html','scope'=>'./','display'=>'standalone','display_override'=>['standalone','minimal-ui'],'orientation'=>'portrait','background_color'=>'#070b14','theme_color'=>'#0f172a','icons'=>[['src'=>'/tarjetas-digitales/pwa-192x192.png','sizes'=>'192x192','type'=>'image/png','purpose'=>'any'],['src'=>'/tarjetas-digitales/pwa-512x512.png','sizes'=>'512x512','type'=>'image/png','purpose'=>'any']] ];
+            $manifestJson = json_encode($manifest, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+            if ($manifestJson !== false) { @file_put_contents($cardDir . '/manifest.json', $manifestJson, LOCK_EX); @chmod($cardDir . '/manifest.json', 0644); }
+            $swName = 'lav-card-shell-' . substr(hash('sha256', $clientFolder . '/' . $cardFolder), 0, 12) . '-v2';
+            $sw = "const CACHE_NAME = '" . $swName . "';\nself.addEventListener('install',e=>{self.skipWaiting();e.waitUntil(caches.open(CACHE_NAME).then(c=>c.add('./index.html')))});\nself.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('lav-card-shell-')&&k!==CACHE_NAME).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));\nself.addEventListener('fetch',e=>{if(e.request.method!=='GET'||new URL(e.request.url).origin!==self.location.origin)return;if(e.request.mode==='navigate')e.respondWith(fetch(e.request).then(r=>{if(r.ok){const copy=r.clone();caches.open(CACHE_NAME).then(c=>c.put('./index.html',copy))}return r}).catch(()=>caches.match('./index.html')))});";
+            @file_put_contents($cardDir . '/sw.js', $sw, LOCK_EX); @chmod($cardDir . '/sw.js', 0644);
             $tmp = tempnam(dirname($path), 'fix');
             if ($tmp && file_put_contents($tmp, $html, LOCK_EX) !== false && @chmod($tmp, 0644) && @rename($tmp, $path)) {
                 $repaired++;
@@ -85,6 +100,11 @@ if (!preg_match($validFolder, $clientFolder) || !preg_match($validFolder, $cardF
 $cardsRoot = dirname(__DIR__, 2) . '/tarjetas';
 $dir = $cardsRoot . '/' . $clientFolder . '/' . $cardFolder;
 if (!is_dir($dir) && !mkdir($dir, 0755, true) && !is_dir($dir)) out(500, ['ok'=>false,'error'=>'No se pudo crear la carpeta de la tarjeta']);
+// Link the manifest and register the per-card service worker before saving the published HTML.
+$pwaHead = '<meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><link rel="apple-touch-icon" href="/tarjetas-digitales/apple-touch-icon.png"><link rel="manifest" href="./manifest.json"><meta name="lav-card-pwa-ready-v1" content="1">';
+if (stripos($html, 'rel="manifest"') === false && stripos($html, '</head>') !== false) $html = preg_replace('/<\/head>/i', $pwaHead . "\n</head>", $html, 1);
+$pwaRegister = '<script id="lav-card-sw-register-v1">if("serviceWorker" in navigator){window.addEventListener("load",function(){navigator.serviceWorker.register("./sw.js",{scope:"./"}).catch(function(e){console.warn("No se pudo registrar la tarjeta instalable",e);});});}</script>';
+if (strpos($html, 'lav-card-sw-register-v1') === false && stripos($html, '</body>') !== false) $html = preg_replace('/<\/body>/i', $pwaRegister . "\n</body>", $html, 1);
 // Ensure web-readable permissions on the published path.
 @chmod($cardsRoot, 0755);
 @chmod(dirname($dir), 0755);
