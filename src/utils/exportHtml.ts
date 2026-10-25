@@ -918,6 +918,12 @@ export function generateStandaloneHtml(card: CardData): string {
       window.open('https://wa.me/?text=' + encodeURIComponent(lines), '_blank', 'noopener');
     }
 
+    // Los botones usan onclick en el HTML exportado; exponer las funciones en window
+    // garantiza que funcionen también cuando el script esté encapsulado.
+    window.copyText = copyText;
+    window.copyAllBank = copyAllBank;
+    window.shareBankWhatsApp = shareBankWhatsApp;
+
     const CARD_DATA = {
       name: ${JSON.stringify(card.name)},
       business: ${JSON.stringify(card.businessName || '')},
