@@ -40,7 +40,15 @@ INSTALL_JS;
             $cardDir = dirname($path);
             $cardFolder = basename($cardDir);
             $clientFolder = basename(dirname($cardDir));
-            if (strpos($html, 'lav-card-app-shell-v1') !== false && strpos($html, 'lav-card-pwa-ready-v1') !== false && file_exists($cardDir . '/manifest.json') && file_exists($cardDir . '/sw.js') && file_exists($cardDir . '/contact.vcf')) { $skipped++; continue; }
+            // Las tarjetas exportadas ya traen su propio botón "Abrir como app".
+            // El reparador antiguo añadía un segundo botón y un segundo diálogo.
+            $hadDuplicateInstallUi = strpos($html, 'lavInstallButton') !== false && strpos($html, 'pwaInstallBar') !== false;
+            if ($hadDuplicateInstallUi) {
+                $html = preg_replace('/<style id="lav-card-pwa-install-v1">.*?<\/style>/s', '', $html, 1);
+                $html = str_replace($installMarkup, '', $html);
+                $html = preg_replace('/<script id="lav-pwa-install-v1">.*?<\/script>/s', '', $html, 1);
+            }
+            if (!$hadDuplicateInstallUi && strpos($html, 'lav-card-app-shell-v1') !== false && strpos($html, 'lav-card-pwa-ready-v1') !== false && file_exists($cardDir . '/manifest.json') && file_exists($cardDir . '/sw.js') && file_exists($cardDir . '/contact.vcf')) { $skipped++; continue; }
             if (strpos($html, 'lav-card-app-shell-v1') === false && stripos($html, '</head>') !== false) {
                 $html = preg_replace('/<\\/head>/i', $appShellStyle . "\\n</head>", $html, 1);
             }
@@ -58,17 +66,17 @@ INSTALL_JS;
                     $html = preg_replace('/<body\b/i', $style . '<body', $html, 1);
                 }
             }
-            if (strpos($html, 'lav-card-pwa-install-v1') === false && stripos($html, '</head>') !== false) {
+            if (strpos($html, 'lavInstallButton') === false && strpos($html, 'lav-card-pwa-install-v1') === false && stripos($html, '</head>') !== false) {
                 $html = preg_replace('/<\/head>/i', $installStyle . "\n</head>", $html, 1);
             }
-            if (strpos($html, 'pwaInstallBar') === false) {
+            if (strpos($html, 'lavInstallButton') === false && strpos($html, 'pwaInstallBar') === false) {
                 if (strpos($html, '<div id="toastNotice"></div>') !== false) {
                     $html = str_replace('<div id="toastNotice"></div>', '<div id="toastNotice"></div>' . $installMarkup, $html);
                 } else {
                     $html = preg_replace('/<body\b[^>]*>/i', '$0' . $installMarkup, $html, 1);
                 }
             }
-            if (strpos($html, 'lav-pwa-install-v1') === false) {
+            if (strpos($html, 'lavInstallButton') === false && strpos($html, 'lav-pwa-install-v1') === false) {
                 $html = preg_replace('/<\/body>/i', $installScript . "\n</body>", $html, 1);
             }
             // Make each existing published card an actually installable PWA: the HTML must link its manifest and register its own scoped service worker.
