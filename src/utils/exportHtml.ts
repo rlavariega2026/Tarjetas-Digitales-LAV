@@ -210,6 +210,39 @@ export function generateStandaloneHtml(card: CardData): string {
       .cover-banner { height: ${card.design.coverHeight === 'sm' ? '110px' : card.design.coverHeight === 'lg' ? '170px' : '135px'}; }
     }
 
+    /* LAV APP SHELL: la tarjeta publicada ocupa la pantalla del móvil, sin marco de página */
+    @media (max-width: 600px) {
+      html, body { width: 100% !important; min-height: 100% !important; margin: 0 !important; padding: 0 !important; }
+      body {
+        display: block !important;
+        min-height: 100vh !important;
+        min-height: 100dvh !important;
+        padding: 0 !important;
+        align-items: stretch !important;
+        justify-content: flex-start !important;
+        overflow-x: hidden !important;
+        background: ${card.design.backgroundColor} !important;
+      }
+      .card-container {
+        width: 100% !important;
+        width: 100vw !important;
+        max-width: none !important;
+        min-height: 100vh !important;
+        min-height: 100dvh !important;
+        margin: 0 !important;
+        border-radius: 0 !important;
+        border: 0 !important;
+        box-shadow: none !important;
+      }
+      .cover-banner { border-radius: 0 !important; }
+      .content-body { padding-bottom: max(26px, env(safe-area-inset-bottom)) !important; }
+    }
+    @media (display-mode: standalone), (display-mode: fullscreen) {
+      html, body { margin: 0 !important; padding: 0 !important; min-height: 100vh !important; min-height: 100dvh !important; }
+      body { display: block !important; }
+      .card-container { width: 100% !important; max-width: none !important; min-height: 100vh !important; min-height: 100dvh !important; margin: 0 !important; border-radius: 0 !important; box-shadow: none !important; }
+    }
+
     /* Premium Animation Keyframes */
     @keyframes shimmer-sweep {
       0% { left: -160%; }
