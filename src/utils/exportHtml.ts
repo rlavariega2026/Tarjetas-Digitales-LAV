@@ -967,6 +967,41 @@ export function generateStandaloneHtml(card: CardData): string {
       window.setTimeout(function() { URL.revokeObjectURL(url); }, 60000);
     }
   </script>
+  <style id="lav-install-ui-css">
+    #lavInstallButton{position:fixed;z-index:9997;top:max(12px,env(safe-area-inset-top));right:12px;border:1px solid rgba(255,255,255,.28);border-radius:999px;padding:10px 14px;background:rgba(10,15,28,.92);color:#fff;font:700 12px/1.2 Arial,sans-serif;box-shadow:0 6px 20px rgba(0,0,0,.25);backdrop-filter:blur(12px)}
+    #lavInstallDialog{position:fixed;inset:0;z-index:9998;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(0,0,0,.74);backdrop-filter:blur(8px);font-family:Arial,sans-serif}
+    #lavInstallDialog.open{display:flex}
+    #lavInstallPanel{position:relative;width:min(100%,380px);padding:24px;border-radius:22px;background:#101827;color:#f8fafc;border:1px solid rgba(255,255,255,.14);font-size:14px;line-height:1.55}
+    #lavInstallPanel h2{margin:0 30px 12px 0;font-size:20px;color:#fff}
+    #lavInstallPanel p{margin:8px 0;color:#e2e8f0}
+    #lavInstallClose{position:absolute;top:8px;right:12px;border:0;background:transparent;color:#fff;font-size:26px}
+    @media(display-mode:standalone),(display-mode:fullscreen){#lavInstallButton,#lavInstallDialog{display:none!important}}
+  </style>
+  <button id="lavInstallButton" type="button">Abrir como app</button>
+  <div id="lavInstallDialog" role="dialog" aria-modal="true" aria-labelledby="lavInstallTitle">
+    <div id="lavInstallPanel"><button id="lavInstallClose" type="button" aria-label="Cerrar">×</button><h2 id="lavInstallTitle">Usa esta tarjeta como una app</h2><p id="lavInstallInstructions">Agrega esta tarjeta a la pantalla de inicio para abrirla sin la barra del navegador.</p></div>
+  </div>
+  <script id="lav-install-ui-js">
+    (function(){
+      var button=document.getElementById('lavInstallButton'),dialog=document.getElementById('lavInstallDialog'),instructions=document.getElementById('lavInstallInstructions'),close=document.getElementById('lavInstallClose'),promptEvent=null;
+      var ua=navigator.userAgent||'',ios=/iphone|ipad|ipod/i.test(ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+      var standalone=window.matchMedia('(display-mode: standalone)').matches||window.matchMedia('(display-mode: fullscreen)').matches||navigator.standalone===true;
+      if(standalone&&button)button.style.display='none';
+      window.addEventListener('beforeinstallprompt',function(event){event.preventDefault();promptEvent=event;});
+      window.addEventListener('appinstalled',function(){if(button)button.style.display='none';if(dialog)dialog.classList.remove('open');});
+      if(button)button.addEventListener('click',async function(){
+        if(promptEvent){promptEvent.prompt();try{await promptEvent.userChoice;}catch(e){}promptEvent=null;return;}
+        if(instructions)instructions.textContent=ios
+          ? 'En Safari, pulsa Compartir y después “Añadir a pantalla de inicio”. Si aparece “Abrir como app”, actívalo y pulsa Añadir. Si abriste este enlace desde WhatsApp, primero ábrelo en Safari.'
+          : (/android/i.test(ua)
+            ? 'En Chrome, abre el menú ⋮ y selecciona “Instalar aplicación” o “Añadir a pantalla de inicio”. Si el enlace se abrió dentro de WhatsApp, usa “Abrir en Chrome” primero.'
+            : 'Abre este enlace en Chrome o Edge y elige “Instalar aplicación” en el menú del navegador.');
+        if(dialog)dialog.classList.add('open');
+      });
+      if(close)close.addEventListener('click',function(){dialog.classList.remove('open');});
+      if(dialog)dialog.addEventListener('click',function(event){if(event.target===dialog)dialog.classList.remove('open');});
+    })();
+  </script>
 </body>
 </html>`;
 }
