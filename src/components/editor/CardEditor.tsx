@@ -2686,11 +2686,17 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                         </div>
 
                         <div className="flex gap-3 items-center">
-                          <img
-                            src={g.imageUrl}
-                            alt={g.title || 'Foto'}
-                            className="w-14 h-14 rounded-xl object-cover bg-slate-900 border border-slate-700 flex-shrink-0"
-                          />
+                          {g.imageUrl ? (
+                            <img
+                              src={g.imageUrl}
+                              alt={g.title || 'Foto'}
+                              className="w-14 h-14 rounded-xl object-cover bg-slate-900 border border-slate-700 flex-shrink-0"
+                            />
+                          ) : (
+                            <div className="w-14 h-14 rounded-xl bg-slate-900 border border-dashed border-slate-700 flex items-center justify-center flex-shrink-0">
+                              <Camera className="w-5 h-5 text-slate-500" />
+                            </div>
+                          )}
                           <div className="flex-1 space-y-2">
                             <div>
                               <label className="block text-[10px] text-slate-400 mb-0.5">Título o Pie de Foto</label>
