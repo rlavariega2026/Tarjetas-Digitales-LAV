@@ -698,6 +698,7 @@ export function generateStandaloneHtml(card: CardData): string {
         ${card.phone ? `<a href="tel:${card.phone.replace(/\D/g, '')}" class="quick-btn"><span>📞</span> Llamar</a>` : ''}
         ${card.email ? `<a href="mailto:${card.email}" class="quick-btn"><span>✉️</span> Correo</a>` : ''}
         ${card.googleMapsUrl || card.address ? `<a href="${card.googleMapsUrl || `https://maps.google.com/?q=${encodeURIComponent(card.address)}`}" target="_blank" class="quick-btn"><span>📍</span> Ubicación</a>` : ''}
+        ${card.website ? `<a href="${/^https?:\/\//i.test(card.website.trim()) ? card.website.trim() : `https://${card.website.trim()}`}" target="_blank" rel="noopener noreferrer" class="quick-btn"><span>🌐</span> Página web</a>` : ''}
       </div>
 
       <!-- Compartir contacto (Apertura directa en app de Contactos) -->
@@ -822,9 +823,7 @@ export function generateStandaloneHtml(card: CardData): string {
         🕒 ${escapeHtml(card.businessHours)}
       </div>` : ''}
 
-      <div class="footer-brand">
-        Diseñado con <strong>LAV Digital Marketing</strong> &bull; <a href="https://lavdigitalmkt.com" target="_blank">lavdigitalmkt.com</a>
-      </div>
+
     </div>
   </div>
   <div id="toastNotice"></div>
