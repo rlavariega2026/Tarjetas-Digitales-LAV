@@ -2027,6 +2027,15 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                     />
                   </label>
                   <label className="flex items-center justify-between p-2 rounded-xl bg-slate-800/60 text-xs">
+                    <span>Botón de Ubicación / Mapa</span>
+                    <input
+                      type="checkbox"
+                      checked={card.design.showMapButton ?? false}
+                      onChange={(e) => updateDesignField('showMapButton', e.target.checked)}
+                      className="rounded border-slate-700 text-indigo-600 focus:ring-indigo-500"
+                    />
+                  </label>
+                  <label className="flex items-center justify-between p-2 rounded-xl bg-slate-800/60 text-xs">
                     <span>Catálogo de Productos / Servicios</span>
                     <input
                       type="checkbox"
