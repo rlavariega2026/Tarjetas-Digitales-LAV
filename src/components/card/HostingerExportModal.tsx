@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { CardData } from '../../types/card';
 import { generateStandaloneHtml } from '../../utils/exportHtml';
 import { generateVCardString } from '../../utils/vcard';
@@ -25,11 +25,17 @@ export const HostingerExportModal: React.FC<HostingerExportModalProps> = ({ card
   const [copiedUrl, setCopiedUrl] = useState(false);
   const [repairing, setRepairing] = useState(false);
   const [repairResult, setRepairResult] = useState('');
+  const [clientFolder, setClientFolder] = useState('');
+  const [cardFolder, setCardFolder] = useState('');
+
+  useEffect(() => {
+    if (!card) return;
+    setClientFolder(toSafeSlug(card.businessName || card.name || 'cliente') || 'cliente');
+    setCardFolder(toSafeSlug(card.slug || card.name || card.id || 'tarjeta') || 'tarjeta');
+    setPublishedUrl('');
+  }, [card?.id, card?.businessName, card?.name, card?.slug]);
 
   if (!card) return null;
-
-  const [clientFolder, setClientFolder] = useState(() => toSafeSlug(card.businessName || card.name || 'cliente') || 'cliente');
-  const [cardFolder, setCardFolder] = useState(() => toSafeSlug(card.slug || card.name || card.id || 'tarjeta') || 'tarjeta');
   const finalCardUrl = publishedUrl || `https://lavdigitalmkt.com/tarjetas/${encodeURIComponent(clientFolder)}/${encodeURIComponent(cardFolder)}/index.html`;
 
   const handleDownload = (filename: string) => {
