@@ -237,8 +237,8 @@ export const CardEditor: React.FC<CardEditorProps> = ({
       input.value = '';
       return;
     }
-    if (file.size > 8 * 1024 * 1024) {
-      window.alert('La imagen supera los 8 MB. Elige una imagen más ligera.');
+    if (file.size > 5 * 1024 * 1024) {
+      window.alert('La imagen supera los 5 MB. Elige una imagen más ligera.');
       input.value = '';
       return;
     }
