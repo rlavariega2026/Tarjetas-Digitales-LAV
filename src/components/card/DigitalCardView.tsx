@@ -27,6 +27,7 @@ import {
   Linkedin,
   Youtube,
   Twitter,
+  Spotify,
   MessageCircle,
   Check,
   Copy,
@@ -1573,9 +1574,11 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
           </div>
         )}
 
-        {/* Social Networks Row */}
-        {design.showSocials && (
-          <div className="flex items-center justify-center gap-2.5 pt-3 pb-4 flex-wrap" aria-label="Redes sociales">
+        {/* Social Networks Section */}
+        {design.showSocials && Object.values(card.socials || {}).some((value) => typeof value === 'string' && value.trim()) && (
+          <section className="mt-5 pt-4 border-t border-white/[0.08]" aria-labelledby="digital-card-social-title">
+            <h3 id="digital-card-social-title" className="mb-3 text-center text-[10px] font-bold uppercase tracking-[0.18em] text-white/60">Redes sociales</h3>
+            <div className="flex items-center justify-center gap-2.5 pb-4 flex-wrap" aria-label="Redes sociales">
             {card.socials.instagram && (
               <a href={formatSocialUrl('instagram', card.socials.instagram)} target="_blank" rel="noopener noreferrer" aria-label="Instagram" title="Instagram" className="inline-flex items-center gap-2 min-h-10 px-3 rounded-xl bg-white/[0.08] hover:bg-pink-500/15 border border-white/[0.14] hover:border-pink-400/50 text-white transition-all duration-200 hover:-translate-y-0.5 shadow-sm">
                 <Instagram className="w-[18px] h-[18px] text-pink-300 flex-shrink-0" /><span className="text-xs font-semibold tracking-wide">Instagram</span>
@@ -1611,7 +1614,13 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
                 <Send className="w-[18px] h-[18px] text-sky-300 flex-shrink-0" /><span className="text-xs font-semibold tracking-wide">Telegram</span>
               </a>
             )}
-          </div>
+            {card.socials.spotify && (
+              <a href={formatSocialUrl('spotify', card.socials.spotify)} target="_blank" rel="noopener noreferrer" aria-label="Spotify" title="Spotify" className="inline-flex items-center gap-2 min-h-10 px-3 rounded-xl bg-white/[0.08] hover:bg-emerald-500/15 border border-white/[0.14] hover:border-emerald-400/50 text-white transition-all duration-200 hover:-translate-y-0.5 shadow-sm">
+                <Spotify className="w-[18px] h-[18px] text-emerald-300 flex-shrink-0" /><span className="text-xs font-semibold tracking-wide">Spotify</span>
+              </a>
+            )}
+            </div>
+          </section>
         )}
 
         {/* Agency Footer Badge */}
