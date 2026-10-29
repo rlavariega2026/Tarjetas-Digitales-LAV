@@ -184,7 +184,13 @@ export async function triggerNativeContactSave(card: CardData): Promise<{
     }
   }
 
-  // Share a real .vcf file where supported; the user confirms saving in the OS Contacts app.
+  // On desktop, download a real .vcf file instead of unexpectedly opening a share sheet.
+  if (!isAndroid && !isIOS) {
+    downloadVCard(card);
+    return { method: 'download', success: true };
+  }
+
+  // On mobile, share a real .vcf file where supported; the user confirms saving in the OS Contacts app.
   if (typeof navigator !== 'undefined' && typeof navigator.share === 'function') {
     try {
       const file = new File([vcardText], fileName, { type: 'text/vcard;charset=utf-8' });
