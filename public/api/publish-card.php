@@ -37,6 +37,11 @@ INSTALL_JS;
             $path = $file->getPathname();
             $html = @file_get_contents($path);
             if (!is_string($html) || stripos($html, '<html') === false) { $skipped++; continue; }
+            // Give older published cards a visible social-networks heading as well.
+            if (strpos($html, 'social-section-title') === false && preg_match('/<div class="social-row">(.*?)<\\/div>/s', $html, $socialMatch)) {
+                $socialSection = '<section class="social-section" aria-labelledby="social-section-title" style="margin-top:22px;padding-top:16px;border-top:1px solid rgba(255,255,255,.1)"><h2 id="social-section-title" class="social-section-title" style="margin:0 0 12px;text-align:center;color:#e2e8f0;font:700 11px/1.3 Arial,sans-serif;letter-spacing:.16em;text-transform:uppercase;opacity:.8">Redes sociales</h2><div class="social-row">' . $socialMatch[1] . '</div></section>';
+                $html = preg_replace('/<div class="social-row">.*?<\\/div>/s', $socialSection, $html, 1);
+            }
             $cardDir = dirname($path);
             $cardFolder = basename($cardDir);
             $clientFolder = basename(dirname($cardDir));
@@ -48,7 +53,7 @@ INSTALL_JS;
                 $html = str_replace($installMarkup, '', $html);
                 $html = preg_replace('/<script id="lav-pwa-install-v1">.*?<\/script>/s', '', $html, 1);
             }
-            if (!$hadDuplicateInstallUi && strpos($html, 'lav-card-app-shell-v1') !== false && strpos($html, 'lav-card-pwa-ready-v1') !== false && file_exists($cardDir . '/manifest.json') && file_exists($cardDir . '/sw.js') && file_exists($cardDir . '/contact.vcf')) { $skipped++; continue; }
+            if (!$hadDuplicateInstallUi && strpos($html, 'lav-card-app-shell-v1') !== false && strpos($html, 'lav-card-pwa-ready-v1') !== false && file_exists($cardDir . '/manifest.json') && file_exists($cardDir . '/sw.js') && file_exists($cardDir . '/contact.vcf') && (strpos($html, 'social-section-title') !== false || strpos($html, 'class="social-row"') === false)) { $skipped++; continue; }
             if (strpos($html, 'lav-card-app-shell-v1') === false && stripos($html, '</head>') !== false) {
                 $html = preg_replace('/<\\/head>/i', $appShellStyle . "\\n</head>", $html, 1);
             }
