@@ -407,8 +407,8 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
       align-items: flex-end;
     }
     .avatar {
-      width: 100px;
-      height: 100px;
+      width: ${card.design.avatarSize === 'sm' ? '72px' : card.design.avatarSize === 'lg' ? '132px' : '100px'};
+      height: ${card.design.avatarSize === 'sm' ? '72px' : card.design.avatarSize === 'lg' ? '132px' : '100px'};
       border-radius: ${card.design.avatarShape === 'circle' ? '50%' : card.design.avatarShape === 'squircle' ? '24px' : '12px'};
       border: 4px solid ${card.design.backgroundColor};
       object-fit: cover;
@@ -416,10 +416,21 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
       box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3);
     }
     .business-logo {
-      max-height: 48px;
-      max-width: 130px;
+      width: ${Math.max(40, Math.min(260, Number(card.design.logoWidth) || 100))}px;
+      max-height: 100px;
+      max-width: 65%;
       object-fit: contain;
     }
+    .avatar-wrapper { align-items: ${card.design.logoPosition === 'above-avatar' || card.design.logoPosition === 'center-banner' ? 'center' : 'flex-end'}; }
+    .card-top-logo { position:absolute; top:14px; right:14px; z-index:4; width:${Math.max(40, Math.min(260, Number(card.design.logoWidth) || 100))}px; max-height:100px; object-fit:contain; }
+    .floating-logo { position:fixed; right:14px; bottom:14px; z-index:10; width:${Math.max(40, Math.min(260, Number(card.design.logoWidth) || 100))}px; max-height:100px; object-fit:contain; filter:drop-shadow(0 4px 12px #0008); }
+    .module-tools { position:absolute; top:12px; right:12px; z-index:20; display:flex; gap:8px; }
+    .module-tool { border:1px solid #ffffff35; border-radius:999px; background:#0009; color:#fff; width:40px; height:40px; display:inline-flex; align-items:center; justify-content:center; cursor:pointer; font-size:19px; }
+    .module-dialog { display:none; position:fixed; inset:0; z-index:9999; background:#000b; align-items:center; justify-content:center; padding:20px; }
+    .module-dialog.open { display:flex; }
+    .module-dialog-panel { width:min(340px,100%); padding:22px; border-radius:18px; background:${card.design.backgroundColor}; color:${card.design.textColor || '#fff'}; border:1px solid #ffffff30; text-align:center; box-shadow:0 20px 70px #0009; }
+    .module-dialog-panel img { display:block; width:220px; max-width:100%; margin:14px auto; background:white; padding:8px; border-radius:8px; }
+    .module-dialog-panel button,.module-dialog-panel a { display:inline-block; margin:5px; border:0; border-radius:9px; padding:10px 14px; background:${card.design.primaryColor}; color:white; text-decoration:none; cursor:pointer; }
     .headline-font {
       font-family: '${card.design.fontHeadline || 'Outfit'}', sans-serif;
     }
@@ -683,11 +694,17 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
   <div class="card-container ${isEleganceLuxury ? 'anim-shimmer-sweep' : ''} ${isFutureTech ? 'anim-border-beam' : ''} ${isMinimalStudio ? 'anim-minimal-frame' : ''} ${isBusinessSignature ? 'anim-business-frame' : ''} ${isGlassMotion ? 'theme-glass-motion' : ''} ${isYoungCreative ? 'theme-young-creative' : ''}">
     ${isGlassMotion ? '<div class="anim-float-orb-1"></div><div class="anim-float-orb-2"></div>' : ''}
     ${isFutureTech ? '<div class="anim-scanline"></div>' : ''}
+    ${(card.design.showQrCodeButton || card.design.showNfcButton || card.design.showShareButton) ? `<div class="module-tools">
+      ${card.design.showQrCodeButton ? '<button class="module-tool" type="button" onclick="openModuleDialog(\'qrDialog\')" aria-label="Código QR" title="Código QR">▦</button>' : ''}
+      ${card.design.showNfcButton ? '<button class="module-tool" type="button" onclick="openModuleDialog(\'nfcDialog\')" aria-label="Tarjeta NFC" title="Tarjeta NFC">⌁</button>' : ''}
+      ${card.design.showShareButton ? '<button class="module-tool" type="button" onclick="shareCardLink()" aria-label="Compartir tarjeta" title="Compartir">↗</button>' : ''}
+    </div>` : ''}
+    ${card.design.logoUrl && card.design.logoPosition === 'card-top' ? `<img class="card-top-logo anim-logo-${card.design.logoAnimation || 'none'}" src="${card.design.logoUrl}" alt="${escapeHtml(card.businessName || 'Logotipo')}">` : ''}
     <div class="cover-banner ${isYoungCreative && !card.design.bannerUrl ? 'anim-liquid-flow' : ''}"></div>
     <div class="content-body">
       <div class="avatar-wrapper card-stagger-1">
         <img class="avatar" src="${card.design.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300'}" alt="${escapeHtml(card.name)}">
-        ${card.design.logoUrl ? `<img class="business-logo anim-logo-${card.design.logoAnimation || 'none'} anim-speed-${card.design.logoAnimationSpeed || 'normal'}" src="${card.design.logoUrl}" alt="${escapeHtml(card.businessName)}">` : ''}
+        ${card.design.logoUrl && !['card-top','floating'].includes(card.design.logoPosition || '') ? `<img class="business-logo anim-logo-${card.design.logoAnimation || 'none'} anim-speed-${card.design.logoAnimationSpeed || 'normal'}" src="${card.design.logoUrl}" alt="${escapeHtml(card.businessName)}" style="${card.design.logoPosition === 'above-avatar' ? 'align-self:center;margin-bottom:12px' : card.design.logoPosition === 'top-right' ? 'align-self:flex-start;margin-left:auto' : card.design.logoPosition === 'center-banner' ? 'align-self:center' : ''}">` : ''}
       </div>
 
       ${card.businessName ? `<div class="company-title headline-font card-stagger-2">${escapeHtml(card.businessName)}</div>` : ''}
@@ -842,9 +859,24 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
 
     </div>
   </div>
+  ${card.design.logoUrl && card.design.logoPosition === 'floating' ? `<img class="floating-logo anim-logo-${card.design.logoAnimation || 'none'}" src="${card.design.logoUrl}" alt="${escapeHtml(card.businessName || 'Logotipo')}">` : ''}
+  ${card.design.showQrCodeButton ? `<div id="qrDialog" class="module-dialog" role="dialog" aria-modal="true" aria-label="Código QR"><div class="module-dialog-panel"><h2>Código QR de tu tarjeta</h2><img src="https://api.qrserver.com/v1/create-qr-code/?size=240x240&amp;data=${encodeURIComponent(cardUrl)}" alt="Código QR para abrir la tarjeta"><p style="font-size:12px;overflow-wrap:anywhere;">${escapeHtml(cardUrl)}</p><a href="https://api.qrserver.com/v1/create-qr-code/?size=600x600&amp;data=${encodeURIComponent(cardUrl)}" target="_blank" rel="noopener noreferrer">Abrir / descargar QR</a><button type="button" onclick="closeModuleDialogs()">Cerrar</button></div></div>` : ''}
+  ${card.design.showNfcButton ? `<div id="nfcDialog" class="module-dialog" role="dialog" aria-modal="true" aria-label="Tarjeta NFC"><div class="module-dialog-panel"><h2>Tarjeta NFC</h2><p>Enlaza tu etiqueta o tarjeta NFC con esta dirección para abrir esta tarjeta digital.</p><p style="font-size:12px;overflow-wrap:anywhere;">${escapeHtml(cardUrl)}</p><button type="button" onclick="copyCardUrl()">Copiar enlace NFC</button><button type="button" onclick="closeModuleDialogs()">Cerrar</button></div></div>` : ''}
   <div id="toastNotice"></div>
 
   <script>
+    function openModuleDialog(id) { var el=document.getElementById(id); if(el) el.classList.add('open'); }
+    function closeModuleDialogs() { document.querySelectorAll('.module-dialog').forEach(function(el){el.classList.remove('open');}); }
+    function shareCardLink() {
+      if (navigator.share) navigator.share({title: document.title, url: ${JSON.stringify("'+cardUrl+'")}}).catch(function(){});
+      else copyCardUrl();
+    }
+    function copyCardUrl() {
+      var value = ${JSON.stringify("'+cardUrl+'")};
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(value).then(function(){showToast('Enlace copiado');}).catch(function(){window.prompt('Copia el enlace de la tarjeta',value);});
+      else window.prompt('Copia el enlace de la tarjeta',value);
+    }
+    document.addEventListener('click', function(e) { if(e.target.classList && e.target.classList.contains('module-dialog')) e.target.classList.remove('open'); });
     function showToast(msg) {
       var t = document.getElementById('toastNotice');
       if (!t) return;
