@@ -157,7 +157,7 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
     .replace(/^-+|-+$/g, '')
     .slice(0, 80);
 
-  const publishedCardUrl = `https://lavdigitalmkt.com/tarjetas/${encodeURIComponent(toSafeCardSlug(card.businessName || card.name || 'cliente'))}/${encodeURIComponent(toSafeCardSlug(card.slug || card.id || 'tarjeta'))}/index.html`;
+  const publishedCardUrl = `https://lavdigitalmkt.com/tarjetas/${encodeURIComponent(toSafeCardSlug(card.businessName || card.name || 'cliente'))}/${encodeURIComponent(toSafeCardSlug(card.slug || card.name || card.id || 'tarjeta'))}/index.html`;
   const currentUrl = typeof window !== 'undefined' && window.location.pathname.startsWith('/tarjetas/')
     ? (window.location.pathname.endsWith('/') ? window.location.origin + window.location.pathname + 'index.html' : window.location.href)
     : (card.website && /^https:\/\/lavdigitalmkt\.com\/tarjetas\//i.test(card.website)
