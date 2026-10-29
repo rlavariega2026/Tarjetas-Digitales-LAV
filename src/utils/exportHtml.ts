@@ -6,7 +6,11 @@ import { generateVCardString } from './vcard';
  */
 export function generateStandaloneHtml(card: CardData): string {
   const vcardEncoded = encodeURIComponent(generateVCardString(card));
-  const cardUrl = card.website || `https://lavdigitalmkt.com/c/${card.slug || card.id}`;
+  const safeFolder = (value: string) => (value || '')
+    .normalize('NFD').replace(/[\\u0300-\\u036f]/g, '').toLowerCase()
+    .replace(/[^a-z0-9_-]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 80) || 'tarjeta';
+  // Sharing and contact actions must point to the published card, not to the business website.
+  const cardUrl = `https://lavdigitalmkt.com/tarjetas/${encodeURIComponent(safeFolder(card.businessName || card.name || 'cliente'))}/${encodeURIComponent(safeFolder(card.slug || card.name || card.id || 'tarjeta'))}/index.html`;
   const absolutePublicImage = [card.design.avatarUrl, card.design.logoUrl, card.design.bannerUrl]
     .find((value) => typeof value === 'string' && /^https:\/\//i.test(value) && !value.startsWith('data:'));
   const previewImageUrl = absolutePublicImage || 'https://lavdigitalmkt.com/pwa-512x512.png';
@@ -697,7 +701,7 @@ export function generateStandaloneHtml(card: CardData): string {
         ${card.whatsapp ? `<a href="${whatsappUrl}" target="_blank" class="quick-btn highlight"><span>💬</span> WhatsApp</a>` : ''}
         ${card.phone ? `<a href="tel:${card.phone.replace(/\D/g, '')}" class="quick-btn"><span>📞</span> Llamar</a>` : ''}
         ${card.email ? `<a href="mailto:${card.email}" class="quick-btn"><span>✉️</span> Correo</a>` : ''}
-        ${card.googleMapsUrl || card.address ? `<a href="${card.googleMapsUrl || `https://maps.google.com/?q=${encodeURIComponent(card.address)}`}" target="_blank" class="quick-btn"><span>📍</span> Ubicación</a>` : ''}
+        ${card.design.showMapButton && (card.googleMapsUrl || card.address) ? `<a href="${card.googleMapsUrl || `https://maps.google.com/?q=${encodeURIComponent(card.address)}`}" target="_blank" rel="noopener noreferrer" class="quick-btn"><span>📍</span> Ubicación</a>` : ''}
         ${card.website ? `<a href="${/^https?:\/\//i.test(card.website.trim()) ? card.website.trim() : `https://${card.website.trim()}`}" target="_blank" rel="noopener noreferrer" class="quick-btn"><span>🌐</span> Página web</a>` : ''}
       </div>
 
@@ -799,8 +803,20 @@ export function generateStandaloneHtml(card: CardData): string {
         </div>
       </div>` : ''}
 
+      <!-- Gallery / Portfolio -->
+      ${card.design.showGallery && card.gallery && card.gallery.length > 0 ? `
+      <div class="section-title">Portafolio &amp; Galería de Fotos</div>
+      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:20px;">
+        ${card.gallery.map(item => `
+          <figure style="margin:0;overflow:hidden;border-radius:12px;background:rgba(255,255,255,.05);">
+            <img src="${escapeHtml(item.imageUrl || '')}" alt="${escapeHtml(item.title || 'Foto')}" loading="lazy" style="display:block;width:100%;aspect-ratio:1/1;object-fit:cover;">
+            ${item.title || item.caption ? `<figcaption style="padding:8px;font-size:12px;color:#fff;">${escapeHtml(item.title || '')}${item.caption ? `<div style="opacity:.75;margin-top:3px;">${escapeHtml(item.caption)}</div>` : ''}</figcaption>` : ''}
+          </figure>
+        `).join('')}
+      </div>` : ''}
+
       <!-- Catalog -->
-      ${card.catalog && card.catalog.length > 0 ? `
+      ${card.design.showCatalog && card.catalog && card.catalog.length > 0 ? `
       <div class="section-title">Productos & Servicios</div>
       <div>
         ${card.catalog.map(item => `
@@ -817,7 +833,7 @@ export function generateStandaloneHtml(card: CardData): string {
       </div>` : ''}
 
       <!-- Business Hours -->
-      ${card.businessHours ? `
+      ${card.design.showHours && card.businessHours ? `
       <div class="section-title">Horarios de Atención</div>
       <div style="font-size:13px; opacity:0.85; margin-bottom:18px; padding:12px; background:rgba(255,255,255,0.03); border-radius:12px; border:1px solid rgba(255,255,255,0.06);">
         🕒 ${escapeHtml(card.businessHours)}
