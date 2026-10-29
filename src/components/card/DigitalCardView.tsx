@@ -1102,7 +1102,7 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
             </a>
           )}
 
-          {(card.googleMapsUrl || card.address) && (
+          {design.showMapButton && (card.googleMapsUrl || card.address) && (
             <a
               href={card.googleMapsUrl || `https://maps.google.com/?q=${encodeURIComponent(card.address)}`}
               target="_blank"
