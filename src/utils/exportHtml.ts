@@ -835,7 +835,7 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
       <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:20px;">
         ${card.gallery.map(item => `
           <figure style="margin:0;overflow:hidden;border-radius:12px;background:rgba(255,255,255,.05);">
-            <img src="${escapeHtml(item.imageUrl || '')}" alt="${escapeHtml(item.title || 'Foto')}" loading="lazy" style="display:block;width:100%;aspect-ratio:1/1;object-fit:cover;">
+            ${item.imageUrl ? `<img src="${escapeHtml(item.imageUrl)}" alt="${escapeHtml(item.title || 'Foto')}" loading="lazy" style="display:block;width:100%;aspect-ratio:1/1;object-fit:cover;">` : '<div style="display:flex;align-items:center;justify-content:center;width:100%;aspect-ratio:1/1;color:#94a3b8;font-size:12px;background:rgba(255,255,255,.04);">Foto pendiente</div>'}
             ${item.title || item.caption ? `<figcaption style="padding:8px;font-size:12px;color:#fff;">${escapeHtml(item.title || '')}${item.caption ? `<div style="opacity:.75;margin-top:3px;">${escapeHtml(item.caption)}</div>` : ''}</figcaption>` : ''}
           </figure>
         `).join('')}
