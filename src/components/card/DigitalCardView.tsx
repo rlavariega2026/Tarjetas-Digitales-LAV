@@ -1119,7 +1119,6 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
               href={/^https?:\/\//i.test(card.website.trim()) ? card.website.trim() : `https://${card.website.trim()}`}
               target="_blank"
               rel="noopener noreferrer"
-              onClick={() => recordCardContactClick(card.id, 'website')}
               className="flex flex-col items-center justify-center py-2.5 px-1 rounded-2xl bg-white/[0.08] hover:bg-white/[0.12] transition text-white group active:scale-95 border border-white/[0.08] text-center"
             >
               <Globe className="w-5 h-5 mb-1 group-hover:scale-110 transition-transform" />
