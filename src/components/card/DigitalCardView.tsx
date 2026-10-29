@@ -978,39 +978,45 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
             </div>
           )}
 
-          {/* Top Floating Action Icons */}
-          <div className="absolute top-3 right-3 flex items-center gap-2 z-10">
-            {design.showQrCodeButton && (
-              <button
-                onClick={handleOpenQr}
-                aria-label="Código QR"
-                className="p-2 rounded-full bg-black/40 backdrop-blur-md text-white hover:bg-black/60 transition shadow-sm border border-white/10"
-                title="Ver Código QR"
-              >
-                <QrCode className="w-4 h-4" />
-              </button>
-            )}
-            {design.showNfcButton && (
-              <button
-                onClick={() => setShowNfcModal(true)}
-                aria-label="Tarjeta NFC"
-                className="p-2 rounded-full bg-black/40 backdrop-blur-md text-white hover:bg-black/60 transition shadow-sm border border-white/10"
-                title="Programar Tarjeta NFC"
-              >
-                <Wifi className="w-4 h-4" />
-              </button>
-            )}
-            {design.showShareButton && (
-              <button
-                onClick={handleCopyLink}
-                aria-label="Compartir tarjeta"
-                className="p-2 rounded-full bg-black/40 backdrop-blur-md text-white hover:bg-black/60 transition shadow-sm border border-white/10"
-                title="Compartir tarjeta"
-              >
-                {copiedLink ? <Check className="w-4 h-4 text-emerald-400" /> : <Share2 className="w-4 h-4" />}
-              </button>
-            )}
-          </div>
+        </div>
+      )}
+
+      {/* Module buttons live on the card shell, not inside the optional cover. */}
+      {(design.showQrCodeButton || design.showNfcButton || design.showShareButton) && (
+        <div className="absolute top-3 right-3 flex items-center gap-2 z-30">
+          {design.showQrCodeButton && (
+            <button
+              type="button"
+              onClick={handleOpenQr}
+              aria-label="Código QR"
+              className="p-2 rounded-full bg-black/55 backdrop-blur-md text-white hover:bg-black/75 transition shadow-sm border border-white/15"
+              title="Ver Código QR"
+            >
+              <QrCode className="w-4 h-4" />
+            </button>
+          )}
+          {design.showNfcButton && (
+            <button
+              type="button"
+              onClick={() => setShowNfcModal(true)}
+              aria-label="Tarjeta NFC"
+              className="p-2 rounded-full bg-black/55 backdrop-blur-md text-white hover:bg-black/75 transition shadow-sm border border-white/15"
+              title="Programar Tarjeta NFC"
+            >
+              <Wifi className="w-4 h-4" />
+            </button>
+          )}
+          {design.showShareButton && (
+            <button
+              type="button"
+              onClick={handleCopyLink}
+              aria-label="Compartir tarjeta"
+              className="p-2 rounded-full bg-black/55 backdrop-blur-md text-white hover:bg-black/75 transition shadow-sm border border-white/15"
+              title="Compartir tarjeta"
+            >
+              {copiedLink ? <Check className="w-4 h-4 text-emerald-400" /> : <Share2 className="w-4 h-4" />}
+            </button>
+          )}
         </div>
       )}
 
@@ -1538,6 +1544,13 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
           </div>
         )}
 
+        {design.showCatalog && (!card.catalog || card.catalog.length === 0) && !isStandalone && (
+          <div className="mb-5 rounded-2xl border border-dashed border-white/20 bg-white/[0.03] p-4 text-center">
+            <h2 className="text-xs font-bold uppercase tracking-wider mb-1">Catálogo &amp; Servicios</h2>
+            <p className="text-xs opacity-70">Activa el catálogo y añade productos o servicios desde la pestaña “Catálogo” del editor.</p>
+          </div>
+        )}
+
         {/* Gallery / Portfolio */}
         {design.showGallery && card.gallery && card.gallery.length > 0 && (
           <div className="mb-5">
@@ -1566,6 +1579,13 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
           </div>
         )}
 
+        {design.showGallery && (!card.gallery || card.gallery.length === 0) && !isStandalone && (
+          <div className="mb-5 rounded-2xl border border-dashed border-white/20 bg-white/[0.03] p-4 text-center">
+            <h2 className="text-xs font-bold uppercase tracking-wider mb-1">Portafolio &amp; Galería de Fotos</h2>
+            <p className="text-xs opacity-70">Activa la galería y añade fotos desde la pestaña “Galería” del editor.</p>
+          </div>
+        )}
+
         {/* Business Hours */}
         {design.showHours && card.businessHours && (
           <div className="mb-5 p-3 rounded-2xl bg-white/[0.04] border border-white/[0.06] flex items-start gap-2.5">
@@ -1574,6 +1594,13 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
               <span className="font-semibold block text-white">Horarios de Atención:</span>
               <span className="opacity-80 text-[11px]">{card.businessHours}</span>
             </div>
+          </div>
+        )}
+
+        {design.showHours && !card.businessHours?.trim() && !isStandalone && (
+          <div className="mb-5 rounded-2xl border border-dashed border-white/20 bg-white/[0.03] p-4 text-center">
+            <h2 className="text-xs font-bold uppercase tracking-wider mb-1">Horarios de Atención</h2>
+            <p className="text-xs opacity-70">Escribe los horarios en la información de la tarjeta para mostrarlos aquí.</p>
           </div>
         )}
 
