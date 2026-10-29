@@ -7,7 +7,7 @@ import { generateVCardString } from './vcard';
 export function generateStandaloneHtml(card: CardData): string {
   const vcardEncoded = encodeURIComponent(generateVCardString(card));
   const safeFolder = (value: string) => (value || '')
-    .normalize('NFD').replace(/[\\u0300-\\u036f]/g, '').toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
     .replace(/[^a-z0-9_-]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 80) || 'tarjeta';
   // Sharing and contact actions must point to the published card, not to the business website.
   const cardUrl = `https://lavdigitalmkt.com/tarjetas/${encodeURIComponent(safeFolder(card.businessName || card.name || 'cliente'))}/${encodeURIComponent(safeFolder(card.slug || card.name || card.id || 'tarjeta'))}/index.html`;
