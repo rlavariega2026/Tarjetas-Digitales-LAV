@@ -4,13 +4,13 @@ import { generateVCardString } from './vcard';
 /**
  * Generates a self-contained, standalone HTML page ready to host on lavdigitalmkt.com or any server
  */
-export function generateStandaloneHtml(card: CardData): string {
+export function generateStandaloneHtml(card: CardData, publishedUrl?: string): string {
   const vcardEncoded = encodeURIComponent(generateVCardString(card));
   const safeFolder = (value: string) => (value || '')
     .normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
     .replace(/[^a-z0-9_-]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 80) || 'tarjeta';
   // Sharing and contact actions must point to the published card, not to the business website.
-  const cardUrl = `https://lavdigitalmkt.com/tarjetas/${encodeURIComponent(safeFolder(card.businessName || card.name || 'cliente'))}/${encodeURIComponent(safeFolder(card.slug || card.name || card.id || 'tarjeta'))}/index.html`;
+  const cardUrl = publishedUrl || `https://lavdigitalmkt.com/tarjetas/${encodeURIComponent(safeFolder(card.businessName || card.name || 'cliente'))}/${encodeURIComponent(safeFolder(card.slug || card.name || card.id || 'tarjeta'))}/index.html`;
   const absolutePublicImage = [card.design.avatarUrl, card.design.logoUrl, card.design.bannerUrl]
     .find((value) => typeof value === 'string' && /^https:\/\//i.test(value) && !value.startsWith('data:'));
   const previewImageUrl = absolutePublicImage || 'https://lavdigitalmkt.com/pwa-512x512.png';
