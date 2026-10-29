@@ -10,7 +10,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: tarjetas-digitales-hostinger-deploy
+  group: tarjetas-digitales-hostinger-deploy-v2
   cancel-in-progress: true
 
 jobs:
