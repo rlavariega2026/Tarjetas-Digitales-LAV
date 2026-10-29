@@ -262,6 +262,53 @@ export const CardEditor: React.FC<CardEditorProps> = ({
     }
   };
 
+  // Upload optimized images for catalog products and portfolio/gallery items.
+  const handleCatalogGalleryUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+    target: 'catalog' | 'gallery',
+    itemId: string
+  ) => {
+    const input = e.currentTarget;
+    const file = input.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      window.alert('Selecciona una imagen PNG, JPG o WebP.');
+      input.value = '';
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      window.alert('La imagen supera los 5 MB. Elige una imagen más ligera.');
+      input.value = '';
+      return;
+    }
+
+    try {
+      const optimizedDataUrl = await optimizeImageFile(file, 900, 900, 0.7);
+      if (!optimizedDataUrl || !optimizedDataUrl.startsWith('data:image/')) {
+        throw new Error('No se pudo procesar la imagen.');
+      }
+      setCard((prev) => target === 'catalog'
+        ? {
+            ...prev,
+            catalog: (prev.catalog || []).map((item) =>
+              item.id === itemId ? { ...item, imageUrl: optimizedDataUrl } : item
+            ),
+          }
+        : {
+            ...prev,
+            gallery: (prev.gallery || []).map((item) =>
+              item.id === itemId ? { ...item, imageUrl: optimizedDataUrl } : item
+            ),
+          });
+    } catch (err) {
+      console.error('Error al cargar imagen del módulo:', err);
+      window.alert('No se pudo cargar la imagen. Prueba con PNG, JPG o WebP de menos de 5 MB.');
+    } finally {
+      input.value = '';
+    }
+  };
+
   // Save Card
   const handleSave = () => {
     setIsSaving(true);
@@ -334,6 +381,7 @@ export const CardEditor: React.FC<CardEditorProps> = ({
     };
     setCard((prev) => ({
       ...prev,
+      design: { ...prev.design, showCatalog: true },
       catalog: [...(prev.catalog || []), newItem],
     }));
   };
@@ -357,11 +405,12 @@ export const CardEditor: React.FC<CardEditorProps> = ({
     const newItem: GalleryItem = {
       id: `gal-${Date.now()}`,
       title: 'Fotografía o Trabajo',
-      imageUrl: 'https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=600',
+      imageUrl: '',
       caption: '',
     };
     setCard((prev) => ({
       ...prev,
+      design: { ...prev.design, showGallery: true },
       gallery: [...(prev.gallery || []), newItem],
     }));
   };
@@ -2530,14 +2579,26 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                             />
                           </div>
                           <div>
-                            <label className="block text-[10px] text-slate-400 mb-0.5">URL de Foto (Opcional)</label>
-                            <input
-                              type="url"
-                              value={item.imageUrl || ''}
-                              onChange={(e) => handleUpdateCatalogItem(item.id, 'imageUrl', e.target.value)}
-                              className="w-full px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-white text-xs"
-                              placeholder="https://images.unsplash..."
-                            />
+                            <label className="block text-[10px] text-slate-400 mb-0.5">Foto del producto (sube desde tu dispositivo o pega una URL)</label>
+                            <div className="flex gap-2">
+                              <input
+                                type="url"
+                                value={item.imageUrl?.startsWith('data:image/') ? '' : (item.imageUrl || '')}
+                                onChange={(e) => handleUpdateCatalogItem(item.id, 'imageUrl', e.target.value)}
+                                className="min-w-0 flex-1 px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-white text-xs"
+                                placeholder="https://..."
+                              />
+                              <label className="shrink-0 cursor-pointer rounded-lg px-2.5 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-[10px] font-semibold flex items-center">
+                                Subir foto
+                                <input
+                                  type="file"
+                                  accept="image/png,image/jpeg,image/webp"
+                                  className="hidden"
+                                  onChange={(e) => handleCatalogGalleryUpload(e, 'catalog', item.id)}
+                                />
+                              </label>
+                            </div>
+                            {item.imageUrl && <img src={item.imageUrl} alt={item.title || 'Producto'} className="mt-2 h-24 w-full rounded-lg object-cover border border-slate-700" />}
                           </div>
                         </div>
 
@@ -2642,14 +2703,25 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                               />
                             </div>
                             <div>
-                              <label className="block text-[10px] text-slate-400 mb-0.5">URL de la Imagen</label>
-                              <input
-                                type="url"
-                                value={g.imageUrl}
-                                onChange={(e) => handleUpdateGalleryItem(g.id, 'imageUrl', e.target.value)}
-                                className="w-full px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-white text-xs"
-                                placeholder="https://..."
-                              />
+                              <label className="block text-[10px] text-slate-400 mb-0.5">Imagen (sube una foto o pega una URL)</label>
+                              <div className="flex gap-2">
+                                <input
+                                  type="url"
+                                  value={g.imageUrl?.startsWith('data:image/') ? '' : g.imageUrl}
+                                  onChange={(e) => handleUpdateGalleryItem(g.id, 'imageUrl', e.target.value)}
+                                  className="min-w-0 flex-1 px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-white text-xs"
+                                  placeholder="https://..."
+                                />
+                                <label className="shrink-0 cursor-pointer rounded-lg px-2.5 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-[10px] font-semibold flex items-center">
+                                  Subir foto
+                                  <input
+                                    type="file"
+                                    accept="image/png,image/jpeg,image/webp"
+                                    className="hidden"
+                                    onChange={(e) => handleCatalogGalleryUpload(e, 'gallery', g.id)}
+                                  />
+                                </label>
+                              </div>
                             </div>
                           </div>
                         </div>
