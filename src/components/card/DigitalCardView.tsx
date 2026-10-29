@@ -1563,11 +1563,17 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
             <div className="grid grid-cols-2 gap-2">
               {card.gallery.map((g) => (
                 <div key={g.id} className="relative rounded-xl overflow-hidden aspect-square group bg-slate-800">
-                  <img
-                    src={g.imageUrl}
-                    alt={g.title || 'Foto'}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
+                  {g.imageUrl ? (
+                    <img
+                      src={g.imageUrl}
+                      alt={g.title || 'Foto'}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                  ) : (
+                    <div className="w-full h-full min-h-28 flex items-center justify-center text-[11px] text-slate-400 bg-slate-900/70">
+                      Sube una foto desde el editor
+                    </div>
+                  )}
                   {g.title && (
                     <div className="absolute inset-x-0 bottom-0 p-1.5 bg-gradient-to-t from-black/80 to-transparent text-[10px] font-medium text-white truncate">
                       {g.title}
