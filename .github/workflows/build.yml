@@ -51,6 +51,9 @@ jobs:
         env:
           VITE_BASE_PATH: "/tarjetas-digitales/"
 
+      - name: Incluir reglas Apache para Hostinger
+        run: cp public/.htaccess dist/.htaccess
+
       - name: Preparar archivos para descargar
         uses: actions/upload-artifact@v4
         with:
