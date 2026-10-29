@@ -58,7 +58,7 @@ export const HostingerExportModal: React.FC<HostingerExportModalProps> = ({ card
       const response = await fetch('/tarjetas-digitales/api/publish-card.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + publishToken.trim() },
-        body: JSON.stringify({ clientFolder: resolvedClientFolder, cardFolder: resolvedCardFolder, html }),
+        body: JSON.stringify({ clientFolder: resolvedClientFolder, cardFolder: resolvedCardFolder, html, vcard: (await import('../../utils/vcard')).generateVCardString({ ...card, website: targetUrl }) }),
       });
       const result = await response.json().catch(() => ({}));
       if (!response.ok || !result.ok || !result.url) throw new Error(result.error || 'Error al publicar (' + response.status + ').');
