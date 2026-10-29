@@ -11,7 +11,7 @@ interface HostingerExportModalProps {
 }
 
 const toSafeSlug = (value: string) =>
-  value.normalize('NFD').replace(/[\\u0300-\\u036f]/g, '').toLowerCase()
+  value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
     .replace(/[^a-z0-9_-]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 80);
 
 export const HostingerExportModal: React.FC<HostingerExportModalProps> = ({ card, onClose }) => {
@@ -30,10 +30,16 @@ export const HostingerExportModal: React.FC<HostingerExportModalProps> = ({ card
 
   useEffect(() => {
     if (!card) return;
-    setClientFolder(toSafeSlug(card.businessName || card.name || 'cliente') || 'cliente');
-    setCardFolder(toSafeSlug(card.slug || card.name || card.id || 'tarjeta') || 'tarjeta');
+    let savedPath: { clientFolder?: string; cardFolder?: string } | null = null;
+    try {
+      savedPath = JSON.parse(window.localStorage.getItem('lav-publish-path-' + card.id) || 'null');
+    } catch {
+      savedPath = null;
+    }
+    setClientFolder(savedPath?.clientFolder || toSafeSlug(card.businessName || card.name || 'cliente') || 'cliente');
+    setCardFolder(savedPath?.cardFolder || toSafeSlug(card.slug || card.name || card.id || 'tarjeta') || 'tarjeta');
     setPublishedUrl('');
-  }, [card?.id, card?.businessName, card?.name, card?.slug]);
+  }, [card?.id]);
 
   if (!card) return null;
   const finalCardUrl = publishedUrl || `https://lavdigitalmkt.com/tarjetas/${encodeURIComponent(clientFolder)}/${encodeURIComponent(cardFolder)}/index.html`;
@@ -53,26 +59,39 @@ export const HostingerExportModal: React.FC<HostingerExportModalProps> = ({ card
   };
 
   const handlePublish = async () => {
-    if (!/^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$/.test(clientFolder) || !/^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$/.test(cardFolder)) {
+    const safeClientFolder = toSafeSlug(clientFolder);
+    const safeCardFolder = toSafeSlug(cardFolder);
+    if (!/^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$/.test(safeClientFolder) || !/^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$/.test(safeCardFolder)) {
       setPublishError('Escribe nombres de carpeta válidos: letras, números, guiones o guiones bajos; máximo 80 caracteres.');
       return;
     }
+    setClientFolder(safeClientFolder);
+    setCardFolder(safeCardFolder);
     setPublishing(true);
     setPublishError('');
     setPublishedUrl('');
     try {
       if (!publishToken.trim()) throw new Error('Escribe el token configurado en Hostinger.');
       try { window.localStorage.setItem('lav-hostinger-publish-token', publishToken.trim()); } catch {}
-      const targetUrl = `https://lavdigitalmkt.com/tarjetas/${encodeURIComponent(clientFolder)}/${encodeURIComponent(cardFolder)}/index.html`;
+      const targetUrl = `https://lavdigitalmkt.com/tarjetas/${encodeURIComponent(safeClientFolder)}/${encodeURIComponent(safeCardFolder)}/index.html`;
       const html = generateStandaloneHtml(card, targetUrl);
       const response = await fetch('/tarjetas-digitales/api/publish-card.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + publishToken.trim() },
-        body: JSON.stringify({ clientFolder: clientFolder, cardFolder: cardFolder, html, vcard: generateVCardString(card) }),
+        body: JSON.stringify({ clientFolder: safeClientFolder, cardFolder: safeCardFolder, html, vcard: generateVCardString(card) }),
       });
       const result = await response.json().catch(() => ({}));
       if (!response.ok || !result.ok || !result.url) throw new Error(result.error || 'Error al publicar (' + response.status + ').');
       setPublishedUrl(result.url);
+      try {
+        window.localStorage.setItem('lav-publish-path-' + card.id, JSON.stringify({
+          clientFolder: safeClientFolder,
+          cardFolder: safeCardFolder,
+          url: result.url,
+        }));
+      } catch (storageError) {
+        console.warn('No se pudo recordar la ruta publicada en este navegador.', storageError);
+      }
       await navigator.clipboard.writeText(result.url).catch(() => undefined);
       confetti({ particleCount: 50, spread: 70, origin: { y: 0.65 } });
     } catch (error) {
@@ -123,12 +142,12 @@ export const HostingerExportModal: React.FC<HostingerExportModalProps> = ({ card
         <div className="p-6 overflow-y-auto space-y-6">
           <div className="p-4 rounded-2xl bg-indigo-950/40 border border-indigo-500/30 text-xs text-slate-300 space-y-3">
             <p className="font-bold text-indigo-300">Publicación directa</p>
-            <p>Las carpetas se generan automáticamente con los datos de esta tarjeta. No necesitas escribir nombres de carpetas.</p>
+            <p>Elige el nombre de carpeta que quieras. Si esta tarjeta ya está publicada, conserva la misma carpeta para actualizar esa URL; la ruta elegida se recordará después de publicar.</p>
             <div className="rounded-xl bg-slate-900/80 border border-slate-700 p-3 space-y-1">
               <label htmlFor="lav-client-folder" className="block text-slate-400">Carpeta del cliente</label>
-              <input id="lav-client-folder" type="text" value={clientFolder} onChange={e => { setClientFolder(toSafeSlug(e.target.value)); setPublishedUrl(''); }} maxLength={80} pattern="[A-Za-z0-9][A-Za-z0-9_-]{0,79}" className="w-full px-3 py-2 rounded-lg bg-slate-800 border border-slate-600 text-white font-mono text-xs" placeholder="nombre-del-cliente" autoComplete="off" />
+              <input id="lav-client-folder" type="text" value={clientFolder} onChange={e => { setClientFolder(e.target.value); setPublishedUrl(''); }} maxLength={80} pattern="[A-Za-z0-9][A-Za-z0-9_-]{0,79}" className="w-full px-3 py-2 rounded-lg bg-slate-800 border border-slate-600 text-white font-mono text-xs" placeholder="nombre-del-cliente" autoComplete="off" />
               <label htmlFor="lav-card-folder" className="block text-slate-400 pt-2">Carpeta de la tarjeta</label>
-              <input id="lav-card-folder" type="text" value={cardFolder} onChange={e => { setCardFolder(toSafeSlug(e.target.value)); setPublishedUrl(''); }} maxLength={80} pattern="[A-Za-z0-9][A-Za-z0-9_-]{0,79}" className="w-full px-3 py-2 rounded-lg bg-slate-800 border border-slate-600 text-white font-mono text-xs" placeholder="nombre-de-la-tarjeta" autoComplete="off" />
+              <input id="lav-card-folder" type="text" value={cardFolder} onChange={e => { setCardFolder(e.target.value); setPublishedUrl(''); }} maxLength={80} pattern="[A-Za-z0-9][A-Za-z0-9_-]{0,79}" className="w-full px-3 py-2 rounded-lg bg-slate-800 border border-slate-600 text-white font-mono text-xs" placeholder="nombre-de-la-tarjeta" autoComplete="off" />
               <p className="text-slate-500 pt-2">Puedes editar ambos nombres. Se crearán dentro de /tarjetas/ junto con index.html. Usa letras, números, guiones o guiones bajos.</p>
             </div>
             <label className="block font-bold pt-1">Token de publicación de Hostinger</label>
