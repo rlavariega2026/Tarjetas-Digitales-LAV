@@ -213,7 +213,7 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
       .social-icon-btn svg { display: block !important; visibility: visible !important; opacity: 1 !important; width: 18px; height: 18px; flex: 0 0 18px; }
       .save-contact-btn, .quick-btn, .custom-link-btn { -webkit-tap-highlight-color: transparent; }
       .content-body { padding: 0 22px 26px; }
-      .cover-banner { height: ${card.design.coverHeight === 'none' ? '0px' : card.design.coverHeight === 'sm' ? '110px' : card.design.coverHeight === 'lg' ? '190px' : '145px'}; }
+      .cover-banner { height: ${card.design.coverHeight === 'none' ? '40px' : card.design.coverHeight === 'sm' ? '112px' : card.design.coverHeight === 'lg' ? '192px' : '144px'}; }
     }
 
     /* LAV APP SHELL: la tarjeta publicada ocupa la pantalla del móvil, sin marco de página */
@@ -407,9 +407,9 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
       align-items: flex-end;
     }
     .avatar {
-      width: ${card.design.avatarSize === 'sm' ? '72px' : card.design.avatarSize === 'lg' ? '132px' : '100px'};
-      height: ${card.design.avatarSize === 'sm' ? '72px' : card.design.avatarSize === 'lg' ? '132px' : '100px'};
-      border-radius: ${card.design.avatarShape === 'circle' ? '50%' : card.design.avatarShape === 'squircle' ? '24px' : '12px'};
+      width: ${card.design.avatarSize === 'sm' ? '64px' : card.design.avatarSize === 'lg' ? '96px' : '80px'};
+      height: ${card.design.avatarSize === 'sm' ? '64px' : card.design.avatarSize === 'lg' ? '96px' : '80px'};
+      border-radius: ${card.design.avatarShape === 'circle' ? '50%' : card.design.avatarShape === 'squircle' ? '16px' : '8px'};
       border: 4px solid ${card.design.backgroundColor};
       object-fit: cover;
       background: ${card.design.primaryColor};
@@ -421,9 +421,14 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
       max-width: 65%;
       object-fit: contain;
     }
-    .avatar-wrapper { align-items: ${card.design.logoPosition === 'above-avatar' || card.design.logoPosition === 'center-banner' ? 'center' : 'flex-end'}; }
-    .card-top-logo { position:absolute; top:14px; right:14px; z-index:4; width:${Math.max(40, Math.min(260, Number(card.design.logoWidth) || 100))}px; max-height:100px; object-fit:contain; }
-    .floating-logo { position:fixed; right:14px; bottom:14px; z-index:10; width:${Math.max(40, Math.min(260, Number(card.design.logoWidth) || 100))}px; max-height:100px; object-fit:contain; filter:drop-shadow(0 4px 12px #0008); }
+    .avatar-wrapper { position:relative; align-items:flex-end; gap:12px; }
+    .avatar-wrapper.logo-above-avatar { flex-direction:column; align-items:flex-start; justify-content:flex-end; gap:8px; }
+    .business-logo { max-height:56px; max-width:60%; flex-shrink:0; }
+    .card-top-logo-wrap { position:relative; z-index:4; padding:12px 24px 4px; text-align:center; }
+    .card-top-logo { display:inline-block; width:${Math.max(40, Math.min(260, Number(card.design.logoWidth) || 100))}px; max-width:100%; max-height:56px; object-fit:contain; }
+    .banner-logo-center { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); z-index:5; width:${Math.max(40, Math.min(260, Number(card.design.logoWidth) || 100))}px; max-width:60%; max-height:56px; object-fit:contain; }
+    .banner-logo-top-right { position:absolute; top:14px; left:14px; z-index:5; width:${Math.max(40, Math.min(260, Number(card.design.logoWidth) || 100))}px; max-width:55%; max-height:56px; object-fit:contain; }
+    .floating-logo { position:fixed; right:14px; bottom:14px; z-index:30; width:${Math.max(40, Math.min(260, Number(card.design.logoWidth) || 100))}px; max-width:60vw; max-height:56px; object-fit:contain; filter:drop-shadow(0 4px 12px #0008); }
     .module-tools { position:absolute; top:12px; right:12px; z-index:20; display:flex; gap:8px; }
     .module-tool { border:1px solid #ffffff35; border-radius:999px; background:#0009; color:#fff; width:40px; height:40px; display:inline-flex; align-items:center; justify-content:center; cursor:pointer; font-size:19px; }
     .module-dialog { display:none; position:fixed; inset:0; z-index:9999; background:#000b; align-items:center; justify-content:center; padding:20px; }
@@ -699,12 +704,16 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
       ${card.design.showNfcButton ? '<button class="module-tool" type="button" onclick="openModuleDialog(\'nfcDialog\')" aria-label="Tarjeta NFC" title="Tarjeta NFC">⌁</button>' : ''}
       ${card.design.showShareButton ? '<button class="module-tool" type="button" onclick="shareCardLink()" aria-label="Compartir tarjeta" title="Compartir">↗</button>' : ''}
     </div>` : ''}
-    ${card.design.logoUrl && card.design.logoPosition === 'card-top' ? `<img class="card-top-logo anim-logo-${card.design.logoAnimation || 'none'}" src="${card.design.logoUrl}" alt="${escapeHtml(card.businessName || 'Logotipo')}">` : ''}
-    <div class="cover-banner ${isYoungCreative && !card.design.bannerUrl ? 'anim-liquid-flow' : ''}"></div>
+    ${card.design.logoUrl && card.design.logoPosition === 'card-top' ? `<div class="card-top-logo-wrap"><img class="card-top-logo anim-logo-${card.design.logoAnimation || 'none'} anim-speed-${card.design.logoAnimationSpeed || 'normal'}" src="${card.design.logoUrl}" alt="${escapeHtml(card.businessName || 'Logotipo')}"></div>` : ''}
+    <div class="cover-banner ${isYoungCreative && !card.design.bannerUrl ? 'anim-liquid-flow' : ''}">
+      ${card.design.logoUrl && card.design.logoPosition === 'center-banner' ? `<img class="banner-logo-center anim-logo-${card.design.logoAnimation || 'none'} anim-speed-${card.design.logoAnimationSpeed || 'normal'}" src="${card.design.logoUrl}" alt="${escapeHtml(card.businessName || 'Logotipo')}">` : ''}
+      ${card.design.logoUrl && card.design.logoPosition === 'top-right' ? `<img class="banner-logo-top-right anim-logo-${card.design.logoAnimation || 'none'} anim-speed-${card.design.logoAnimationSpeed || 'normal'}" src="${card.design.logoUrl}" alt="${escapeHtml(card.businessName || 'Logotipo')}">` : ''}
+    </div>
     <div class="content-body">
-      <div class="avatar-wrapper card-stagger-1">
+      <div class="avatar-wrapper card-stagger-1 ${card.design.logoPosition === 'above-avatar' ? 'logo-above-avatar' : ''}">
+        ${card.design.logoUrl && card.design.logoPosition === 'above-avatar' ? `<img class="business-logo anim-logo-${card.design.logoAnimation || 'none'} anim-speed-${card.design.logoAnimationSpeed || 'normal'}" src="${card.design.logoUrl}" alt="${escapeHtml(card.businessName || 'Logotipo')}">` : ''}
         <img class="avatar" src="${card.design.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300'}" alt="${escapeHtml(card.name)}">
-        ${card.design.logoUrl && !['card-top','floating'].includes(card.design.logoPosition || '') ? `<img class="business-logo anim-logo-${card.design.logoAnimation || 'none'} anim-speed-${card.design.logoAnimationSpeed || 'normal'}" src="${card.design.logoUrl}" alt="${escapeHtml(card.businessName)}" style="${card.design.logoPosition === 'above-avatar' ? 'align-self:center;margin-bottom:12px' : card.design.logoPosition === 'top-right' ? 'align-self:flex-start;margin-left:auto' : card.design.logoPosition === 'center-banner' ? 'align-self:center' : ''}">` : ''}
+        ${card.design.logoUrl && card.design.logoPosition === 'header' ? `<img class="business-logo anim-logo-${card.design.logoAnimation || 'none'} anim-speed-${card.design.logoAnimationSpeed || 'normal'}" src="${card.design.logoUrl}" alt="${escapeHtml(card.businessName || 'Logotipo')}">` : ''}
       </div>
 
       ${card.businessName ? `<div class="company-title headline-font card-stagger-2">${escapeHtml(card.businessName)}</div>` : ''}
