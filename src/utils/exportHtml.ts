@@ -213,7 +213,7 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
       .social-icon-btn svg { display: block !important; visibility: visible !important; opacity: 1 !important; width: 18px; height: 18px; flex: 0 0 18px; }
       .save-contact-btn, .quick-btn, .custom-link-btn { -webkit-tap-highlight-color: transparent; }
       .content-body { padding: 0 22px 26px; }
-      .cover-banner { height: ${card.design.coverHeight === 'sm' ? '110px' : card.design.coverHeight === 'lg' ? '170px' : '135px'}; }
+      .cover-banner { height: ${card.design.coverHeight === 'none' ? '0px' : card.design.coverHeight === 'sm' ? '110px' : card.design.coverHeight === 'lg' ? '190px' : '145px'}; }
     }
 
     /* LAV APP SHELL: la tarjeta publicada ocupa la pantalla del móvil, sin marco de página */
@@ -388,7 +388,7 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
 
     .cover-banner {
       width: 100%;
-      height: ${card.design.coverHeight === 'sm' ? '120px' : card.design.coverHeight === 'lg' ? '200px' : '150px'};
+      height: ${card.design.coverHeight === 'none' ? '0px' : card.design.coverHeight === 'sm' ? '110px' : card.design.coverHeight === 'lg' ? '190px' : '145px'};
       background: linear-gradient(135deg, ${card.design.primaryColor}, ${card.design.secondaryColor});
       background-image: ${card.design.bannerUrl ? `url("${card.design.bannerUrl}")` : `linear-gradient(135deg,${card.design.primaryColor},${card.design.secondaryColor})`};
       background-size: cover;
