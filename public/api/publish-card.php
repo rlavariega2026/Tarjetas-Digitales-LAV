@@ -207,9 +207,38 @@ self.addEventListener('fetch', event => {
 });
 SW;
 $cachePrefix = 'lav-card-' . substr(hash('sha256', $clientFolder . '/' . $cardFolder), 0, 12) . '-shell-';
-$serviceWorker = str_replace('lav-card-shell-v1', $cachePrefix . 'v1', $serviceWorker);
+// Change the service-worker script whenever the published HTML changes so phones
+// cannot keep an older installed-card shell after a republish.
+$cacheVersion = substr(hash('sha256', $html), 0, 10);
+$serviceWorker = str_replace('lav-card-shell-v1', $cachePrefix . $cacheVersion, $serviceWorker);
 $serviceWorker = str_replace("keys.filter(key => key !== CACHE_NAME)", "keys.filter(key => key.startsWith('" . $cachePrefix . "') && key !== CACHE_NAME)", $serviceWorker);
 file_put_contents($dir . '/sw.js', $serviceWorker, LOCK_EX);
 @chmod($dir . '/sw.js', 0644);
+
+// Published HTML and its service worker must not be served from an old browser cache.
+// Preserve any existing card-specific Apache rules and append our policy only once.
+$cardHtaccess = $dir . '/.htaccess';
+$cachePolicyMarker = '# LAV CARD CACHE POLICY';
+$cachePolicy = $cachePolicyMarker . "\n"
+    . "<IfModule mod_headers.c>\n"
+    . "<FilesMatch \"^(index\\.html|manifest\\.json|sw\\.js)$\">\n"
+    . "Header always set Cache-Control \"no-store, no-cache, must-revalidate, max-age=0\"\n"
+    . "Header always set Pragma \"no-cache\"\n"
+    . "</FilesMatch>\n"
+    . "</IfModule>\n"
+    . "<IfModule mod_expires.c>\n"
+    . "<FilesMatch \"^(index\\.html|manifest\\.json|sw\\.js)$\">\n"
+    . "ExpiresActive On\n"
+    . "ExpiresDefault \"access plus 0 seconds\"\n"
+    . "</FilesMatch>\n"
+    . "</IfModule>\n";
+$existingCardRules = is_file($cardHtaccess) ? @file_get_contents($cardHtaccess) : '';
+if (!is_string($existingCardRules)) $existingCardRules = '';
+if (strpos($existingCardRules, $cachePolicyMarker) === false) {
+    $combinedRules = rtrim($existingCardRules) . ($existingCardRules !== '' ? "\n\n" : '') . $cachePolicy;
+    @file_put_contents($cardHtaccess, $combinedRules, LOCK_EX);
+    @chmod($cardHtaccess, 0644);
+}
+
 $host = $_SERVER['HTTP_HOST'] ?? 'lavdigitalmkt.com';
 out(200, ['ok'=>true,'url'=>'https://' . $host . '/tarjetas/' . rawurlencode($clientFolder) . '/' . rawurlencode($cardFolder) . '/index.html']);
