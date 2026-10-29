@@ -741,7 +741,7 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
       </section>` : ''}
 
       <!-- Custom Buttons -->
-      ${card.customButtons && card.customButtons.length > 0 ? `
+      ${card.design.showCustomButtons && card.customButtons && card.customButtons.length > 0 ? `
       <div class="custom-links">
         ${card.customButtons.map(btn => `
           <a href="${btn.url}" target="_blank" class="custom-link-btn">
@@ -868,11 +868,11 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
     function openModuleDialog(id) { var el=document.getElementById(id); if(el) el.classList.add('open'); }
     function closeModuleDialogs() { document.querySelectorAll('.module-dialog').forEach(function(el){el.classList.remove('open');}); }
     function shareCardLink() {
-      if (navigator.share) navigator.share({title: document.title, url: ${JSON.stringify("'+cardUrl+'")}}).catch(function(){});
+      if (navigator.share) navigator.share({title: document.title, url: ${JSON.stringify(cardUrl)}}).catch(function(){});
       else copyCardUrl();
     }
     function copyCardUrl() {
-      var value = ${JSON.stringify("'+cardUrl+'")};
+      var value = ${JSON.stringify(cardUrl)};
       if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(value).then(function(){showToast('Enlace copiado');}).catch(function(){window.prompt('Copia el enlace de la tarjeta',value);});
       else window.prompt('Copia el enlace de la tarjeta',value);
     }
