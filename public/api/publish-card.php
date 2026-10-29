@@ -226,12 +226,7 @@ $cachePolicy = $cachePolicyMarker . "\n"
     . "Header always set Pragma \"no-cache\"\n"
     . "</FilesMatch>\n"
     . "</IfModule>\n"
-    . "<IfModule mod_expires.c>\n"
-    . "<FilesMatch \"^(index\\.html|manifest\\.json|sw\\.js)$\">\n"
-    . "ExpiresActive On\n"
-    . "ExpiresDefault \"access plus 0 seconds\"\n"
-    . "</FilesMatch>\n"
-    . "</IfModule>\n";
+    ;
 $existingCardRules = is_file($cardHtaccess) ? @file_get_contents($cardHtaccess) : '';
 if (!is_string($existingCardRules)) $existingCardRules = '';
 if (strpos($existingCardRules, $cachePolicyMarker) === false) {
