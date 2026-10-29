@@ -1637,13 +1637,6 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
           </section>
         )}
 
-        {/* Agency Footer Badge */}
-        <div className="pt-4 border-t border-white/[0.08] text-center">
-          <p className="text-[10px] tracking-wider uppercase opacity-50 font-medium">
-            Diseñada con <span className="text-white font-bold">LAV Digital Marketing</span> &bull;{' '}
-
-          </p>
-        </div>
       </div>
 
       {/* Floating Copy Toast Notification */}
