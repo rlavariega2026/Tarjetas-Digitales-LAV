@@ -33,7 +33,7 @@ export const HostingerExportModal: React.FC<HostingerExportModalProps> = ({ card
   const finalCardUrl = publishedUrl || `https://lavdigitalmkt.com/tarjetas/${encodeURIComponent(clientFolder)}/${encodeURIComponent(cardFolder)}/index.html`;
 
   const handleDownload = (filename: string) => {
-    const htmlContent = generateStandaloneHtml(card);
+    const htmlContent = generateStandaloneHtml(card, finalCardUrl);
     const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
@@ -57,7 +57,8 @@ export const HostingerExportModal: React.FC<HostingerExportModalProps> = ({ card
     try {
       if (!publishToken.trim()) throw new Error('Escribe el token configurado en Hostinger.');
       try { window.localStorage.setItem('lav-hostinger-publish-token', publishToken.trim()); } catch {}
-      const html = generateStandaloneHtml(card);
+      const targetUrl = `https://lavdigitalmkt.com/tarjetas/${encodeURIComponent(clientFolder)}/${encodeURIComponent(cardFolder)}/index.html`;
+      const html = generateStandaloneHtml(card, targetUrl);
       const response = await fetch('/tarjetas-digitales/api/publish-card.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + publishToken.trim() },
