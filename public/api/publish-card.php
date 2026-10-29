@@ -119,13 +119,22 @@ $cardsRoot = dirname(__DIR__, 2) . '/tarjetas';
 $dir = $cardsRoot . '/' . $clientFolder . '/' . $cardFolder;
 if (!is_dir($dir) && !mkdir($dir, 0755, true) && !is_dir($dir)) out(500, ['ok'=>false,'error'=>'No se pudo crear la carpeta de la tarjeta']);
 // Save a standards-based vCard beside the published card so phones can open the native contact import flow.
-$vcardPattern = '/vcard:\\s*("(?:\\\\.|[^"\\\\])*")/s';
-if (preg_match($vcardPattern, $html, $vcardMatch)) {
-    $vcardText = json_decode($vcardMatch[1], true);
-    if (is_string($vcardText) && strpos($vcardText, 'BEGIN:VCARD') === 0) {
-        @file_put_contents($dir . '/contact.vcf', $vcardText, LOCK_EX);
-        @chmod($dir . '/contact.vcf', 0644);
+// Prefer the explicit payload; the HTML regex remains as a compatibility fallback for older clients.
+$vcardText = $data['vcard'] ?? null;
+if (!is_string($vcardText) || strpos($vcardText, 'BEGIN:VCARD') !== 0 || strpos($vcardText, 'END:VCARD') === false) {
+    $vcardPattern = '/vcard:\\s*("(?:\\\\.|[^"\\\\])*")/s';
+    if (preg_match($vcardPattern, $html, $vcardMatch)) {
+        $decodedVcard = json_decode($vcardMatch[1], true);
+        if (is_string($decodedVcard)) $vcardText = $decodedVcard;
     }
+}
+if (is_string($vcardText) && strpos($vcardText, 'BEGIN:VCARD') === 0 && strpos($vcardText, 'END:VCARD') !== false) {
+    if (@file_put_contents($dir . '/contact.vcf', $vcardText, LOCK_EX) === false) {
+        out(500, ['ok'=>false,'error'=>'No se pudo generar contact.vcf. Revisa permisos de la carpeta de la tarjeta.']);
+    }
+    @chmod($dir . '/contact.vcf', 0644);
+} else {
+    out(400, ['ok'=>false,'error'=>'No se recibieron datos de contacto válidos para generar contact.vcf.']);
 }
 // Link the manifest and register the per-card service worker before saving the published HTML.
 $pwaHead = '<meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><link rel="apple-touch-icon" href="/tarjetas-digitales/apple-touch-icon.png"><link rel="manifest" href="./manifest.json"><meta name="lav-card-pwa-ready-v1" content="1">';
