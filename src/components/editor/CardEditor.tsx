@@ -621,7 +621,7 @@ export const CardEditor: React.FC<CardEditorProps> = ({
               }`}
             >
               <Share2 className="w-3.5 h-3.5 text-indigo-400" />
-              <span>Redes & Video</span>
+              <span>Redes sociales</span>
             </button>
             <button
               onClick={() => setActiveTab('design')}
@@ -1522,6 +1522,23 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                       className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs focus:ring-2 focus:ring-sky-400"
                       placeholder="@mi_canal o https://t.me/mi_canal"
                     />
+                  </div>
+                  {/* Spotify */}
+                  <div className="space-y-1">
+                    <label className="text-xs font-medium text-slate-300 flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                      <span>Spotify (perfil, artista o playlist)</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={card.socials.spotify || ''}
+                      onChange={(e) => setCard((prev) => ({ ...prev, socials: { ...prev.socials, spotify: e.target.value } }))}
+                      className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs focus:ring-2 focus:ring-emerald-400"
+                      placeholder="usuario o https://open.spotify.com/..."
+                    />
+                    {card.socials.spotify && (
+                      <p className="text-[10px] text-emerald-300 break-all">URL: {formatSocialUrl('spotify', card.socials.spotify)}</p>
+                    )}
                   </div>
                 </div>
               </div>
