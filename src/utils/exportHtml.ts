@@ -388,7 +388,7 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
 
     .cover-banner {
       width: 100%;
-      height: ${card.design.coverHeight === 'none' ? '0px' : card.design.coverHeight === 'sm' ? '110px' : card.design.coverHeight === 'lg' ? '190px' : '145px'};
+      height: ${card.design.coverHeight === 'none' ? '40px' : card.design.coverHeight === 'sm' ? '112px' : card.design.coverHeight === 'lg' ? '192px' : '144px'};
       background: linear-gradient(135deg, ${card.design.primaryColor}, ${card.design.secondaryColor});
       background-image: ${card.design.bannerUrl ? `url("${card.design.bannerUrl}")` : `linear-gradient(135deg,${card.design.primaryColor},${card.design.secondaryColor})`};
       background-size: cover;
@@ -713,7 +713,7 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
       <div class="avatar-wrapper card-stagger-1 ${card.design.logoPosition === 'above-avatar' ? 'logo-above-avatar' : ''}">
         ${card.design.logoUrl && card.design.logoPosition === 'above-avatar' ? `<img class="business-logo anim-logo-${card.design.logoAnimation || 'none'} anim-speed-${card.design.logoAnimationSpeed || 'normal'}" src="${card.design.logoUrl}" alt="${escapeHtml(card.businessName || 'Logotipo')}">` : ''}
         <img class="avatar" src="${card.design.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300'}" alt="${escapeHtml(card.name)}">
-        ${card.design.logoUrl && card.design.logoPosition === 'header' ? `<img class="business-logo anim-logo-${card.design.logoAnimation || 'none'} anim-speed-${card.design.logoAnimationSpeed || 'normal'}" src="${card.design.logoUrl}" alt="${escapeHtml(card.businessName || 'Logotipo')}">` : ''}
+        ${card.design.logoUrl && (card.design.logoPosition || 'header') === 'header' ? `<img class="business-logo anim-logo-${card.design.logoAnimation || 'none'} anim-speed-${card.design.logoAnimationSpeed || 'normal'}" src="${card.design.logoUrl}" alt="${escapeHtml(card.businessName || 'Logotipo')}">` : ''}
       </div>
 
       ${card.businessName ? `<div class="company-title headline-font card-stagger-2">${escapeHtml(card.businessName)}</div>` : ''}
