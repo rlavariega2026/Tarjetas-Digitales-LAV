@@ -33,8 +33,7 @@ export const HostingerExportModal: React.FC<HostingerExportModalProps> = ({ card
   const finalCardUrl = publishedUrl || `https://lavdigitalmkt.com/tarjetas/${encodeURIComponent(clientFolder)}/${encodeURIComponent(cardFolder)}/`;
 
   const handleDownload = (filename: string) => {
-    const updatedCardForExport: CardData = { ...card, website: finalCardUrl };
-    const htmlContent = generateStandaloneHtml(updatedCardForExport);
+    const htmlContent = generateStandaloneHtml(card);
     const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
@@ -59,11 +58,11 @@ export const HostingerExportModal: React.FC<HostingerExportModalProps> = ({ card
       if (!publishToken.trim()) throw new Error('Escribe el token configurado en Hostinger.');
       try { window.localStorage.setItem('lav-hostinger-publish-token', publishToken.trim()); } catch {}
       const targetUrl = `https://lavdigitalmkt.com/tarjetas/${encodeURIComponent(clientFolder)}/${encodeURIComponent(cardFolder)}/`;
-      const html = generateStandaloneHtml({ ...card, website: targetUrl });
+      const html = generateStandaloneHtml(card);
       const response = await fetch('/tarjetas-digitales/api/publish-card.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + publishToken.trim() },
-        body: JSON.stringify({ clientFolder: clientFolder, cardFolder: cardFolder, html, vcard: generateVCardString({ ...card, website: targetUrl }) }),
+        body: JSON.stringify({ clientFolder: clientFolder, cardFolder: cardFolder, html, vcard: generateVCardString(card) }),
       });
       const result = await response.json().catch(() => ({}));
       if (!response.ok || !result.ok || !result.url) throw new Error(result.error || 'Error al publicar (' + response.status + ').');
