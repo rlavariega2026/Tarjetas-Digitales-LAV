@@ -412,14 +412,14 @@ export const CardEditor: React.FC<CardEditorProps> = ({
   const handleUpdateCatalogItem = (id: string, field: keyof CatalogItem, val: string) => {
     setCard((prev) => ({
       ...prev,
-      catalog: prev.catalog.map((c) => (c.id === id ? { ...c, [field]: val } : c)),
+      catalog: (prev.catalog || []).map((c) => (c.id === id ? { ...c, [field]: val } : c)),
     }));
   };
 
   const handleDeleteCatalogItem = (id: string) => {
     setCard((prev) => ({
       ...prev,
-      catalog: prev.catalog.filter((c) => c.id !== id),
+      catalog: (prev.catalog || []).filter((c) => c.id !== id),
     }));
   };
 
@@ -961,10 +961,21 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-slate-400 mb-1">Horarios de Atención</label>
+                      <div className="flex items-center justify-between gap-3 mb-1">
+                        <label className="block text-xs font-medium text-slate-400">Horarios de Atención</label>
+                        <label className="inline-flex items-center gap-2 text-[11px] text-slate-300">
+                          <input
+                            type="checkbox"
+                            checked={card.design.showHours}
+                            onChange={(e) => updateDesignField('showHours', e.target.checked)}
+                            className="rounded border-slate-700 text-indigo-600 focus:ring-indigo-500"
+                          />
+                          Mostrar en tarjeta
+                        </label>
+                      </div>
                       <input
                         type="text"
-                        value={card.businessHours}
+                        value={card.businessHours || ''}
                         onChange={(e) => updateCardField('businessHours', e.target.value)}
                         className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none"
                         placeholder="Lun - Vie: 9:00 AM - 7:00 PM | Sáb: 10:00 AM - 2:00 PM"
@@ -2534,6 +2545,22 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                     <Plus className="w-3.5 h-3.5" />
                     <span>Añadir Ítem</span>
                   </button>
+                </div>
+
+                <div className="p-3 rounded-2xl bg-slate-800/80 border border-slate-700 flex items-center justify-between">
+                  <div>
+                    <p className="text-xs font-bold text-slate-200">Mostrar Catálogo en la Tarjeta</p>
+                    <p className="text-[11px] text-slate-400">Actívalo para que productos y servicios aparezcan en la vista previa y publicación.</p>
+                  </div>
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={card.design.showCatalog}
+                      onChange={(e) => updateDesignField('showCatalog', e.target.checked)}
+                      className="sr-only peer"
+                    />
+                    <div className="w-11 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                  </label>
                 </div>
 
                 <div className="space-y-3">
