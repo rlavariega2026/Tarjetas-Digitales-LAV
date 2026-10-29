@@ -27,7 +27,7 @@ import {
   Linkedin,
   Youtube,
   Twitter,
-  Spotify,
+  Music2,
   MessageCircle,
   Check,
   Copy,
@@ -95,7 +95,7 @@ export const getEmbedVideoUrl = (url?: string): string | null => {
 
 // Formats social platform links safely avoiding @@ and missing domains
 export const formatSocialUrl = (
-  platform: 'instagram' | 'facebook' | 'linkedin' | 'tiktok' | 'youtube' | 'twitter' | 'telegram',
+  platform: 'instagram' | 'facebook' | 'linkedin' | 'tiktok' | 'youtube' | 'twitter' | 'telegram' | 'spotify',
   val?: string
 ): string => {
   if (!val) return '';
@@ -118,6 +118,8 @@ export const formatSocialUrl = (
       return `https://x.com/${clean}`;
     case 'telegram':
       return `https://t.me/${clean}`;
+    case 'spotify':
+      return `https://open.spotify.com/${clean}`;
     default:
       return trimmed;
   }
@@ -1616,7 +1618,7 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
             )}
             {card.socials.spotify && (
               <a href={formatSocialUrl('spotify', card.socials.spotify)} target="_blank" rel="noopener noreferrer" aria-label="Spotify" title="Spotify" className="inline-flex items-center gap-2 min-h-10 px-3 rounded-xl bg-white/[0.08] hover:bg-emerald-500/15 border border-white/[0.14] hover:border-emerald-400/50 text-white transition-all duration-200 hover:-translate-y-0.5 shadow-sm">
-                <Spotify className="w-[18px] h-[18px] text-emerald-300 flex-shrink-0" /><span className="text-xs font-semibold tracking-wide">Spotify</span>
+                <Music2 className="w-[18px] h-[18px] text-emerald-300 flex-shrink-0" /><span className="text-xs font-semibold tracking-wide">Spotify</span>
               </a>
             )}
             </div>
