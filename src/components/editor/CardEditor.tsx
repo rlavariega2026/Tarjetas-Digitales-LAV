@@ -129,7 +129,30 @@ export const CardEditor: React.FC<CardEditorProps> = ({
   onBack,
   onPreviewStandalone,
 }) => {
-  const [card, setCard] = useState<CardData>(initialCard);
+  // Migrate older saved cards that predate newer design controls without
+  // overriding any explicit on/off choice already stored by the user.
+  const [card, setCard] = useState<CardData>(() => ({
+    ...initialCard,
+    design: {
+      ...initialCard.design,
+      avatarShape: initialCard.design?.avatarShape ?? 'circle',
+      avatarSize: initialCard.design?.avatarSize ?? 'md',
+      logoPosition: initialCard.design?.logoPosition ?? 'header',
+      logoWidth: initialCard.design?.logoWidth ?? 100,
+      logoAnimation: initialCard.design?.logoAnimation ?? 'none',
+      coverHeight: initialCard.design?.coverHeight ?? 'md',
+      showSaveContactButton: initialCard.design?.showSaveContactButton ?? true,
+      showQrCodeButton: initialCard.design?.showQrCodeButton ?? true,
+      showShareButton: initialCard.design?.showShareButton ?? true,
+      showNfcButton: initialCard.design?.showNfcButton ?? true,
+      showCatalog: initialCard.design?.showCatalog ?? false,
+      showGallery: initialCard.design?.showGallery ?? false,
+      showHours: initialCard.design?.showHours ?? true,
+      showSocials: initialCard.design?.showSocials ?? true,
+      showCustomButtons: initialCard.design?.showCustomButtons ?? true,
+      showMapButton: initialCard.design?.showMapButton ?? true,
+    },
+  }));
   // Conserva la última portada válida. No borres esta copia de respaldo si
   // algún cambio de diseño deja temporalmente bannerUrl vacío.
   const coverImageRef = useRef<string>(initialCard.design?.bannerUrl || '');
