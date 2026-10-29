@@ -830,7 +830,7 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
       </div>` : ''}
 
       <!-- Gallery / Portfolio -->
-      ${card.design.showGallery && card.gallery && card.gallery.length > 0 ? `
+      ${card.design.showGallery ? (card.gallery && card.gallery.length > 0 ? `
       <div class="section-title">Portafolio &amp; Galería de Fotos</div>
       <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:20px;">
         ${card.gallery.map(item => `
@@ -839,31 +839,31 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
             ${item.title || item.caption ? `<figcaption style="padding:8px;font-size:12px;color:#fff;">${escapeHtml(item.title || '')}${item.caption ? `<div style="opacity:.75;margin-top:3px;">${escapeHtml(item.caption)}</div>` : ''}</figcaption>` : ''}
           </figure>
         `).join('')}
-      </div>` : ''}
+      </div>` : `<div class="section-title">Portafolio &amp; Galería de Fotos</div><div style="margin-bottom:20px;padding:14px;border:1px dashed rgba(255,255,255,.2);border-radius:14px;color:#94a3b8;font-size:12px;text-align:center;">Añade fotos desde la pestaña Galería del editor.</div>`) : ''}
 
       <!-- Catalog -->
-      ${card.design.showCatalog && card.catalog && card.catalog.length > 0 ? `
+      ${card.design.showCatalog ? (card.catalog && card.catalog.length > 0 ? `
       <div class="section-title">Productos & Servicios</div>
       <div>
         ${card.catalog.map(item => `
           <div class="catalog-card">
-            ${item.imageUrl ? `<img src="${item.imageUrl}" class="catalog-img" alt="${escapeHtml(item.title)}">` : ''}
+            ${item.imageUrl ? `<img src="${escapeHtml(item.imageUrl)}" class="catalog-img" alt="${escapeHtml(item.title)}">` : ''}
             <div class="catalog-info">
               <div style="font-weight:600; font-size:14px;">${escapeHtml(item.title)}</div>
               <div style="font-size:12px; opacity:0.8; margin:2px 0 4px 0;">${escapeHtml(item.description || '')}</div>
               ${item.price ? `<div class="catalog-price">${escapeHtml(item.price)}</div>` : ''}
             </div>
-            ${item.ctaLink ? `<a href="${item.ctaLink}" target="_blank" style="padding:6px 12px; background:rgba(255,255,255,0.1); border-radius:10px; color:#fff; text-decoration:none; font-size:11px; font-weight:600;">${escapeHtml(item.ctaLabel || 'Ver')}</a>` : ''}
+            ${item.ctaLink ? `<a href="${item.ctaLink}" target="_blank" rel="noopener noreferrer" style="padding:6px 12px; background:rgba(255,255,255,0.1); border-radius:10px; color:#fff; text-decoration:none; font-size:11px; font-weight:600;">${escapeHtml(item.ctaLabel || 'Ver')}</a>` : ''}
           </div>
         `).join('')}
-      </div>` : ''}
+      </div>` : `<div class="section-title">Productos &amp; Servicios</div><div style="margin-bottom:20px;padding:14px;border:1px dashed rgba(255,255,255,.2);border-radius:14px;color:#94a3b8;font-size:12px;text-align:center;">Añade productos o servicios desde la pestaña Catálogo del editor.</div>`) : ''}
 
       <!-- Business Hours -->
-      ${card.design.showHours && card.businessHours ? `
+      ${card.design.showHours ? (card.businessHours && card.businessHours.trim() ? `
       <div class="section-title">Horarios de Atención</div>
       <div style="font-size:13px; opacity:0.85; margin-bottom:18px; padding:12px; background:rgba(255,255,255,0.03); border-radius:12px; border:1px solid rgba(255,255,255,0.06);">
         🕒 ${escapeHtml(card.businessHours)}
-      </div>` : ''}
+      </div>` : `<div class="section-title">Horarios de Atención</div><div style="font-size:12px;opacity:.7;margin-bottom:18px;padding:12px;border:1px dashed rgba(255,255,255,.2);border-radius:12px;">Escribe los horarios en el editor para mostrarlos aquí.</div>`) : ''}
 
 
     </div>
@@ -1004,7 +1004,7 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
       }
 
       // Compartir la ficha .vcf con el sistema cuando el navegador admite compartir archivos.
-      if (navigator.share && window.File) {
+      if ((isAndroid || isIOS) && navigator.share && window.File) {
         try {
           const file = new File([CARD_DATA.vcard], (CARD_DATA.name.replace(/[^a-zA-Z0-9]/g, '_') || 'contacto') + '.vcf', {
             type: 'text/vcard;charset=utf-8'
