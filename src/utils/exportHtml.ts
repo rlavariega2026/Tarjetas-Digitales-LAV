@@ -186,7 +186,9 @@ export function generateStandaloneHtml(card: CardData): string {
       }
       .cover-banner { border-radius: 25px 25px 0 0; }
       .footer-brand { font-size: 10px; opacity: .38; }
-      .social-row { gap: 10px; margin: 18px 0 12px; display: flex !important; visibility: visible !important; opacity: 1 !important; flex-wrap: wrap; overflow: visible; }
+      .social-section { margin-top: 22px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,.1); }
+    .social-section-title { margin: 0 0 12px; text-align: center; color: var(--text-color, #e2e8f0); font: 700 11px/1.3 Arial,sans-serif; letter-spacing: .16em; text-transform: uppercase; opacity: .8; }
+    .social-row { gap: 10px; margin: 18px 0 12px; display: flex !important; visibility: visible !important; opacity: 1 !important; flex-wrap: wrap; overflow: visible; }
       .social-icon-btn {
         width: auto !important;
         height: auto !important;
@@ -706,12 +708,15 @@ export function generateStandaloneHtml(card: CardData): string {
       </button>` : ''}
 
       <!-- Social Networks -->
-      ${socialLinks.length > 0 ? `
-      <div class="social-row">
-        ${socialLinks.map(s => `
-          <a href="${s.url}" target="_blank" rel="noopener noreferrer" class="social-icon-btn social-${s.name.toLowerCase().replace(/[^a-z]/g, '')}" title="${s.name}" aria-label="${s.name}">${socialSvg(s.name)}<span class="social-label">${s.name === 'X / Twitter' ? 'X' : s.name}</span></a>
-        `).join('')}
-      </div>` : ''}
+      ${socialLinks.length > 0 && card.design.showSocials ? `
+      <section class="social-section" aria-labelledby="social-section-title">
+        <h2 id="social-section-title" class="social-section-title">Redes sociales</h2>
+        <div class="social-row">
+          ${socialLinks.map(s => `
+            <a href="${s.url}" target="_blank" rel="noopener noreferrer" class="social-icon-btn social-${s.name.toLowerCase().replace(/[^a-z]/g, '')}" title="${s.name}" aria-label="${s.name}">${socialSvg(s.name)}<span class="social-label">${s.name === 'X / Twitter' ? 'X' : s.name}</span></a>
+          `).join('')}
+        </div>
+      </section>` : ''}
 
       <!-- Custom Buttons -->
       ${card.customButtons && card.customButtons.length > 0 ? `
@@ -929,8 +934,17 @@ export function generateStandaloneHtml(card: CardData): string {
 
       // En una tarjeta ya publicada existe contact.vcf junto a index.html; dejar que iOS abra su importador nativo.
       if (isIOS && window.location.pathname.indexOf('/tarjetas/') === 0) {
-        window.location.href = new URL('contact.vcf', window.location.href).href;
-        return;
+        const vcardUrl = new URL('contact.vcf', window.location.href).href;
+        // Older published cards may not yet have contact.vcf. Check first and fall back to the embedded vCard.
+        try {
+          const response = await fetch(vcardUrl, { method: 'HEAD', cache: 'no-store' });
+          if (response.ok) {
+            window.location.href = vcardUrl;
+            return;
+          }
+        } catch (e) {
+          // Offline or blocked HEAD request: use the self-contained vCard below.
+        }
       }
 
       // Compartir la ficha .vcf con el sistema cuando el navegador admite compartir archivos.
