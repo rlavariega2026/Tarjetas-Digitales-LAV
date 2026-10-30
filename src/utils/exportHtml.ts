@@ -136,6 +136,72 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
     ? gradientBackground
     : patternBackground;
 
+
+  // Reproducir en el HTML autónomo la misma composición fotográfica elegida en el editor.
+  const avatarUrl = card.design.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500';
+  const photoComposition = card.design.photoComposition || 'circle-portrait';
+  const photos = [avatarUrl, ...(card.gallery || []).map((item) => item.imageUrl).filter(Boolean)];
+  const renderLogo = (position: string) => {
+    if (!card.design.logoUrl || (card.design.logoPosition || 'header') !== position) return '';
+    const width = Math.max(40, Math.min(260, Number(card.design.logoWidth) || 100));
+    return `<img src="${escapeHtml(card.design.logoUrl)}" alt="${escapeHtml(card.businessName || 'Logotipo')}" class="export-logo anim-logo-${card.design.logoAnimation || 'none'} anim-speed-${card.design.logoAnimationSpeed || 'normal'}" style="width:${width}px;max-width:60%;max-height:56px;object-fit:contain">`;
+  };
+  const photoFrame = (image: string, style: string, extra = '') =>
+    `<img src="${escapeHtml(image)}" alt="${escapeHtml(card.name)}" style="${style}" ${extra}>`;
+  const avatarSize = card.design.avatarSize === 'lg' ? 96 : card.design.avatarSize === 'sm' ? 64 : 80;
+  const avatarRadius = card.design.avatarShape === 'circle' ? '50%' : card.design.avatarShape === 'squircle' ? '16px' : '8px';
+  const photoCompositionHtml = (() => {
+    const photo = (style: string, extra = '') => photoFrame(avatarUrl, style, extra);
+    const logo = renderLogo('header');
+    const row = (content: string, style = 'display:flex;align-items:flex-end;justify-content:space-between;gap:14px;margin:-42px 0 16px;position:relative;z-index:2;') => `<div style="${style}">${content}</div>`;
+    switch (photoComposition) {
+      case 'top-large':
+        return `<div style="position:relative;margin:0 -24px 18px;aspect-ratio:4/3;overflow:hidden">${photo('width:100%;height:100%;object-fit:cover')}<div style="position:absolute;inset:0;background:linear-gradient(to top,#020617,transparent 70%)"></div><div style="position:absolute;top:12px;right:12px">${renderLogo('top-right')}</div><div style="position:absolute;bottom:14px;left:16px">${logo}</div></div>`;
+      case 'vertical-large':
+        return `<div style="position:relative;margin:0 -24px 18px;aspect-ratio:3/4;max-height:480px;overflow:hidden">${photo('width:100%;height:100%;object-fit:cover')}<div style="position:absolute;inset:0;background:linear-gradient(to top,#020617,transparent 65%)"></div><div style="position:absolute;top:16px;left:16px">${logo}</div></div>`;
+      case 'card-bg':
+        return `<div style="position:relative;margin:0 -24px 18px;height:192px;overflow:hidden">${photo('width:100%;height:100%;object-fit:cover;filter:blur(3px);transform:scale(1.08);opacity:.42')}<div style="position:absolute;inset:0;background:linear-gradient(to bottom,transparent,#020617)"></div><div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center">${photo('width:96px;height:96px;border-radius:16px;object-fit:cover;border:4px solid #ffffff33;box-shadow:0 20px 30px #0008')}</div></div>`;
+      case 'bottom-compact':
+        return row(logo, 'display:flex;justify-content:flex-end;margin:-24px 0 16px;');
+      case 'left-photo':
+        return row(`${photo('width:80px;height:80px;border-radius:16px;object-fit:cover;flex-shrink:0') }<div style="flex:1;min-width:0">${renderLogo('above-avatar')}<div style="font-size:11px;font-weight:700">${escapeHtml(card.businessName || 'Profesional')}</div><strong>${escapeHtml(card.name)}</strong><div style="font-size:12px;opacity:.75">${escapeHtml(card.jobTitle || '')}</div></div>${logo}`, 'display:flex;align-items:center;gap:12px;margin:-40px 0 16px;padding:12px;border-radius:16px;background:#ffffff0a;border:1px solid #ffffff1a;position:relative;');
+      case 'right-photo':
+        return row(`<div style="flex:1;min-width:0">${logo}<div style="font-size:11px;font-weight:700">${escapeHtml(card.businessName || 'Especialista')}</div><strong>${escapeHtml(card.name)}</strong><div style="font-size:12px;opacity:.75">${escapeHtml(card.jobTitle || '')}</div></div>${photo('width:80px;height:80px;border-radius:16px;object-fit:cover;flex-shrink:0')}`, 'display:flex;align-items:center;gap:12px;margin:-40px 0 16px;padding:12px;border-radius:16px;background:#ffffff0a;border:1px solid #ffffff1a;position:relative;');
+      case 'panoramic':
+        return `<div style="position:relative;margin:-38px -24px 18px;aspect-ratio:16/9;overflow:hidden;border-radius:16px">${photo('width:100%;height:100%;object-fit:cover')}<div style="position:absolute;inset:0;background:linear-gradient(to top,#000c,transparent 65%)"></div><div style="position:absolute;bottom:12px;left:14px;right:14px;display:flex;justify-content:space-between;align-items:center"><strong>${escapeHtml(card.name)}</strong>${logo}</div></div>`;
+      case 'elegant-frame':
+        return row(`<div style="padding:4px;border-radius:18px;background:linear-gradient(45deg,#f59e0b,#fef3c7,#a16207)">${photo('width:80px;height:80px;border-radius:13px;object-fit:cover;border:3px solid #090d18')}</div>${logo}`);
+      case 'rounded-squircle':
+        return row(`<div style="padding:4px;border-radius:22px;background:linear-gradient(45deg,${card.design.primaryColor},${card.design.accentColor || card.design.secondaryColor})">${photo('width:80px;height:80px;border-radius:18px;object-fit:cover')}</div>${logo}`);
+      case 'asymmetric':
+        return row(`<div style="position:relative;transform:rotate(-3deg)"><span style="position:absolute;inset:0;background:#6366f166;border-radius:16px;transform:translate(6px,6px)"></span>${photo('position:relative;width:80px;height:80px;border-radius:16px;object-fit:cover;border:2px solid white')}</div>${logo}`);
+      case 'multi-grid':
+        return row(`${photo('width:80px;height:80px;border-radius:16px;object-fit:cover;flex-shrink:0')}<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:5px;flex:1;max-width:130px">${photos.slice(1,3).map((p) => photoFrame(p,'width:100%;height:36px;object-fit:cover;border-radius:8px')).join('')}</div>${logo}`, 'display:flex;align-items:center;gap:8px;margin:-42px 0 16px;');
+      case 'horizontal-slider':
+        return `<div style="display:flex;gap:10px;overflow-x:auto;margin:-30px -24px 16px;padding:0 24px 8px">${photos.map((p,i)=>`<div style="position:relative;flex:0 0 96px;height:96px;overflow:hidden;border-radius:16px;border:1px solid #ffffff22">${photoFrame(p,'width:100%;height:100%;object-fit:cover')}${i===0?'<small style="position:absolute;bottom:4px;left:4px;background:#000b;padding:2px 5px;border-radius:5px">Principal</small>':''}</div>`).join('')}</div>`;
+      case 'main-thumbnails':
+        return `<div style="margin:-42px 0 16px"><div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:8px">${photo('width:96px;height:96px;border-radius:16px;object-fit:cover')}${logo}</div><div style="display:flex;gap:6px;overflow-x:auto">${photos.map(p=>photoFrame(p,'width:36px;height:36px;object-fit:cover;border-radius:8px;border:1px solid #ffffff33')).join('')}</div></div>`;
+      case 'editorial-spread':
+        return row(`<div style="flex:1;padding-top:8px"><small style="display:block;letter-spacing:2px;opacity:.65">EDITORIAL · VOL. 1</small>${renderLogo('above-avatar')}</div>${photo('width:96px;height:128px;border-radius:12px;object-fit:cover')}`, 'display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin:-36px 0 16px;');
+      case 'overlapping-depth':
+        return row(`<div style="padding:5px;border-radius:16px;background:#ffffff20;border:1px solid #ffffff33;box-shadow:0 12px 28px #0008">${photo('width:80px;height:80px;border-radius:12px;object-fit:cover')}</div>${logo}`);
+      case 'photo-cards':
+        return row(`<div style="padding:6px 6px 16px;border-radius:12px;background:#fff;transform:rotate(-2deg);box-shadow:0 14px 24px #0008">${photo('width:80px;height:80px;border-radius:8px;object-fit:cover')}<div style="color:#1e293b;text-align:center;font-size:9px;font-weight:700">${escapeHtml((card.name || '').split(' ')[0])}</div></div>${logo}`);
+      case 'minimal-small':
+        return row(`<div style="display:flex;align-items:center;gap:12px">${photo('width:48px;height:48px;border-radius:50%;object-fit:cover')}</div>${logo}`, 'display:flex;align-items:center;justify-content:space-between;margin:-20px 0 12px;');
+      case 'geometric-cut':
+        return row(`<div style="padding:3px;background:linear-gradient(45deg,#22d3ee,#6366f1);clip-path:polygon(25% 0,75% 0,100% 50%,75% 100%,25% 100%,0 50%)">${photo('width:82px;height:82px;object-fit:cover;clip-path:polygon(25% 0,75% 0,100% 50%,75% 100%,25% 100%,0 50%)')}</div>${logo}`);
+      case 'multi-zone':
+        return row(`<div>${renderLogo('above-avatar')}${photo('width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid #6366f1')}</div>${logo}`);
+      case 'circle-portrait':
+      default:
+        return row(`<div>${renderLogo('above-avatar')}${photo(`width:${avatarSize}px;height:${avatarSize}px;border-radius:${avatarRadius};object-fit:cover;${card.design.avatarBorder ? 'border:4px solid '+(card.design.backgroundColor || '#0f172a')+';box-shadow:0 0 0 2px '+card.design.primaryColor : ''}`)}</div>${logo}`);
+    }
+  })();
+  const bottomPhotoHtml = photoComposition === 'bottom-compact'
+    ? `<div style="position:relative;margin:0 0 20px;aspect-ratio:16/9;overflow:hidden;border-radius:16px;border:1px solid #ffffff22">${photoFrame(avatarUrl,'width:100%;height:100%;object-fit:cover')}<div style="position:absolute;inset:0;background:linear-gradient(to top,#000c,transparent);display:flex;align-items:flex-end;padding:12px;font-weight:700">${escapeHtml(card.name)}</div></div>`
+    : '';
+
   return `<!DOCTYPE html>
 <html lang="es">
 <head>
@@ -740,22 +806,19 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
       ${card.design.showShareButton ? '<button class="module-tool" type="button" onclick="shareCardLink()" aria-label="Compartir tarjeta" title="Compartir">↗</button>' : ''}
     </div>` : ''}
     ${card.design.logoUrl && card.design.logoPosition === 'card-top' ? `<div class="card-top-logo-wrap"><img class="card-top-logo anim-logo-${card.design.logoAnimation || 'none'} anim-speed-${card.design.logoAnimationSpeed || 'normal'}" src="${card.design.logoUrl}" alt="${escapeHtml(card.businessName || 'Logotipo')}"></div>` : ''}
-    <div class="cover-banner ${isYoungCreative && !card.design.bannerUrl ? 'anim-liquid-flow' : ''}">
-      ${card.design.logoUrl && card.design.logoPosition === 'center-banner' ? `<img class="banner-logo-center anim-logo-${card.design.logoAnimation || 'none'} anim-speed-${card.design.logoAnimationSpeed || 'normal'}" src="${card.design.logoUrl}" alt="${escapeHtml(card.businessName || 'Logotipo')}">` : ''}
-      ${card.design.logoUrl && card.design.logoPosition === 'top-right' ? `<img class="banner-logo-top-right anim-logo-${card.design.logoAnimation || 'none'} anim-speed-${card.design.logoAnimationSpeed || 'normal'}" src="${card.design.logoUrl}" alt="${escapeHtml(card.businessName || 'Logotipo')}">` : ''}
-    </div>
+    ${(card.design.bannerUrl || !['top-large','vertical-large','card-bg'].includes(photoComposition)) ? `<div class="cover-banner ${isYoungCreative && !card.design.bannerUrl ? 'anim-liquid-flow' : ''}">
+      ${card.design.logoUrl && card.design.logoPosition === 'center-banner' ? `<img class="banner-logo-center anim-logo-${card.design.logoAnimation || 'none'} anim-speed-${card.design.logoAnimationSpeed || 'normal'}" src="${escapeHtml(card.design.logoUrl)}" alt="${escapeHtml(card.businessName || 'Logotipo')}">` : ''}
+      ${card.design.logoUrl && card.design.logoPosition === 'top-right' ? `<img class="banner-logo-top-right anim-logo-${card.design.logoAnimation || 'none'} anim-speed-${card.design.logoAnimationSpeed || 'normal'}" src="${escapeHtml(card.design.logoUrl)}" alt="${escapeHtml(card.businessName || 'Logotipo')}">` : ''}
+    </div>` : ''}
     <div class="content-body">
-      <div class="avatar-wrapper card-stagger-1 ${card.design.logoPosition === 'above-avatar' ? 'logo-above-avatar' : ''}">
-        ${card.design.logoUrl && card.design.logoPosition === 'above-avatar' ? `<img class="business-logo anim-logo-${card.design.logoAnimation || 'none'} anim-speed-${card.design.logoAnimationSpeed || 'normal'}" src="${card.design.logoUrl}" alt="${escapeHtml(card.businessName || 'Logotipo')}">` : ''}
-        <img class="avatar" src="${card.design.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300'}" alt="${escapeHtml(card.name)}">
-        ${card.design.logoUrl && (card.design.logoPosition || 'header') === 'header' ? `<img class="business-logo anim-logo-${card.design.logoAnimation || 'none'} anim-speed-${card.design.logoAnimationSpeed || 'normal'}" src="${card.design.logoUrl}" alt="${escapeHtml(card.businessName || 'Logotipo')}">` : ''}
-      </div>
+      ${photoCompositionHtml}
 
       ${card.businessName ? `<div class="company-title headline-font card-stagger-2">${escapeHtml(card.businessName)}</div>` : ''}
       <h1 class="headline-font card-stagger-2">${escapeHtml(card.name)}</h1>
       ${card.jobTitle ? `<div class="job-title card-stagger-2">${escapeHtml(card.jobTitle)}</div>` : ''}
 
       ${card.bio ? `<div class="bio-text card-stagger-2">${escapeHtml(card.bio)}</div>` : ''}
+      ${bottomPhotoHtml}
 
       <!-- Quick Action Grid -->
       <div class="action-grid card-stagger-3">
