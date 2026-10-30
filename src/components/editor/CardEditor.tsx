@@ -924,6 +924,11 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                           className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none"
                           placeholder="Ej. Clínica Dental Sonrisas"
                         />
+                        <div className="mt-2 flex items-center gap-2">
+                          <label className="text-[10px] text-slate-400 whitespace-nowrap">Color del texto</label>
+                          <input type="color" value={card.design.businessNameColor || card.design.accentColor || '#38bdf8'} onChange={(e) => updateDesignField('businessNameColor', e.target.value)} aria-label="Color independiente de Empresa o Negocio" className="w-7 h-7 rounded-lg cursor-pointer bg-transparent border-0" />
+                          <span className="text-[10px] text-slate-500">Solo Empresa / Negocio</span>
+                        </div>
                       </div>
                       <div>
                         <label className="block text-xs font-medium text-slate-400 mb-1">Giro / Categoría</label>
@@ -2117,6 +2122,16 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                         <option value="Cinzel">Cinzel (Clásica Romana, Legal & Prestigio)</option>
                         <option value="Space Grotesk">Space Grotesk (Tech, Creativa, Futuro)</option>
                         <option value="Montserrat">Montserrat (Contemporánea, Alta Legibilidad)</option><option value="DM Sans">DM Sans (Minimalista)</option><option value="Lora">Lora (Editorial)</option><option value="Cormorant Garamond">Cormorant Garamond (Lujo)</option><option value="Oswald">Oswald (Impacto)</option><option value="Roboto Slab">Roboto Slab (Serif moderna)</option><option value="Raleway">Raleway (Elegante)</option><option value="Bebas Neue">Bebas Neue (Display)</option><option value="Merriweather">Merriweather (Clásica)</option>
+                        <option value="Poppins">Poppins (Geométrica y moderna)</option>
+                        <option value="Manrope">Manrope (Corporativa actual)</option>
+                        <option value="Plus Jakarta Sans">Plus Jakarta Sans (Contemporánea)</option>
+                        <option value="Urbanist">Urbanist (Minimalista)</option>
+                        <option value="Archivo">Archivo (Profesional)</option>
+                        <option value="Barlow Condensed">Barlow Condensed (Compacta)</option>
+                        <option value="Josefin Sans">Josefin Sans (Elegante)</option>
+                        <option value="DM Serif Display">DM Serif Display (Editorial)</option>
+                        <option value="Libre Baskerville">Libre Baskerville (Clásica)</option>
+                        <option value="Ubuntu">Ubuntu (Amigable)</option>
                       </select>
                     </div>
                     <div>
@@ -2129,6 +2144,15 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                         <option value="Inter">Inter (Óptima para celulares)</option>
                         <option value="DM Sans">DM Sans (Suave y legible)</option>
                         <option value="Outfit">Outfit (Moderna y continua)</option><option value="Roboto">Roboto</option><option value="Lato">Lato</option><option value="Montserrat">Montserrat</option><option value="Open Sans">Open Sans</option><option value="Nunito Sans">Nunito Sans</option><option value="Source Sans 3">Source Sans 3</option><option value="Lora">Lora</option><option value="Merriweather">Merriweather</option>
+                        <option value="Poppins">Poppins</option>
+                        <option value="Manrope">Manrope</option>
+                        <option value="Plus Jakarta Sans">Plus Jakarta Sans</option>
+                        <option value="Urbanist">Urbanist</option>
+                        <option value="Archivo">Archivo</option>
+                        <option value="Figtree">Figtree</option>
+                        <option value="Nunito">Nunito</option>
+                        <option value="Ubuntu">Ubuntu</option>
+                        <option value="Work Sans">Work Sans</option>
                       </select>
                     </div>
                   </div>
@@ -2165,6 +2189,8 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                         <option value="mesh">Malla de gradiente</option>
                         <option value="geometric">Geométrico diagonal</option>
                         <option value="carbon">Fibra de carbono</option>
+                        <option value="waves">Ondas concéntricas</option>
+                        <option value="grid">Cuadrícula técnica</option>
                       </select>
                     </div>
                   </div>
