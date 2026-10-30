@@ -133,6 +133,11 @@ export const CardEditor: React.FC<CardEditorProps> = ({
   // overriding any explicit on/off choice already stored by the user.
   const [card, setCard] = useState<CardData>(() => ({
     ...initialCard,
+    customButtons: Array.isArray(initialCard.customButtons) ? initialCard.customButtons : [],
+    catalog: Array.isArray(initialCard.catalog) ? initialCard.catalog : [],
+    gallery: Array.isArray(initialCard.gallery) ? initialCard.gallery : [],
+    socials: initialCard.socials && typeof initialCard.socials === 'object' ? initialCard.socials : {},
+    businessHours: typeof initialCard.businessHours === 'string' ? initialCard.businessHours : '',
     design: {
       ...initialCard.design,
       avatarShape: initialCard.design?.avatarShape ?? 'circle',
