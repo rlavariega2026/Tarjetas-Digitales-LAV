@@ -58,7 +58,3 @@ jobs:
           retention-days: 14
 
       # Despliegue manual: este flujo solo construye y genera el ZIP.
-
-        if: ${{ env.HOSTINGER_FTP_SERVER == '' || env.HOSTINGER_FTP_USERNAME == '' || env.HOSTINGER_FTP_PASSWORD == '' || env.HOSTINGER_FTP_SERVER_DIR == '' }}
-        run: |
-          echo "::warning::La compilacion termino, pero falta configurar los secretos FTP de Hostinger en GitHub. No se publico el sitio.";
