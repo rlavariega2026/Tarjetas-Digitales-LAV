@@ -11,6 +11,8 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
     .replace(/[^a-z0-9_-]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 80) || 'tarjeta';
   // Sharing and contact actions must point to the published card, not to the business website.
   const cardUrl = publishedUrl || `https://lavdigitalmkt.com/tarjetas/${encodeURIComponent(safeFolder(card.businessName || card.name || 'cliente'))}/${encodeURIComponent(safeFolder(card.slug || card.name || card.id || 'tarjeta'))}/index.html`;
+  // Keep older cards with incomplete design data renderable in both preview and export.
+  const theme = card.design?.theme || 'modern-clean';
   const absolutePublicImage = [card.design.avatarUrl, card.design.logoUrl, card.design.bannerUrl]
     .find((value) => typeof value === 'string' && /^https:\/\//i.test(value) && !value.startsWith('data:'));
   const previewImageUrl = absolutePublicImage || 'https://lavdigitalmkt.com/pwa-512x512.png';
@@ -70,12 +72,12 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
   ].filter(Boolean) as Array<{ name: string; url: string }>;
 
   // Keep the published HTML visually aligned with the React preview for every premium collection.
-  const isEleganceLuxury = ['elegance-luxury','executive-black','champagne-gold','royal-navy','black-gold','platinum-edition','liquid-metal','royal-velvet'].includes(card.design.theme) || card.design.animationStyle === 'metallic-sheen';
-  const isFutureTech = ['future-tech','cyber-blue','neon-purple','digital-glass','cyber-chrome','neon-grid','digital-orbit','holographic-future','liquid-glass'].includes(card.design.theme) || card.design.animationStyle === 'tech-scan';
-  const isGlassMotion = ['glass-motion','aurora-glass','frosted-depth','crystal-prism','aurora-flow','prismatic-light','dynamic-layers'].includes(card.design.theme) || card.design.animationStyle === 'floating-glow' || card.design.animationStyle === 'glass-parallax';
-  const isYoungCreative = ['young-creative','urban-gradient','pop-creative','color-motion','asymmetric-flow','bold-creative','editorial-cover'].includes(card.design.theme) || card.design.animationStyle === 'liquid-flow';
-  const isMinimalStudio = ['minimal-studio','pure-white','soft-beige','modern-monochrome','swiss-minimal','monochrome-studio','architectural-lines'].includes(card.design.theme) || card.design.animationStyle === 'subtle-fade';
-  const isBusinessSignature = ['business-signature','corporate-executive','modern-consultant','lawyer-elite','architectural-lines'].includes(card.design.theme);
+  const isEleganceLuxury = ['elegance-luxury','executive-black','champagne-gold','royal-navy','black-gold','platinum-edition','liquid-metal','royal-velvet'].includes(theme) || card.design.animationStyle === 'metallic-sheen';
+  const isFutureTech = ['future-tech','cyber-blue','neon-purple','digital-glass','cyber-chrome','neon-grid','digital-orbit','holographic-future','liquid-glass'].includes(theme) || card.design.animationStyle === 'tech-scan';
+  const isGlassMotion = ['glass-motion','aurora-glass','frosted-depth','crystal-prism','aurora-flow','prismatic-light','dynamic-layers'].includes(theme) || card.design.animationStyle === 'floating-glow' || card.design.animationStyle === 'glass-parallax';
+  const isYoungCreative = ['young-creative','urban-gradient','pop-creative','color-motion','asymmetric-flow','bold-creative','editorial-cover'].includes(theme) || card.design.animationStyle === 'liquid-flow';
+  const isMinimalStudio = ['minimal-studio','pure-white','soft-beige','modern-monochrome','swiss-minimal','monochrome-studio','architectural-lines'].includes(theme) || card.design.animationStyle === 'subtle-fade';
+  const isBusinessSignature = ['business-signature','corporate-executive','modern-consultant','lawyer-elite','architectural-lines'].includes(theme);
   const metallicBackground = 'linear-gradient(115deg,#27272a 0%,#d4d4d8 14%,#71717a 28%,#fef3c7 43%,#a16207 56%,#f8fafc 70%,#52525b 84%,#e5e7eb 100%)';
   const gradientBackground = `linear-gradient(135deg,${card.design.primaryColor || '#06b6d4'},${card.design.secondaryColor || '#7c3aed'},${card.design.accentColor || '#ec4899'})`;
   const patternBackground = (() => {
@@ -87,8 +89,8 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
       default: return 'none';
     }
   })();
-  const isGradientFinish = card.design.backgroundFinish === 'gradient' || (!card.design.backgroundFinish && ['urban-gradient','color-motion','aurora-glass','soft-gradient','bold-gradient','aurora-flow','prismatic-light','royal-velvet'].includes(card.design.theme));
-  const isMetallicFinish = card.design.backgroundFinish === 'metallic' || (!card.design.backgroundFinish && ['executive-black','champagne-gold','royal-navy','black-gold','platinum-edition','liquid-metal','lawyer-elite','elegance-luxury','cyber-chrome'].includes(card.design.theme));
+  const isGradientFinish = card.design.backgroundFinish === 'gradient' || (!card.design.backgroundFinish && ['urban-gradient','color-motion','aurora-glass','soft-gradient','bold-gradient','aurora-flow','prismatic-light','royal-velvet'].includes(theme));
+  const isMetallicFinish = card.design.backgroundFinish === 'metallic' || (!card.design.backgroundFinish && ['executive-black','champagne-gold','royal-navy','black-gold','platinum-edition','liquid-metal','lawyer-elite','elegance-luxury','cyber-chrome'].includes(theme));
   const cardBackgroundImage = card.design.backgroundFinish === 'gradient'
     ? gradientBackground
     : card.design.backgroundFinish === 'metallic'
@@ -853,7 +855,7 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
               <div style="font-size:12px; opacity:0.8; margin:2px 0 4px 0;">${escapeHtml(item.description || '')}</div>
               ${item.price ? `<div class="catalog-price">${escapeHtml(item.price)}</div>` : ''}
             </div>
-            ${item.ctaLink ? `<a href="${item.ctaLink}" target="_blank" rel="noopener noreferrer" style="padding:6px 12px; background:rgba(255,255,255,0.1); border-radius:10px; color:#fff; text-decoration:none; font-size:11px; font-weight:600;">${escapeHtml(item.ctaLabel || 'Ver')}</a>` : ''}
+            ${item.ctaLink ? `<a href="${escapeHtml(item.ctaLink)}" target="_blank" rel="noopener noreferrer" style="padding:6px 12px; background:rgba(255,255,255,0.1); border-radius:10px; color:#fff; text-decoration:none; font-size:11px; font-weight:600;">${escapeHtml(item.ctaLabel || 'Ver')}</a>` : ''}
           </div>
         `).join('')}
       </div>` : `<div class="section-title">Productos &amp; Servicios</div><div style="margin-bottom:20px;padding:14px;border:1px dashed rgba(255,255,255,.2);border-radius:14px;color:#94a3b8;font-size:12px;text-align:center;">Añade productos o servicios desde la pestaña Catálogo del editor.</div>`) : ''}
