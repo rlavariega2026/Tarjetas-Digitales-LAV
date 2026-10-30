@@ -116,10 +116,13 @@ export function getStoredCards(): CardData[] {
       const c: CardData = {
         ...storedCard,
         customButtons: Array.isArray(storedCard.customButtons) ? storedCard.customButtons : [],
-        catalog: Array.isArray(storedCard.catalog) ? storedCard.catalog : [],
-        gallery: Array.isArray(storedCard.gallery) ? storedCard.gallery : [],
+        catalog: Array.isArray(storedCard.catalog) ? storedCard.catalog.map((item, index) => ({ ...item, id: item?.id || `catalog-${storedCard.id}-${index}`, title: item?.title || '', description: item?.description || '', price: item?.price || '', imageUrl: item?.imageUrl || '' })) : [],
+        gallery: Array.isArray(storedCard.gallery) ? storedCard.gallery.map((item, index) => ({ ...item, id: item?.id || `gallery-${storedCard.id}-${index}`, imageUrl: item?.imageUrl || '' })) : [],
         socials: storedCard.socials && typeof storedCard.socials === 'object' ? storedCard.socials : {},
         businessHours: typeof storedCard.businessHours === 'string' ? storedCard.businessHours : '',
+        schedule: Array.isArray(storedCard.schedule) ? storedCard.schedule : [
+          ['monday', 'Lunes'], ['tuesday', 'Martes'], ['wednesday', 'Miércoles'], ['thursday', 'Jueves'], ['friday', 'Viernes'], ['saturday', 'Sábado'], ['sunday', 'Domingo'],
+        ].map(([id, day]) => ({ id, day, open: '09:00', close: '18:00', closed: false })),
         design: {
           ...(INITIAL_TEMPLATES[0]?.cardData.design || {}),
           ...(storedCard.design || {}),
@@ -131,7 +134,8 @@ export function getStoredCards(): CardData[] {
         !Array.isArray(storedCard.gallery) ||
         !storedCard.socials ||
         !storedCard.design ||
-        typeof storedCard.businessHours !== 'string';
+        typeof storedCard.businessHours !== 'string' ||
+        !Array.isArray(storedCard.schedule);
       let views = c.viewsCount;
       if (typeof views !== 'number' || views < 0) {
         views = Math.floor(Math.random() * 320) + 110;
