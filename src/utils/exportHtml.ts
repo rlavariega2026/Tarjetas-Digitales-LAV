@@ -824,7 +824,7 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
         ${card.phone ? `<a href="tel:${card.phone.replace(/\D/g, '')}" class="quick-btn"><span>📞</span> Llamar</a>` : ''}
         ${card.email ? `<a href="mailto:${card.email}" class="quick-btn"><span>✉️</span> Correo</a>` : ''}
         ${card.design.showMapButton && (card.googleMapsUrl || card.address) ? `<a href="${card.googleMapsUrl || `https://maps.google.com/?q=${encodeURIComponent(card.address)}`}" target="_blank" rel="noopener noreferrer" class="quick-btn"><span>📍</span> Ubicación</a>` : ''}
-        ${card.website ? `<a href="${/^https?:\/\//i.test(card.website.trim()) ? card.website.trim() : `https://${card.website.trim()}`}" target="_blank" rel="noopener noreferrer" class="quick-btn"><span>🌐</span> Página web</a>` : ''}
+        ${card.website ? `<a href="${/^https?:\/\//i.test(card.website.trim()) ? card.website.trim() : `https://${card.website.trim()}`}" target="_blank" rel="noopener noreferrer" class="quick-btn" style="text-align:center;"><span>🌐</span><span style="display:block;width:100%;text-align:center;">Página web</span></a>` : ''}
       </div>
 
       <!-- Compartir contacto (Apertura directa en app de Contactos) -->
