@@ -894,8 +894,10 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
         backgroundColor: design.backgroundColor || '#0f172a',
         color: design.textColor || '#f8fafc',
         backgroundImage: cardBackgroundImage,
-        backgroundSize: design.backgroundTextureUrl ? 'cover' : 'auto',
+        backgroundSize: cardBackgroundSize,
         backgroundPosition: 'center',
+        backgroundRepeat: cardBackgroundRepeat,
+        backgroundBlendMode: cardBackgroundBlendMode,
         ['--beam-color' as any]: design.primaryColor || '#06b6d4',
         ['--card-text-color' as any]: /^#[0-9a-fA-F]{6}$/.test(design.textColor || '') ? design.textColor : '#f8fafc',
       }}
