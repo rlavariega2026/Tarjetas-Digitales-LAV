@@ -1064,77 +1064,19 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
       vcard: ${JSON.stringify(generateVCardString(card))}
     };
 
-    async function compartirContactoDirecto() {
-      const ua = (navigator.userAgent || '').toLowerCase();
-      const isAndroid = /android/i.test(ua);
-      const isIOS = /iphone|ipad|ipod/i.test(ua);
-
-      // Android: invoca el formulario nativo para crear el contacto, con los campos ya rellenados.
-      if (isAndroid) {
-        const intentParts = [
-          'action=android.intent.action.INSERT',
-          'type=vnd.android.cursor.dir/contact',
-          'S.name=' + encodeURIComponent(CARD_DATA.name || '')
-        ];
-        const cleanPhone = (CARD_DATA.phone || '').replace(/[^\\d+]/g, '');
-        if (cleanPhone) intentParts.push('S.phone=' + encodeURIComponent(cleanPhone));
-        if (CARD_DATA.email) intentParts.push('S.email=' + encodeURIComponent(CARD_DATA.email));
-        if (CARD_DATA.business) intentParts.push('S.company=' + encodeURIComponent(CARD_DATA.business));
-        if (CARD_DATA.job) intentParts.push('S.job_title=' + encodeURIComponent(CARD_DATA.job));
-        if (CARD_DATA.address) intentParts.push('S.postal=' + encodeURIComponent(CARD_DATA.address));
-        if (CARD_DATA.notes) intentParts.push('S.notes=' + encodeURIComponent(CARD_DATA.notes));
-        const fallback = encodeURIComponent(window.location.href);
-        window.location.href = 'intent:#Intent;' + intentParts.join(';') +
-          ';S.browser_fallback_url=' + fallback + ';end';
-        return;
-      }
-
-      // En una tarjeta ya publicada existe contact.vcf junto a index.html; dejar que iOS abra su importador nativo.
-      if (isIOS && window.location.pathname.indexOf('/tarjetas/') === 0) {
-        const vcardUrl = new URL('contact.vcf', window.location.href).href;
-        // Older published cards may not yet have contact.vcf. Check first and fall back to the embedded vCard.
-        try {
-          const response = await fetch(vcardUrl, { method: 'HEAD', cache: 'no-store' });
-          if (response.ok) {
-            window.location.href = vcardUrl;
-            return;
-          }
-        } catch (e) {
-          // Offline or blocked HEAD request: use the self-contained vCard below.
-        }
-      }
-
-      // Compartir la ficha .vcf con el sistema cuando el navegador admite compartir archivos.
-      if ((isAndroid || isIOS) && navigator.share && window.File) {
-        try {
-          const file = new File([CARD_DATA.vcard], (CARD_DATA.name.replace(/[^a-zA-Z0-9]/g, '_') || 'contacto') + '.vcf', {
-            type: 'text/vcard;charset=utf-8'
-          });
-          if (navigator.canShare && navigator.canShare({ files: [file] })) {
-            await navigator.share({
-              files: [file],
-              title: CARD_DATA.name,
-              text: 'Contacto de ' + CARD_DATA.name
-            });
-            return;
-          }
-        } catch (e) {
-          if (e.name === 'AbortError') return;
-        }
-      }
-
-      // 3. iOS Safari: Abre directamente la ficha de contacto en pantalla sin descargar archivos sueltos
-      // 3. iPhone/iPad y navegadores sin Web Share: ofrecer la ficha vCard como archivo
-      // para que el sistema muestre la vista previa/importación nativa de Contactos.
+    function compartirContactoDirecto() {
+      // Descarga inmediata del vCard desde el gesto del usuario.
+      // No depender de intents, fetch/HEAD ni Web Share, que pueden bloquearse en móviles.
+      const safeName = (CARD_DATA.name.replace(/[^a-zA-Z0-9_-]/g, '_') || 'contacto');
       const blob = new Blob([CARD_DATA.vcard], { type: 'text/vcard;charset=utf-8' });
       const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = (CARD_DATA.name.replace(/[^a-zA-Z0-9]/g, '_') || 'contacto') + '.vcf';
-      a.style.display = 'none';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = safeName + '.vcf';
+      link.style.display = 'none';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
       window.setTimeout(function() { URL.revokeObjectURL(url); }, 60000);
     }
   </script>
