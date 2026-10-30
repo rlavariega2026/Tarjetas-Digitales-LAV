@@ -1021,7 +1021,7 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
       )}
 
       {/* Main Card Content */}
-      <div className="relative px-6 pb-8" style={{ fontFamily: bodyFontFamily }}>
+      <div className="relative z-10 px-6 pb-8" style={{ fontFamily: bodyFontFamily }}>
         {/* Render Selected Photo Composition (1 of 20 variants) */}
         {renderPhotoComposition()}
 
