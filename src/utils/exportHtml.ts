@@ -299,7 +299,7 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
         width: 100%;
         max-width: 420px;
         min-height: 0;
-        border-radius: 26px;
+        border-radius: ${themeRadius};
         background-color: ${card.design.backgroundColor};
         border: 1px solid rgba(255,255,255,.12);
         box-shadow: 0 28px 75px rgba(0,0,0,.52), 0 0 0 1px rgba(255,255,255,.035);
@@ -307,7 +307,7 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
         isolation: isolate;
         overflow: hidden;
       }
-      .cover-banner { border-radius: 25px 25px 0 0; }
+      .cover-banner { border-radius: ${themeRadius} ${themeRadius} 0 0; }
       .footer-brand { font-size: 10px; opacity: .38; }
       .social-section { margin-top: 22px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,.1); }
     .social-section-title { margin: 0 0 12px; text-align: center; color: var(--text-color, #e2e8f0); font: 700 11px/1.3 Arial,sans-serif; letter-spacing: .16em; text-transform: uppercase; opacity: .8; }
