@@ -836,11 +836,13 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
     <div class="content-body">
       ${photoCompositionHtml}
 
-      ${card.businessName ? `<div class="company-title headline-font card-stagger-2">${escapeHtml(card.businessName)}</div>` : ''}
-      <h1 class="headline-font card-stagger-2">${escapeHtml(card.name)}</h1>
-      ${card.jobTitle ? `<div class="job-title card-stagger-2">${escapeHtml(card.jobTitle)}</div>` : ''}
-
-      ${card.bio ? `<div class="bio-text card-stagger-2">${escapeHtml(card.bio)}</div>` : ''}
+      <div class="info-block" style="text-align:${card.design.infoTextAlign || 'left'};">
+        ${card.businessName ? `<div class="company-title headline-font card-stagger-2">${escapeHtml(card.businessName)}</div>` : ''}
+        <h1 class="headline-font card-stagger-2">${escapeHtml(card.name)}</h1>
+        ${card.category ? `<div class="category-title card-stagger-2">${escapeHtml(card.category)}</div>` : ''}
+        ${card.jobTitle ? `<div class="job-title card-stagger-2">${escapeHtml(card.jobTitle)}</div>` : ''}
+        ${card.bio ? `<div class="bio-text card-stagger-2">${escapeHtml(card.bio)}</div>` : ''}
+      </div>
       ${bottomPhotoHtml}
 
       <!-- Quick Action Grid -->
