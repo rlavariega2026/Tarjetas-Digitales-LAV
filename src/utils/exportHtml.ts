@@ -337,9 +337,7 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
         min-height: 100vh !important;
         min-height: 100dvh !important;
         margin: 0 !important;
-        border-radius: 0 !important;
-        border: 0 !important;
-        box-shadow: none !important;
+        /* Mantener el radio, borde y sombra definidos por el tema seleccionado. */
       }
       .cover-banner { border-radius: 0 !important; }
       .content-body { padding-bottom: max(26px, env(safe-area-inset-bottom)) !important; }
