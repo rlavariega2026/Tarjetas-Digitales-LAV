@@ -217,6 +217,8 @@ export interface CardDesign {
   showCustomButtons: boolean;
   showMapButton: boolean;
   showVideo?: boolean;
+  /** Text alignment for the personal and professional information block. */
+  infoTextAlign?: 'left' | 'center' | 'right';
 
   // Physical Card Front & Back for print
   physicalCard: {
