@@ -268,8 +268,10 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
       max-width: 440px;
       background-color: ${card.design.backgroundColor};
       background-image: ${cardBackgroundImage};
-      background-size: ${card.design.backgroundTextureUrl ? 'cover' : 'auto'};
+      background-size: ${cardBackgroundSize};
       background-position: center;
+      background-repeat: ${cardBackgroundRepeat};
+      background-blend-mode: ${cardBackgroundBlendMode};
       border: ${themeBorder};
       border-radius: ${themeRadius};
       overflow: hidden;
@@ -559,14 +561,21 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
       font-weight: 700;
       line-height: 1.2;
       margin-bottom: 4px;
-      color: #ffffff;
+      color: ${card.design.textColor || '#ffffff'};
     }
     .company-title {
       font-size: 15px;
       font-weight: 600;
-      color: ${card.design.accentColor || '#38bdf8'};
+      color: ${card.design.businessNameColor || card.design.accentColor || '#38bdf8'};
       margin-bottom: 2px;
       letter-spacing: 0.5px;
+    }
+    .category-title {
+      font-size: 12px;
+      font-weight: 500;
+      opacity: .82;
+      margin-bottom: 3px;
+      color: ${card.design.textColor || '#f8fafc'};
     }
     .job-title {
       font-size: 14px;
