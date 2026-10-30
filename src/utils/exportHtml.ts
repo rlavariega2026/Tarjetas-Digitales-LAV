@@ -861,11 +861,12 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
       </div>` : `<div class="section-title">Productos &amp; Servicios</div><div style="margin-bottom:20px;padding:14px;border:1px dashed rgba(255,255,255,.2);border-radius:14px;color:#94a3b8;font-size:12px;text-align:center;">Añade productos o servicios desde la pestaña Catálogo del editor.</div>`) : ''}
 
       <!-- Business Hours -->
-      ${card.design.showHours ? (card.businessHours && card.businessHours.trim() ? `
+      ${card.design.showHours ? `
       <div class="section-title">Horarios de Atención</div>
-      <div style="font-size:13px; opacity:0.85; margin-bottom:18px; padding:12px; background:rgba(255,255,255,0.03); border-radius:12px; border:1px solid rgba(255,255,255,0.06);">
-        🕒 ${escapeHtml(card.businessHours)}
-      </div>` : `<div class="section-title">Horarios de Atención</div><div style="font-size:12px;opacity:.7;margin-bottom:18px;padding:12px;border:1px dashed rgba(255,255,255,.2);border-radius:12px;">Escribe los horarios en el editor para mostrarlos aquí.</div>`) : ''}
+      <div style="font-size:13px;opacity:.9;margin-bottom:18px;padding:12px;background:rgba(255,255,255,.03);border-radius:12px;border:1px solid rgba(255,255,255,.06);">
+        ${Array.isArray(card.schedule) && card.schedule.length ? card.schedule.map(day => `<div style="display:flex;justify-content:space-between;gap:12px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.06);"><strong>${escapeHtml(day.day)}</strong><span>${day.closed ? 'Cerrado' : escapeHtml(day.open || '') + ' – ' + escapeHtml(day.close || '')}</span></div>`).join('') : (card.businessHours ? escapeHtml(card.businessHours) : 'Configura los horarios en el editor.')}
+        ${card.businessHours ? `<div style="margin-top:8px;opacity:.75;">${escapeHtml(card.businessHours)}</div>` : ''}
+      </div>` : ''}
 
 
     </div>
