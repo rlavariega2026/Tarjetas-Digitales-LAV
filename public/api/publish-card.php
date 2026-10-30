@@ -240,4 +240,4 @@ if (strpos($existingCardRules, $cachePolicyMarker) === false) {
 }
 
 $host = $_SERVER['HTTP_HOST'] ?? 'lavdigitalmkt.com';
-out(200, ['ok'=>true,'url'=>'https://' . $host . '/tarjetas/' . rawurlencode($clientFolder) . '/' . rawurlencode($cardFolder) . '/index.html']);
+out(200, ['ok'=>true,'url'=>'https://' . $host . '/tarjetas/' . rawurlencode($clientFolder) . '/' . rawurlencode($cardFolder) . '/']);
