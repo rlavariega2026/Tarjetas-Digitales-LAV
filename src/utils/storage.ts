@@ -120,7 +120,7 @@ export function getStoredCards(): CardData[] {
         gallery: Array.isArray(storedCard.gallery) ? storedCard.gallery.map((item, index) => ({ ...item, id: item?.id || `gallery-${storedCard.id}-${index}`, imageUrl: item?.imageUrl || '' })) : [],
         socials: storedCard.socials && typeof storedCard.socials === 'object' ? storedCard.socials : {},
         businessHours: typeof storedCard.businessHours === 'string' ? storedCard.businessHours : '',
-        schedule: Array.isArray(storedCard.schedule) ? storedCard.schedule : [
+        schedule: Array.isArray(storedCard.schedule) && storedCard.schedule.length ? storedCard.schedule : [
           ['monday', 'Lunes'], ['tuesday', 'Martes'], ['wednesday', 'Miércoles'], ['thursday', 'Jueves'], ['friday', 'Viernes'], ['saturday', 'Sábado'], ['sunday', 'Domingo'],
         ].map(([id, day]) => ({ id, day, open: '09:00', close: '18:00', closed: false })),
         design: {
@@ -135,7 +135,9 @@ export function getStoredCards(): CardData[] {
         !storedCard.socials ||
         !storedCard.design ||
         typeof storedCard.businessHours !== 'string' ||
-        !Array.isArray(storedCard.schedule);
+        !Array.isArray(storedCard.schedule) || storedCard.schedule.length === 0 ||
+        (Array.isArray(storedCard.catalog) && storedCard.catalog.some((item) => !item?.id)) ||
+        (Array.isArray(storedCard.gallery) && storedCard.gallery.some((item) => !item?.id));
       let views = c.viewsCount;
       if (typeof views !== 'number' || views < 0) {
         views = Math.floor(Math.random() * 320) + 110;
