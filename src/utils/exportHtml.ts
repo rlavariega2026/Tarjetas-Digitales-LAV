@@ -313,7 +313,7 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
       .social-icon-btn .social-label { display: inline-block !important; font-size: 11px; }
       .social-icon-btn svg { display: block !important; visibility: visible !important; opacity: 1 !important; width: 18px; height: 18px; flex: 0 0 18px; }
       .save-contact-btn, .quick-btn, .custom-link-btn { -webkit-tap-highlight-color: transparent; }
-      .content-body { padding: 0 22px 26px; }
+      .content-body { position: relative; z-index: 10; padding: 0 22px 26px; }
       .cover-banner { height: ${card.design.coverHeight === 'none' ? '40px' : card.design.coverHeight === 'sm' ? '112px' : card.design.coverHeight === 'lg' ? '192px' : '144px'}; }
     }
 
