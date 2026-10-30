@@ -820,7 +820,7 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
 
       <!-- Quick Action Grid -->
       <div class="action-grid card-stagger-3">
-        ${card.whatsapp ? `<a href="${whatsappUrl}" target="_blank" class="quick-btn highlight"><span>💬</span> WhatsApp</a>` : ''}
+        ${card.whatsapp ? `<a href="${whatsappUrl}" target="_blank" rel="noopener noreferrer" class="quick-btn highlight"><svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18" fill="currentColor" style="vertical-align:middle;margin-right:5px;"><path d="M20.52 3.48A11.86 11.86 0 0 0 12.04 0C5.47 0 .12 5.34.12 11.9c0 2.1.55 4.15 1.6 5.96L0 24l6.3-1.65a11.94 11.94 0 0 0 5.73 1.46h.01c6.56 0 11.9-5.34 11.91-11.9a11.82 11.82 0 0 0-3.43-8.43ZM12.04 21.8a9.9 9.9 0 0 1-5.04-1.38l-.36-.21-3.74.98 1-3.65-.24-.37a9.84 9.84 0 0 1-1.52-5.27c0-5.47 4.46-9.92 9.94-9.92a9.86 9.86 0 0 1 7.02 2.91 9.86 9.86 0 0 1 2.9 7.03c0 5.48-4.46 9.93-9.96 9.93Zm5.45-7.43c-.3-.15-1.77-.87-2.04-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.47-.89-.79-1.49-1.77-1.66-2.07-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.08-.79.37-.27.3-1.04 1.02-1.04 2.49s1.07 2.89 1.22 3.09c.15.2 2.1 3.2 5.08 4.49.71.31 1.27.5 1.7.64.71.23 1.36.2 1.87.12.57-.09 1.77-.72 2.02-1.42.25-.7.25-1.3.17-1.42-.07-.13-.27-.2-.57-.35Z"/></svg> WhatsApp</a>` : ''}
         ${card.phone ? `<a href="tel:${card.phone.replace(/\D/g, '')}" class="quick-btn"><span>📞</span> Llamar</a>` : ''}
         ${card.email ? `<a href="mailto:${card.email}" class="quick-btn"><span>✉️</span> Correo</a>` : ''}
         ${card.design.showMapButton && (card.googleMapsUrl || card.address) ? `<a href="${card.googleMapsUrl || `https://maps.google.com/?q=${encodeURIComponent(card.address)}`}" target="_blank" rel="noopener noreferrer" class="quick-btn"><span>📍</span> Ubicación</a>` : ''}
@@ -954,13 +954,17 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
         `).join('')}
       </div>` : `<div class="section-title">Productos &amp; Servicios</div><div style="margin-bottom:20px;padding:14px;border:1px dashed rgba(255,255,255,.2);border-radius:14px;color:#94a3b8;font-size:12px;text-align:center;">Añade productos o servicios desde la pestaña Catálogo del editor.</div>`) : ''}
 
-      <!-- Business Hours -->
-      ${card.design.showHours ? `
-      <div class="section-title">Horarios de Atención</div>
-      <div style="font-size:13px;opacity:.9;margin-bottom:18px;padding:12px;background:rgba(255,255,255,.03);border-radius:12px;border:1px solid rgba(255,255,255,.06);">
-        ${Array.isArray(card.schedule) && card.schedule.length ? card.schedule.map(day => `<div style="display:flex;justify-content:space-between;gap:12px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.06);"><strong>${escapeHtml(day.day)}</strong><span>${day.closed ? 'Cerrado' : escapeHtml(day.open || '') + ' – ' + escapeHtml(day.close || '')}</span></div>`).join('') : (card.businessHours ? escapeHtml(card.businessHours) : 'Configura los horarios en el editor.')}
-        ${card.businessHours ? `<div style="margin-top:8px;opacity:.75;">${escapeHtml(card.businessHours)}</div>` : ''}
-      </div>` : ''}
+      <!-- Business Hours: compact native disclosure button -->
+      ${card.design.showHours && ((Array.isArray(card.schedule) && card.schedule.length > 0) || card.businessHours?.trim()) ? `
+      <details style="margin-bottom:18px;border:1px solid rgba(255,255,255,.10);border-radius:14px;background:rgba(255,255,255,.04);overflow:hidden;">
+        <summary style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 15px;cursor:pointer;list-style:none;font-size:13px;font-weight:700;color:#fff;">
+          <span style="display:flex;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="#fbbf24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>Horarios de atención</span>
+          <span aria-hidden="true" style="opacity:.7;">⌄</span>
+        </summary>
+        <div style="padding:0 15px 12px;font-size:13px;opacity:.9;">
+          ${Array.isArray(card.schedule) && card.schedule.length ? card.schedule.map(day => `<div style="display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-top:1px solid rgba(255,255,255,.06);"><strong>${escapeHtml(day.day)}</strong><span>${day.closed ? 'Cerrado' : escapeHtml(day.open || '') + ' – ' + escapeHtml(day.close || '')}</span></div>`).join('') : escapeHtml(card.businessHours || '')}
+        </div>
+      </details>` : ''}
 
 
     </div>
