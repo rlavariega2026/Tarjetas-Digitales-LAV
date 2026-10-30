@@ -70,6 +70,7 @@ jobs:
         run: |
           lftp -u "$FTP_USERNAME","$FTP_PASSWORD" "$FTP_SERVER" -e "
             set ftp:passive-mode true;
+            set ssl:verify-certificate no;
             set net:timeout 30;
             set net:max-retries 2;
             set net:reconnect-interval-base 5;
