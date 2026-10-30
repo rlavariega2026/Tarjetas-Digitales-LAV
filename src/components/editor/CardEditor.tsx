@@ -1714,7 +1714,7 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                               }
                             : {}),
                           bannerUrl: preservedBanner,
-                          backgroundTextureUrl: prev.design.backgroundTextureUrl,
+                          backgroundTextureUrl: undefined,
                           textColor: prev.design.textColor,
                           photoComposition: prev.design.photoComposition,
                         },
