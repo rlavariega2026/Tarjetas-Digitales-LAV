@@ -12,7 +12,8 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
   // Sharing and contact actions must point to the published card, not to the business website.
   const cardUrl = publishedUrl || `https://lavdigitalmkt.com/tarjetas/${encodeURIComponent(safeFolder(card.businessName || card.name || 'cliente'))}/${encodeURIComponent(safeFolder(card.slug || card.name || card.id || 'tarjeta'))}/index.html`;
   // Keep older cards with incomplete design data renderable in both preview and export.
-  const theme = card.design?.theme || 'modern-clean';
+  // Exportar exactamente el tema seleccionado; no sustituirlo por una colección predeterminada.
+  const theme = card.design?.theme || '';
   const absolutePublicImage = [card.design.avatarUrl, card.design.logoUrl, card.design.bannerUrl]
     .find((value) => typeof value === 'string' && /^https:\/\//i.test(value) && !value.startsWith('data:'));
   const previewImageUrl = absolutePublicImage || 'https://lavdigitalmkt.com/pwa-512x512.png';
@@ -78,6 +79,36 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
   const isYoungCreative = ['young-creative','urban-gradient','pop-creative','color-motion','asymmetric-flow','bold-creative','editorial-cover'].includes(theme) || card.design.animationStyle === 'liquid-flow';
   const isMinimalStudio = ['minimal-studio','pure-white','soft-beige','modern-monochrome','swiss-minimal','monochrome-studio','architectural-lines'].includes(theme) || card.design.animationStyle === 'subtle-fade';
   const isBusinessSignature = ['business-signature','corporate-executive','modern-consultant','lawyer-elite','architectural-lines'].includes(theme);
+  // Igualar el marco visual del componente DigitalCardView en el HTML publicado.
+  const themeBorder = isEleganceLuxury
+    ? '1px solid rgba(245,158,11,.30)'
+    : isFutureTech
+    ? '1px solid rgba(34,211,238,.40)'
+    : isGlassMotion
+    ? '1px solid rgba(255,255,255,.20)'
+    : isYoungCreative
+    ? '1px solid rgba(255,255,255,.25)'
+    : isMinimalStudio
+    ? '1px solid rgba(51,65,85,.60)'
+    : isBusinessSignature
+    ? '1px solid rgba(59,130,246,.30)'
+    : '1px solid rgba(255,255,255,.10)';
+  const themeShadow = isEleganceLuxury
+    ? '0 20px 50px rgba(217,119,6,.18)'
+    : isFutureTech
+    ? '0 0 35px rgba(6,182,212,.22)'
+    : isGlassMotion || isYoungCreative || isBusinessSignature
+    ? '0 25px 50px -12px rgba(0,0,0,.50)'
+    : isMinimalStudio
+    ? '0 10px 15px -3px rgba(0,0,0,.10)'
+    : '0 25px 50px -12px rgba(0,0,0,.50)';
+  const themeRadius = card.design.cardShape === 'rounded-3xl'
+    ? '32px'
+    : card.design.cardShape === 'rounded-2xl'
+    ? '16px'
+    : card.design.cardShape === 'rounded-xl'
+    ? '12px'
+    : '0';
   const metallicBackground = 'linear-gradient(115deg,#27272a 0%,#d4d4d8 14%,#71717a 28%,#fef3c7 43%,#a16207 56%,#f8fafc 70%,#52525b 84%,#e5e7eb 100%)';
   const gradientBackground = `linear-gradient(135deg,${card.design.primaryColor || '#06b6d4'},${card.design.secondaryColor || '#7c3aed'},${card.design.accentColor || '#ec4899'})`;
   const patternBackground = (() => {
@@ -157,9 +188,11 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
       background-image: ${cardBackgroundImage};
       background-size: ${card.design.backgroundTextureUrl ? 'cover' : 'auto'};
       background-position: center;
-      border-radius: 28px;
+      border: ${themeBorder};
+      border-radius: ${themeRadius};
       overflow: hidden;
-      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.08);
+      box-shadow: ${themeShadow};
+      backdrop-filter: ${isGlassMotion ? "blur(24px)" : "none"};
       position: relative;
       margin-bottom: 30px;
     }
