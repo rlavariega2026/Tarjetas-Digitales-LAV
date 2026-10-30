@@ -110,6 +110,10 @@ INSTALL_JS;
     }
     out(200, ['ok'=>true,'repaired'=>$repaired,'skipped'=>$skipped,'message'=>'Corrección aplicada a las tarjetas existentes.']);
 }
+$cardId = (string)($data['cardId'] ?? '');
+if (!preg_match('/^[a-zA-Z0-9_-]{1,128}$/', $cardId)) {
+    out(400, ['ok'=>false,'error'=>'ID de tarjeta inválido o ausente']);
+}
 $clientFolder = (string)($data['clientFolder'] ?? '');
 $cardFolder = (string)($data['cardFolder'] ?? '');
 $html = $data['html'] ?? '';
@@ -236,4 +240,4 @@ if (strpos($existingCardRules, $cachePolicyMarker) === false) {
 }
 
 $host = $_SERVER['HTTP_HOST'] ?? 'lavdigitalmkt.com';
-out(200, ['ok'=>true,'url'=>'https://' . $host . '/tarjetas/' . rawurlencode($clientFolder) . '/' . rawurlencode($cardFolder) . '/index.html']);
+out(200, ['ok'=>true,'url'=>'https://' . $host . '/tarjetas/' . rawurlencode($clientFolder) . '/' . rawurlencode($cardFolder) . '/']);

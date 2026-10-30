@@ -110,9 +110,34 @@ export function getStoredCards(): CardData[] {
     const cards: CardData[] = JSON.parse(raw);
     let modified = false;
 
-    // Ensure all stored cards have views and contact breakdowns
-    const enriched = cards.map((c) => {
-      let cardModified = false;
+    // Normalize older records without discarding any saved card fields.
+    // Arrays and nested objects must always exist before the editor renders them.
+    const enriched = cards.map((storedCard) => {
+      const c: CardData = {
+        ...storedCard,
+        customButtons: Array.isArray(storedCard.customButtons) ? storedCard.customButtons : [],
+        catalog: Array.isArray(storedCard.catalog) ? storedCard.catalog.map((item, index) => ({ ...item, id: item?.id || `catalog-${storedCard.id}-${index}`, title: item?.title || '', description: item?.description || '', price: item?.price || '', imageUrl: item?.imageUrl || '' })) : [],
+        gallery: Array.isArray(storedCard.gallery) ? storedCard.gallery.map((item, index) => ({ ...item, id: item?.id || `gallery-${storedCard.id}-${index}`, imageUrl: item?.imageUrl || '' })) : [],
+        socials: storedCard.socials && typeof storedCard.socials === 'object' ? storedCard.socials : {},
+        businessHours: typeof storedCard.businessHours === 'string' ? storedCard.businessHours : '',
+        schedule: Array.isArray(storedCard.schedule) && storedCard.schedule.length ? storedCard.schedule : [
+          ['monday', 'Lunes'], ['tuesday', 'Martes'], ['wednesday', 'Miércoles'], ['thursday', 'Jueves'], ['friday', 'Viernes'], ['saturday', 'Sábado'], ['sunday', 'Domingo'],
+        ].map(([id, day]) => ({ id, day, open: '09:00', close: '18:00', closed: false })),
+        design: {
+          ...(INITIAL_TEMPLATES[0]?.cardData.design || {}),
+          ...(storedCard.design || {}),
+        },
+      };
+      let cardModified =
+        !Array.isArray(storedCard.customButtons) ||
+        !Array.isArray(storedCard.catalog) ||
+        !Array.isArray(storedCard.gallery) ||
+        !storedCard.socials ||
+        !storedCard.design ||
+        typeof storedCard.businessHours !== 'string' ||
+        !Array.isArray(storedCard.schedule) || storedCard.schedule.length === 0 ||
+        (Array.isArray(storedCard.catalog) && storedCard.catalog.some((item) => !item?.id)) ||
+        (Array.isArray(storedCard.gallery) && storedCard.gallery.some((item) => !item?.id));
       let views = c.viewsCount;
       if (typeof views !== 'number' || views < 0) {
         views = Math.floor(Math.random() * 320) + 110;
