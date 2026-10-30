@@ -197,11 +197,10 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
     const ua = typeof navigator !== 'undefined' ? navigator.userAgent.toLowerCase() : '';
     const isAndroid = /android/i.test(ua);
     const isIOS = /iphone|ipad|ipod/i.test(ua);
-    const inIframe = typeof window !== 'undefined' && window.self !== window.top;
-
-    // Si estamos en un teléfono real fuera del visor web/iframe, activamos la app de contactos nativa
-    if ((isAndroid || isIOS) && !inIframe) {
-      await triggerNativeContactSave(card);
+    // En móviles, descargar directamente el archivo .vcf evita que los visores internos
+    // bloqueen la apertura de intents o la descarga después de una operación asíncrona.
+    if (isAndroid || isIOS) {
+      downloadVCard(card);
       return;
     }
 
