@@ -566,7 +566,7 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
     .company-title {
       font-size: 15px;
       font-weight: 600;
-      color: ${card.design.businessNameColor || card.design.accentColor || '#38bdf8'};
+      color: ${card.design.businessNameColor || card.design.accentColor || '#38bdf8'} !important;
       margin-bottom: 2px;
       letter-spacing: 0.5px;
     }
@@ -838,8 +838,8 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
 
       <div class="info-block" style="text-align:${card.design.infoTextAlign || 'left'};">
         ${card.businessName ? `<div class="company-title headline-font card-stagger-2">${escapeHtml(card.businessName)}</div>` : ''}
-        <h1 class="headline-font card-stagger-2">${escapeHtml(card.name)}</h1>
         ${card.category ? `<div class="category-title card-stagger-2">${escapeHtml(card.category)}</div>` : ''}
+        <h1 class="headline-font card-stagger-2">${escapeHtml(card.name)}</h1>
         ${card.jobTitle ? `<div class="job-title card-stagger-2">${escapeHtml(card.jobTitle)}</div>` : ''}
         ${card.bio ? `<div class="bio-text card-stagger-2">${escapeHtml(card.bio)}</div>` : ''}
       </div>
