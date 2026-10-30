@@ -124,19 +124,33 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
   })();
   const isGradientFinish = card.design.backgroundFinish === 'gradient' || (!card.design.backgroundFinish && ['urban-gradient','color-motion','aurora-glass','soft-gradient','bold-gradient','aurora-flow','prismatic-light','royal-velvet'].includes(theme));
   const isMetallicFinish = card.design.backgroundFinish === 'metallic' || (!card.design.backgroundFinish && ['executive-black','champagne-gold','royal-navy','black-gold','platinum-edition','liquid-metal','lawyer-elite','elegance-luxury','cyber-chrome'].includes(theme));
-  const cardBackgroundImage = card.design.backgroundFinish === 'gradient'
+  // El patrón se superpone al color, degradado, metal o textura seleccionados.
+  const cardBaseBackgroundImage = card.design.backgroundFinish === 'gradient'
     ? gradientBackground
     : card.design.backgroundFinish === 'metallic'
     ? metallicBackground
     : card.design.backgroundTextureUrl
     ? `url("${card.design.backgroundTextureUrl}")`
     : card.design.backgroundFinish === 'solid'
-    ? patternBackground
+    ? 'none'
     : isMetallicFinish
     ? metallicBackground
     : isGradientFinish
     ? gradientBackground
-    : patternBackground;
+    : 'none';
+  const hasActivePattern = card.design.backgroundPattern !== 'none' && patternBackground.image !== 'none';
+  const cardBackgroundImage = hasActivePattern
+    ? patternBackground.image + (cardBaseBackgroundImage !== 'none' ? ', ' + cardBaseBackgroundImage : '')
+    : cardBaseBackgroundImage;
+  const cardBackgroundSize = hasActivePattern
+    ? patternBackground.size + (cardBaseBackgroundImage !== 'none' ? ', ' + (card.design.backgroundTextureUrl ? 'cover' : 'auto') : '')
+    : card.design.backgroundTextureUrl ? 'cover' : 'auto';
+  const cardBackgroundRepeat = hasActivePattern
+    ? patternBackground.repeat + (cardBaseBackgroundImage !== 'none' ? ', no-repeat' : '')
+    : 'no-repeat';
+  const cardBackgroundBlendMode = hasActivePattern
+    ? patternBackground.blend + (cardBaseBackgroundImage !== 'none' ? ', normal' : '')
+    : 'normal';
 
 
   // Reproducir en el HTML autónomo la misma composición fotográfica elegida en el editor.
