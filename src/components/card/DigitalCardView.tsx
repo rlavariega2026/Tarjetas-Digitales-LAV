@@ -1026,7 +1026,7 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
         {renderPhotoComposition()}
 
         {/* Company & Name */}
-        <div className="mb-3 card-stagger-2">
+        <div className="mb-3 card-stagger-2" style={{ textAlign: design.infoTextAlign || 'left' }}>
           {card.businessName && (
             <p
               className="text-xs font-bold tracking-wider uppercase mb-0.5"
@@ -1048,7 +1048,10 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
 
         {/* Bio description */}
         {card.bio && (
-          <p className="text-xs leading-relaxed opacity-85 mb-5 p-3 rounded-xl bg-white/[0.04] border border-white/[0.06] card-stagger-2">
+          <p
+            className="text-xs leading-relaxed opacity-85 mb-5 p-3 rounded-xl bg-white/[0.04] border border-white/[0.06] card-stagger-2"
+            style={{ textAlign: design.infoTextAlign || 'left' }}
+          >
             {card.bio}
           </p>
         )}
