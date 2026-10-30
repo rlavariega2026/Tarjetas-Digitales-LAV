@@ -113,11 +113,13 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
   const gradientBackground = `linear-gradient(135deg,${card.design.primaryColor || '#06b6d4'},${card.design.secondaryColor || '#7c3aed'},${card.design.accentColor || '#ec4899'})`;
   const patternBackground = (() => {
     switch (card.design.backgroundPattern) {
-      case 'dots': return 'radial-gradient(circle, rgba(255,255,255,0.08) 1.5px, transparent 1.5px) 0 0 / 20px 20px';
-      case 'mesh': return 'radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.25) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(236, 72, 153, 0.2) 0px, transparent 50%)';
-      case 'geometric': return 'repeating-linear-gradient(45deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 10px, transparent 10px, transparent 20px)';
-      case 'carbon': return 'radial-gradient(black 15%, transparent 16%) 0 0, radial-gradient(black 15%, transparent 16%) 8px 8px, radial-gradient(rgba(255,255,255,.05) 15%, transparent 20%) 0 1px, radial-gradient(rgba(255,255,255,.05) 15%, transparent 20%) 8px 9px';
-      default: return 'none';
+      case 'dots': return { image: 'radial-gradient(circle, rgba(255,255,255,.24) 1.35px, transparent 1.7px)', size: '22px 22px', repeat: 'repeat', blend: 'overlay' };
+      case 'mesh': return { image: 'radial-gradient(at 0% 0%, rgba(99,102,241,.42) 0%, transparent 58%), radial-gradient(at 100% 100%, rgba(236,72,153,.36) 0%, transparent 58%)', size: '100% 100%, 100% 100%', repeat: 'no-repeat, no-repeat', blend: 'overlay, overlay' };
+      case 'geometric': return { image: 'repeating-linear-gradient(45deg, rgba(255,255,255,.17) 0px, rgba(255,255,255,.17) 1px, transparent 1px, transparent 18px)', size: 'auto', repeat: 'repeat', blend: 'overlay' };
+      case 'carbon': return { image: 'repeating-conic-gradient(from 45deg, rgba(255,255,255,.17) 0% 25%, rgba(15,23,42,.17) 0% 50%)', size: '14px 14px', repeat: 'repeat', blend: 'overlay' };
+      case 'waves': return { image: 'repeating-radial-gradient(ellipse at 50% 100%, transparent 0 12px, rgba(255,255,255,.22) 13px 14px, transparent 15px 27px)', size: '100% 100%', repeat: 'no-repeat', blend: 'overlay' };
+      case 'grid': return { image: 'linear-gradient(rgba(255,255,255,.18) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.18) 1px, transparent 1px)', size: '28px 28px, 28px 28px', repeat: 'repeat, repeat', blend: 'overlay, overlay' };
+      default: return { image: 'none', size: 'auto', repeat: 'no-repeat', blend: 'normal' };
     }
   })();
   const isGradientFinish = card.design.backgroundFinish === 'gradient' || (!card.design.backgroundFinish && ['urban-gradient','color-motion','aurora-glass','soft-gradient','bold-gradient','aurora-flow','prismatic-light','royal-velvet'].includes(theme));
