@@ -138,6 +138,9 @@ export const CardEditor: React.FC<CardEditorProps> = ({
     gallery: Array.isArray(initialCard.gallery) ? initialCard.gallery : [],
     socials: initialCard.socials && typeof initialCard.socials === 'object' ? initialCard.socials : {},
     businessHours: typeof initialCard.businessHours === 'string' ? initialCard.businessHours : '',
+    schedule: Array.isArray(initialCard.schedule) ? initialCard.schedule : [
+      ['monday', 'Lunes'], ['tuesday', 'Martes'], ['wednesday', 'Miércoles'], ['thursday', 'Jueves'], ['friday', 'Viernes'], ['saturday', 'Sábado'], ['sunday', 'Domingo'],
+    ].map(([id, day]) => ({ id, day, open: '09:00', close: '18:00', closed: false })),
     design: {
       ...initialCard.design,
       avatarShape: initialCard.design?.avatarShape ?? 'circle',
@@ -405,8 +408,11 @@ export const CardEditor: React.FC<CardEditorProps> = ({
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/^-|-$/g, '');
+      const deepCopy = typeof structuredClone === 'function'
+        ? structuredClone(duplicate)
+        : JSON.parse(JSON.stringify(duplicate)) as CardData;
       const cardToSave: CardData = {
-        ...duplicate,
+        ...deepCopy,
         id: newId,
         slug: newSlug ? `${newSlug}-${newId.slice(0, 6)}` : newId,
         name: cleanName,
@@ -1033,13 +1039,17 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                           Mostrar en tarjeta
                         </label>
                       </div>
-                      <input
-                        type="text"
-                        value={card.businessHours || ''}
-                        onChange={(e) => updateCardField('businessHours', e.target.value)}
-                        className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none"
-                        placeholder="Lun - Vie: 9:00 AM - 7:00 PM | Sáb: 10:00 AM - 2:00 PM"
-                      />
+                      <div className="space-y-2">
+                        {(card.schedule || []).map((day) => (
+                          <div key={day.id} className="grid grid-cols-[1fr_1fr_1fr_auto] items-center gap-2 rounded-xl bg-slate-900/70 p-2">
+                            <span className="text-[11px] text-slate-200">{day.day}</span>
+                            <input aria-label={day.day + ' abre'} type="time" disabled={day.closed} value={day.open} onChange={(e) => setCard((prev) => ({ ...prev, schedule: (prev.schedule || []).map((item) => item.id === day.id ? { ...item, open: e.target.value } : item) }))} className="min-w-0 rounded-lg border border-slate-700 bg-slate-800 px-2 py-1.5 text-xs text-white disabled:opacity-40" />
+                            <input aria-label={day.day + ' cierra'} type="time" disabled={day.closed} value={day.close} onChange={(e) => setCard((prev) => ({ ...prev, schedule: (prev.schedule || []).map((item) => item.id === day.id ? { ...item, close: e.target.value } : item) }))} className="min-w-0 rounded-lg border border-slate-700 bg-slate-800 px-2 py-1.5 text-xs text-white disabled:opacity-40" />
+                            <label className="flex items-center gap-1 text-[10px] text-slate-300"><input type="checkbox" checked={day.closed} onChange={(e) => setCard((prev) => ({ ...prev, schedule: (prev.schedule || []).map((item) => item.id === day.id ? { ...item, closed: e.target.checked } : item) }))} />Cerrado</label>
+                          </div>
+                        ))}
+                      </div>
+                      <input type="text" value={card.businessHours || ''} onChange={(e) => updateCardField('businessHours', e.target.value)} className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="Indicaciones adicionales de horario (opcional)" />
                     </div>
                   </div>
                 </div>
