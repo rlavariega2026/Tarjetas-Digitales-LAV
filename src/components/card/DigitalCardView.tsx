@@ -412,20 +412,34 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
   const isBusinessSignature = ['business-signature','corporate-executive','modern-consultant','lawyer-elite','architectural-lines'].includes(design.theme);
   const isGradientFinish = design.backgroundFinish === 'gradient' || (!design.backgroundFinish && ['urban-gradient','color-motion','aurora-glass','soft-gradient','bold-gradient','aurora-flow','prismatic-light','royal-velvet'].includes(design.theme));
   const isMetallicFinish = design.backgroundFinish === 'metallic' || (!design.backgroundFinish && ['executive-black','champagne-gold','royal-navy','black-gold','platinum-edition','liquid-metal','lawyer-elite','elegance-luxury','cyber-chrome'].includes(design.theme));
-  // El acabado elegido tiene prioridad y las texturas no bloquean los controles.
-  const cardBackgroundImage = design.backgroundFinish === 'gradient'
+  // El acabado y el patrón se apilan para que ninguno oculte al otro.
+  const cardBaseBackgroundImage = design.backgroundFinish === 'gradient'
     ? `linear-gradient(135deg,${design.primaryColor || '#06b6d4'},${design.secondaryColor || '#7c3aed'},${design.accentColor || '#ec4899'})`
     : design.backgroundFinish === 'metallic'
     ? 'linear-gradient(115deg,#27272a 0%,#d4d4d8 14%,#71717a 28%,#fef3c7 43%,#a16207 56%,#f8fafc 70%,#52525b 84%,#e5e7eb 100%)'
     : design.backgroundTextureUrl
     ? `url("${design.backgroundTextureUrl}")`
     : design.backgroundFinish === 'solid'
-    ? getPatternBg()
+    ? 'none'
     : isMetallicFinish
     ? 'linear-gradient(115deg,#27272a 0%,#d4d4d8 14%,#71717a 28%,#fef3c7 43%,#a16207 56%,#f8fafc 70%,#52525b 84%,#e5e7eb 100%)'
     : isGradientFinish
     ? `linear-gradient(135deg,${design.primaryColor || '#06b6d4'},${design.secondaryColor || '#7c3aed'},${design.accentColor || '#ec4899'})`
-    : getPatternBg();
+    : 'none';
+  const activePattern = getPatternBg();
+  const hasActivePattern = design.backgroundPattern !== 'none' && activePattern.image !== 'none';
+  const cardBackgroundImage = hasActivePattern
+    ? activePattern.image + (cardBaseBackgroundImage !== 'none' ? ', ' + cardBaseBackgroundImage : '')
+    : cardBaseBackgroundImage;
+  const cardBackgroundSize = hasActivePattern
+    ? activePattern.size + (cardBaseBackgroundImage !== 'none' ? ', ' + (design.backgroundTextureUrl ? 'cover' : 'auto') : '')
+    : design.backgroundTextureUrl ? 'cover' : 'auto';
+  const cardBackgroundRepeat = hasActivePattern
+    ? activePattern.repeat + (cardBaseBackgroundImage !== 'none' ? ', no-repeat' : '')
+    : 'no-repeat';
+  const cardBackgroundBlendMode = hasActivePattern
+    ? activePattern.blend + (cardBaseBackgroundImage !== 'none' ? ', normal' : '')
+    : 'normal';
 
   const avatarUrl = design.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500';
   const photoComp = design.photoComposition || 'circle-portrait';
