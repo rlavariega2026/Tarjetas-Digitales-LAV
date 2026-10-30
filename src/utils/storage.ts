@@ -110,9 +110,28 @@ export function getStoredCards(): CardData[] {
     const cards: CardData[] = JSON.parse(raw);
     let modified = false;
 
-    // Ensure all stored cards have views and contact breakdowns
-    const enriched = cards.map((c) => {
-      let cardModified = false;
+    // Normalize older records without discarding any saved card fields.
+    // Arrays and nested objects must always exist before the editor renders them.
+    const enriched = cards.map((storedCard) => {
+      const c: CardData = {
+        ...storedCard,
+        customButtons: Array.isArray(storedCard.customButtons) ? storedCard.customButtons : [],
+        catalog: Array.isArray(storedCard.catalog) ? storedCard.catalog : [],
+        gallery: Array.isArray(storedCard.gallery) ? storedCard.gallery : [],
+        socials: storedCard.socials && typeof storedCard.socials === 'object' ? storedCard.socials : {},
+        businessHours: typeof storedCard.businessHours === 'string' ? storedCard.businessHours : '',
+        design: {
+          ...(INITIAL_TEMPLATES[0]?.cardData.design || {}),
+          ...(storedCard.design || {}),
+        },
+      };
+      let cardModified =
+        !Array.isArray(storedCard.customButtons) ||
+        !Array.isArray(storedCard.catalog) ||
+        !Array.isArray(storedCard.gallery) ||
+        !storedCard.socials ||
+        !storedCard.design ||
+        typeof storedCard.businessHours !== 'string';
       let views = c.viewsCount;
       if (typeof views !== 'number' || views < 0) {
         views = Math.floor(Math.random() * 320) + 110;
