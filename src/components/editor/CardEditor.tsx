@@ -340,6 +340,31 @@ export const CardEditor: React.FC<CardEditorProps> = ({
     setShowSaveNameDialog(true);
   };
 
+  const persistCard = (cardToSave: CardData) => {
+    // App.tsx centraliza la persistencia y refresca el listado.
+    onSave(cardToSave);
+    setCard(cardToSave);
+    setSaveName(cardToSave.name || '');
+    setShowSaveNameDialog(false);
+    setSaveSuccess(true);
+    confetti({ particleCount: 35, spread: 60, origin: { y: 0.7 } });
+    window.setTimeout(() => setSaveSuccess(false), 2500);
+  };
+
+  const buildCardForSave = (name: string): CardData => ({
+    ...card,
+    name,
+    design: {
+      ...card.design,
+      bannerUrl:
+        (typeof card.design.bannerUrl === 'string' && card.design.bannerUrl.trim() !== ''
+          ? card.design.bannerUrl
+          : '') ||
+        coverImageRef.current ||
+        (typeof initialCard.design?.bannerUrl === 'string' ? initialCard.design.bannerUrl : ''),
+    },
+  });
+
   const handleConfirmSave = () => {
     const cleanName = saveName.trim();
     if (!cleanName) {
@@ -348,29 +373,46 @@ export const CardEditor: React.FC<CardEditorProps> = ({
     }
     setIsSaving(true);
     try {
-      const cardToSave: CardData = {
-        ...card,
-        name: cleanName,
-        design: {
-          ...card.design,
-          bannerUrl:
-            (typeof card.design.bannerUrl === 'string' && card.design.bannerUrl.trim() !== ''
-              ? card.design.bannerUrl
-              : '') ||
-            coverImageRef.current ||
-            (typeof initialCard.design?.bannerUrl === 'string' ? initialCard.design.bannerUrl : ''),
-        },
-      };
-      saveOrUpdateCard(cardToSave);
-      onSave(cardToSave);
-      setCard(cardToSave);
-      setShowSaveNameDialog(false);
-      setSaveSuccess(true);
-      confetti({ particleCount: 35, spread: 60, origin: { y: 0.7 } });
-      setTimeout(() => setSaveSuccess(false), 2500);
+      persistCard(buildCardForSave(cleanName));
     } catch (err) {
       console.error('No se pudo guardar la tarjeta:', err);
       window.alert('No se pudieron guardar los cambios. Si agregaste muchas fotos, reduce su tamaño e inténtalo de nuevo.');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleSaveAsNew = () => {
+    const cleanName = saveName.trim();
+    if (!cleanName) {
+      window.alert('Escribe un nombre para la nueva tarjeta.');
+      return;
+    }
+    setIsSaving(true);
+    try {
+      const duplicate = buildCardForSave(cleanName);
+      const newId = typeof crypto !== 'undefined' && 'randomUUID' in crypto
+        ? crypto.randomUUID()
+        : `card-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+      const newSlug = cleanName
+        .normalize('NFD')
+        .replace(/[\\u0300-\\u036f]/g, '')
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-|-$/g, '');
+      const cardToSave: CardData = {
+        ...duplicate,
+        id: newId,
+        slug: newSlug ? `${newSlug}-${newId.slice(0, 6)}` : newId,
+        name: cleanName,
+        viewsCount: 0,
+        contactClicks: 0,
+        contactBreakdown: { whatsapp: 0, call: 0, email: 0, saveContact: 0, map: 0, total: 0 },
+      };
+      persistCard(cardToSave);
+    } catch (err) {
+      console.error('No se pudo crear la copia de la tarjeta:', err);
+      window.alert('No se pudo crear la nueva tarjeta. Inténtalo de nuevo.');
     } finally {
       setIsSaving(false);
     }
@@ -2131,42 +2173,32 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                       className="rounded border-slate-700 text-indigo-600 focus:ring-indigo-500"
                     />
                   </label>
-                  <label className="flex items-center justify-between p-2 rounded-xl bg-slate-800/60 text-xs">
-                    <span>Catálogo de Productos / Servicios</span>
-                    <input
-                      type="checkbox"
-                      checked={card.design.showCatalog}
-                      onChange={(e) => {
-                        updateDesignField('showCatalog', e.target.checked);
-                        if (e.target.checked) setActiveTab('catalog');
-                      }}
-                      className="rounded border-slate-700 text-indigo-600 focus:ring-indigo-500"
-                    />
-                  </label>
-                  <label className="flex items-center justify-between p-2 rounded-xl bg-slate-800/60 text-xs">
-                    <span>Portafolio / Galería de Fotos</span>
-                    <input
-                      type="checkbox"
-                      checked={card.design.showGallery}
-                      onChange={(e) => {
-                        updateDesignField('showGallery', e.target.checked);
-                        if (e.target.checked) setActiveTab('gallery');
-                      }}
-                      className="rounded border-slate-700 text-indigo-600 focus:ring-indigo-500"
-                    />
-                  </label>
-                  <label className="flex items-center justify-between p-2 rounded-xl bg-slate-800/60 text-xs">
-                    <span>Horarios de Atención</span>
-                    <input
-                      type="checkbox"
-                      checked={card.design.showHours}
-                      onChange={(e) => {
-                        updateDesignField('showHours', e.target.checked);
-                        if (e.target.checked) setActiveTab('info');
-                      }}
-                      className="rounded border-slate-700 text-indigo-600 focus:ring-indigo-500"
-                    />
-                  </label>
+                  <div className="flex items-center gap-2 rounded-xl bg-slate-800/60 p-2 text-xs">
+                    <label className="flex min-w-0 flex-1 items-center justify-between gap-2">
+                      <span>Catálogo de Productos / Servicios</span>
+                      <input type="checkbox" checked={card.design.showCatalog} onChange={(e) => updateDesignField('showCatalog', e.target.checked)} className="rounded border-slate-700 text-indigo-600 focus:ring-indigo-500" />
+                    </label>
+                    <button type="button" onClick={() => setActiveTab('catalog')} className="shrink-0 rounded-lg border border-slate-600 px-2 py-1 text-[10px] font-semibold text-indigo-200 hover:bg-slate-700">Editar catálogo</button>
+                  </div>
+                  <div className="flex items-center gap-2 rounded-xl bg-slate-800/60 p-2 text-xs">
+                    <label className="flex min-w-0 flex-1 items-center justify-between gap-2">
+                      <span>Portafolio / Galería de Fotos</span>
+                      <input type="checkbox" checked={card.design.showGallery} onChange={(e) => updateDesignField('showGallery', e.target.checked)} className="rounded border-slate-700 text-indigo-600 focus:ring-indigo-500" />
+                    </label>
+                    <button type="button" onClick={() => setActiveTab('gallery')} className="shrink-0 rounded-lg border border-slate-600 px-2 py-1 text-[10px] font-semibold text-indigo-200 hover:bg-slate-700">Editar galería</button>
+                  </div>
+                  <div className="flex items-center gap-2 rounded-xl bg-slate-800/60 p-2 text-xs">
+                    <label className="flex min-w-0 flex-1 items-center justify-between gap-2">
+                      <span>Horarios de Atención</span>
+                      <input
+                        type="checkbox"
+                        checked={card.design.showHours}
+                        onChange={(e) => updateDesignField('showHours', e.target.checked)}
+                        className="rounded border-slate-700 text-indigo-600 focus:ring-indigo-500"
+                      />
+                    </label>
+                    <button type="button" onClick={() => setActiveTab('info')} className="shrink-0 rounded-lg border border-slate-600 px-2 py-1 text-[10px] font-semibold text-indigo-200 hover:bg-slate-700">Editar horario</button>
+                  </div>
 
                   <div className="mt-3 border-t border-slate-700 pt-3">
                     <h4 className="text-[11px] font-bold uppercase tracking-wide text-slate-300 mb-2">Pagos y reputación</h4>
@@ -3586,7 +3618,8 @@ export const CardEditor: React.FC<CardEditorProps> = ({
             <input id="save-card-name" autoFocus type="text" value={saveName} onChange={(e) => setSaveName(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') handleConfirmSave(); }} maxLength={100} className="mt-1 w-full rounded-xl border border-slate-700 bg-slate-800 px-3 py-2.5 text-sm text-white outline-none focus:border-indigo-500" placeholder="Ej. Tarjeta de Raúl Aguilar" />
             <div className="mt-5 flex justify-end gap-2">
               <button type="button" onClick={() => setShowSaveNameDialog(false)} className="rounded-xl border border-slate-700 px-4 py-2 text-xs font-semibold text-slate-300 hover:bg-slate-800">Cancelar</button>
-              <button type="button" onClick={handleConfirmSave} disabled={isSaving || !saveName.trim()} className="rounded-xl bg-indigo-600 px-4 py-2 text-xs font-bold text-white hover:bg-indigo-500 disabled:cursor-not-allowed disabled:opacity-50">{isSaving ? 'Guardando…' : 'Guardar tarjeta'}</button>
+              <button type="button" onClick={handleSaveAsNew} disabled={isSaving || !saveName.trim()} className="rounded-xl border border-indigo-500 px-4 py-2 text-xs font-bold text-indigo-200 hover:bg-indigo-950 disabled:cursor-not-allowed disabled:opacity-50">Guardar como nueva</button>
+              <button type="button" onClick={handleConfirmSave} disabled={isSaving || !saveName.trim()} className="rounded-xl bg-indigo-600 px-4 py-2 text-xs font-bold text-white hover:bg-indigo-500 disabled:cursor-not-allowed disabled:opacity-50">{isSaving ? 'Guardando…' : 'Guardar cambios'}</button>
             </div>
           </div>
         </div>
