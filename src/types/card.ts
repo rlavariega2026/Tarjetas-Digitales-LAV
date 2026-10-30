@@ -19,6 +19,14 @@ export interface CatalogItem {
   isAvailable?: boolean;
 }
 
+export interface ScheduleDay {
+  id: string;
+  day: string;
+  open: string;
+  close: string;
+  closed: boolean;
+}
+
 export interface GalleryItem {
   id: string;
   title?: string;
@@ -260,6 +268,8 @@ export interface CardData {
   address: string;
   googleMapsUrl: string;
   businessHours: string;
+  /** Structured weekly hours; businessHours remains for backward compatibility. */
+  schedule?: ScheduleDay[];
   
   // Social networks
   socials: {
