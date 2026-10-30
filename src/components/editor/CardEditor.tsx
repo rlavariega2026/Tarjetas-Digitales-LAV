@@ -169,6 +169,8 @@ export const CardEditor: React.FC<CardEditorProps> = ({
   const [activeFace, setActiveFace] = useState<'front' | 'back'>('front');
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [showSaveNameDialog, setShowSaveNameDialog] = useState(false);
+  const [saveName, setSaveName] = useState(initialCard.name || '');
   const [aiLoading, setAiLoading] = useState(false);
   const [aiError, setAiError] = useState('');
   const [aiPromptCategory, setAiPromptCategory] = useState(card.category || '');
@@ -332,14 +334,23 @@ export const CardEditor: React.FC<CardEditorProps> = ({
     }
   };
 
-  // Save Card
+  // Abrir confirmación de nombre antes de guardar.
   const handleSave = () => {
+    setSaveName(card.name || '');
+    setShowSaveNameDialog(true);
+  };
+
+  const handleConfirmSave = () => {
+    const cleanName = saveName.trim();
+    if (!cleanName) {
+      window.alert('Escribe un nombre para identificar esta tarjeta.');
+      return;
+    }
     setIsSaving(true);
     try {
-      // Si otro control deja bannerUrl vacío durante un cambio de estilo,
-      // recuperar la última portada válida antes de persistir la tarjeta.
       const cardToSave: CardData = {
         ...card,
+        name: cleanName,
         design: {
           ...card.design,
           bannerUrl:
@@ -352,12 +363,14 @@ export const CardEditor: React.FC<CardEditorProps> = ({
       };
       saveOrUpdateCard(cardToSave);
       onSave(cardToSave);
+      setCard(cardToSave);
+      setShowSaveNameDialog(false);
       setSaveSuccess(true);
       confetti({ particleCount: 35, spread: 60, origin: { y: 0.7 } });
       setTimeout(() => setSaveSuccess(false), 2500);
     } catch (err) {
       console.error('No se pudo guardar la tarjeta:', err);
-      window.alert('No se pudieron guardar los cambios. La imagen puede ser demasiado pesada; vuelve a cargarla en JPG o WebP.');
+      window.alert('No se pudieron guardar los cambios. Si agregaste muchas fotos, reduce su tamaño e inténtalo de nuevo.');
     } finally {
       setIsSaving(false);
     }
@@ -2123,7 +2136,10 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                     <input
                       type="checkbox"
                       checked={card.design.showCatalog}
-                      onChange={(e) => updateDesignField('showCatalog', e.target.checked)}
+                      onChange={(e) => {
+                        updateDesignField('showCatalog', e.target.checked);
+                        if (e.target.checked) setActiveTab('catalog');
+                      }}
                       className="rounded border-slate-700 text-indigo-600 focus:ring-indigo-500"
                     />
                   </label>
@@ -2132,7 +2148,10 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                     <input
                       type="checkbox"
                       checked={card.design.showGallery}
-                      onChange={(e) => updateDesignField('showGallery', e.target.checked)}
+                      onChange={(e) => {
+                        updateDesignField('showGallery', e.target.checked);
+                        if (e.target.checked) setActiveTab('gallery');
+                      }}
                       className="rounded border-slate-700 text-indigo-600 focus:ring-indigo-500"
                     />
                   </label>
@@ -2141,7 +2160,10 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                     <input
                       type="checkbox"
                       checked={card.design.showHours}
-                      onChange={(e) => updateDesignField('showHours', e.target.checked)}
+                      onChange={(e) => {
+                        updateDesignField('showHours', e.target.checked);
+                        if (e.target.checked) setActiveTab('info');
+                      }}
                       className="rounded border-slate-700 text-indigo-600 focus:ring-indigo-500"
                     />
                   </label>
@@ -3555,6 +3577,20 @@ export const CardEditor: React.FC<CardEditorProps> = ({
         </main>
       </div>
 
+      {showSaveNameDialog && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-4" role="dialog" aria-modal="true" aria-labelledby="save-card-title">
+          <div className="w-full max-w-md rounded-2xl border border-slate-700 bg-slate-900 p-5 shadow-2xl">
+            <h2 id="save-card-title" className="text-base font-bold text-white">Guardar tarjeta</h2>
+            <p className="mt-1 text-xs text-slate-400">Escribe el nombre con el que aparecerá en “Mis tarjetas”.</p>
+            <label className="mt-4 block text-xs font-medium text-slate-300" htmlFor="save-card-name">Nombre de la tarjeta</label>
+            <input id="save-card-name" autoFocus type="text" value={saveName} onChange={(e) => setSaveName(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') handleConfirmSave(); }} maxLength={100} className="mt-1 w-full rounded-xl border border-slate-700 bg-slate-800 px-3 py-2.5 text-sm text-white outline-none focus:border-indigo-500" placeholder="Ej. Tarjeta de Raúl Aguilar" />
+            <div className="mt-5 flex justify-end gap-2">
+              <button type="button" onClick={() => setShowSaveNameDialog(false)} className="rounded-xl border border-slate-700 px-4 py-2 text-xs font-semibold text-slate-300 hover:bg-slate-800">Cancelar</button>
+              <button type="button" onClick={handleConfirmSave} disabled={isSaving || !saveName.trim()} className="rounded-xl bg-indigo-600 px-4 py-2 text-xs font-bold text-white hover:bg-indigo-500 disabled:cursor-not-allowed disabled:opacity-50">{isSaving ? 'Guardando…' : 'Guardar tarjeta'}</button>
+            </div>
+          </div>
+        </div>
+      )}
       {showHostingerModal && (
         <HostingerExportModal
           card={card}
