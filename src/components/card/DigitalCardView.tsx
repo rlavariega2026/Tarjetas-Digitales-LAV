@@ -1029,10 +1029,13 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
           {card.businessName && (
             <p
               className="text-xs font-bold tracking-wider uppercase mb-0.5"
-              style={{ color: design.accentColor || '#38bdf8', fontFamily: headlineFontFamily }}
+              style={{ color: design.businessNameColor || design.accentColor || '#38bdf8', fontFamily: headlineFontFamily }}
             >
               {card.businessName}
             </p>
+          )}
+          {card.category && (
+            <p className="text-xs font-medium opacity-80 mb-0.5">{card.category}</p>
           )}
           <h1
             className="text-2xl font-extrabold tracking-tight text-white leading-tight"
