@@ -982,11 +982,21 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                       <div>
                         <label className="block text-xs font-medium text-slate-400 mb-1">Teléfono Móvil</label>
                         <input
-                          type="text"
-                          value={card.phone}
+                          type="tel"
+                          value={card.phone || ''}
                           onChange={(e) => updateCardField('phone', e.target.value)}
                           className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none"
                           placeholder="+52 55 1234 5678"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium text-slate-400 mb-1">Teléfono de Oficina</label>
+                        <input
+                          type="tel"
+                          value={card.officePhone || ''}
+                          onChange={(e) => updateCardField('officePhone', e.target.value)}
+                          className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                          placeholder="+52 777 000 0000"
                         />
                       </div>
                       <div>
