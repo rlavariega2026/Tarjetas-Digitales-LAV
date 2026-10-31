@@ -265,6 +265,8 @@ export interface CardData {
   
   // Contact details
   phone: string;
+  /** Optional office or landline number, separate from the mobile number. */
+  officePhone?: string;
   whatsapp: string;
   whatsappMessage: string;
   email: string;
