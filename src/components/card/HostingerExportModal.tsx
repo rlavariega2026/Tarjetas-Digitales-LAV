@@ -15,10 +15,6 @@ const toSafeSlug = (value: string) =>
     .replace(/[^a-z0-9_-]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 80);
 
 export const HostingerExportModal: React.FC<HostingerExportModalProps> = ({ card, onClose }) => {
-  const [publishToken, setPublishToken] = useState(() => {
-    try { return window.localStorage.getItem('lav-hostinger-publish-token') || ''; }
-    catch { return ''; }
-  });
   const [publishing, setPublishing] = useState(false);
   const [publishError, setPublishError] = useState('');
   const [publishedUrl, setPublishedUrl] = useState('');
@@ -73,13 +69,11 @@ export const HostingerExportModal: React.FC<HostingerExportModalProps> = ({ card
     setPublishError('');
     setPublishedUrl('');
     try {
-      if (!publishToken.trim()) throw new Error('Escribe el token configurado en Hostinger.');
-      try { window.localStorage.setItem('lav-hostinger-publish-token', publishToken.trim()); } catch {}
       const targetUrl = `https://lavdigitalmkt.com/tarjetas/${encodeURIComponent(safeClientFolder)}/${encodeURIComponent(safeCardFolder)}/`;
       const html = generateStandaloneHtml(card, targetUrl);
       const response = await fetch('/tarjetas-digitales/api/publish-card.php', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + publishToken.trim() },
+        headers: { 'Content-Type': 'application/json',  },
         body: JSON.stringify({ cardId: card.id, clientFolder: safeClientFolder, cardFolder: safeCardFolder, html, vcard: generateVCardString(card) }),
       });
       const result = await response.json().catch(() => ({}));
@@ -108,11 +102,9 @@ export const HostingerExportModal: React.FC<HostingerExportModalProps> = ({ card
     setRepairResult('');
     setPublishError('');
     try {
-      if (!publishToken.trim()) throw new Error('Escribe el token configurado en Hostinger.');
-      try { window.localStorage.setItem('lav-hostinger-publish-token', publishToken.trim()); } catch {}
       const response = await fetch('/tarjetas-digitales/api/publish-card.php', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + publishToken.trim() },
+        headers: { 'Content-Type': 'application/json',  },
         body: JSON.stringify({ action: 'repairExistingCards' }),
       });
       const result = await response.json().catch(() => ({}));
@@ -152,9 +144,6 @@ export const HostingerExportModal: React.FC<HostingerExportModalProps> = ({ card
               <input id="lav-card-folder" type="text" value={cardFolder} onChange={e => { setCardFolder(e.target.value); setPublishedUrl(''); }} maxLength={80} pattern="[A-Za-z0-9][A-Za-z0-9_-]{0,79}" className="w-full px-3 py-2 rounded-lg bg-slate-800 border border-slate-600 text-white font-mono text-xs" placeholder="nombre-de-la-tarjeta" autoComplete="off" />
               <p className="text-slate-500 pt-2">Puedes editar ambos nombres. Se crearán dentro de /tarjetas/ junto con index.html. Usa letras, números, guiones o guiones bajos.</p>
             </div>
-            <label className="block font-bold pt-1">Token de publicación de Hostinger</label>
-            <input type="password" value={publishToken} onChange={e => setPublishToken(e.target.value)} autoComplete="off" placeholder="Token exclusivo para publicar" className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs font-mono" />
-            <p className="text-[11px] text-slate-500">El token se recuerda en este navegador para no pedirlo cada vez. No se incluye en el código público.</p>
           </div>
           <div className="p-4 rounded-2xl bg-amber-950/30 border border-amber-500/30 text-xs text-slate-300 space-y-3">
             <p className="font-bold text-amber-200">Corregir tarjetas que ya están publicadas</p>
