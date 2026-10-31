@@ -147,6 +147,7 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
   const [nfcStatusText, setNfcStatusText] = useState('');
   const [nfcSuccess, setNfcSuccess] = useState<boolean | null>(null);
   const [showContactSaveModal, setShowContactSaveModal] = useState(false);
+  const [zoomedGalleryPhoto, setZoomedGalleryPhoto] = useState<{ url: string; title: string } | null>(null);
 
   const design = card.design;
   const toSafeCardSlug = (value?: string) => (value || '')
@@ -1587,11 +1588,18 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
               {card.gallery.map((g) => (
                 <div key={g.id} className="relative rounded-xl overflow-hidden aspect-square group bg-slate-800">
                   {g.imageUrl ? (
-                    <img
-                      src={g.imageUrl}
-                      alt={g.title || 'Foto'}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
+                    <button
+                      type="button"
+                      onClick={() => setZoomedGalleryPhoto({ url: g.imageUrl, title: g.title || 'Foto' })}
+                      aria-label={`Ampliar foto: ${g.title || 'Foto'}`}
+                      className="absolute inset-0 w-full h-full cursor-zoom-in focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+                    >
+                      <img
+                        src={g.imageUrl}
+                        alt={g.title || 'Foto'}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                    </button>
                   ) : (
                     <div className="w-full h-full min-h-28 flex items-center justify-center text-[11px] text-slate-400 bg-slate-900/70">
                       Sube una foto desde el editor
@@ -1705,6 +1713,37 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
             <Check className="w-4 h-4 text-emerald-200" />
             <span>{copyToast}</span>
           </div>
+        </div>
+      )}
+
+      {/* Gallery photo zoom */}
+      {zoomedGalleryPhoto && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 backdrop-blur-sm p-3 sm:p-6"
+          role="dialog"
+          aria-modal="true"
+          aria-label={zoomedGalleryPhoto.title}
+          onClick={() => setZoomedGalleryPhoto(null)}
+        >
+          <button
+            type="button"
+            onClick={() => setZoomedGalleryPhoto(null)}
+            aria-label="Cerrar imagen ampliada"
+            className="absolute top-4 right-4 z-10 w-11 h-11 rounded-full bg-white/15 hover:bg-white/25 text-white flex items-center justify-center"
+          >
+            <X className="w-6 h-6" />
+          </button>
+          <img
+            src={zoomedGalleryPhoto.url}
+            alt={zoomedGalleryPhoto.title}
+            className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl"
+            onClick={(event) => event.stopPropagation()}
+          />
+          {zoomedGalleryPhoto.title && (
+            <p className="absolute bottom-4 left-4 right-4 text-center text-sm text-white/80 pointer-events-none">
+              {zoomedGalleryPhoto.title}
+            </p>
+          )}
         </div>
       )}
 
