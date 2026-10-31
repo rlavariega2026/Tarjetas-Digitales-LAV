@@ -167,6 +167,7 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
 
   const whatsappClean = card.whatsapp ? card.whatsapp.replace(/\D/g, '') : '';
   const phoneClean = card.phone ? card.phone.replace(/\D/g, '') : '';
+  const officePhoneClean = card.officePhone ? card.officePhone.replace(/\D/g, '') : '';
   const whatsappUrl = whatsappClean
     ? `https://wa.me/${whatsappClean}?text=${encodeURIComponent(
         card.whatsappMessage || `Hola ${card.name}, vi tu tarjeta digital y me gustaría obtener información.`
@@ -1113,6 +1114,13 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
             >
               <Phone className="w-5 h-5 mb-1 group-hover:scale-110 transition-transform" />
               <span className="text-[10px] font-semibold">Llamar</span>
+            </a>
+          )}
+
+          {officePhoneClean && (
+            <a href={`tel:${officePhoneClean}`} className="flex flex-col items-center justify-center py-2.5 px-1 rounded-2xl bg-white/[0.08] hover:bg-white/[0.12] transition text-white group active:scale-95 border border-white/[0.08] text-center">
+              <Building2 className="w-5 h-5 mb-1 group-hover:scale-110 transition-transform" />
+              <span className="text-[10px] font-semibold">Llamar a oficina</span>
             </a>
           )}
 
