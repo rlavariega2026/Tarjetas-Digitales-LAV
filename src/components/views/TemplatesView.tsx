@@ -280,32 +280,29 @@ export const TemplatesView: React.FC<TemplatesViewProps> = ({
             key={template.id}
             className="rounded-3xl bg-slate-900 border border-slate-800 hover:border-slate-700 transition duration-300 shadow-xl overflow-hidden flex flex-col justify-between group hover:-translate-y-1"
           >
-            {/* Template Header Badge with Sector Gradient & Live visual cues */}
-            <div className={`h-32 w-full p-4 bg-gradient-to-r ${template.thumbnailGradient} relative flex flex-col justify-between overflow-hidden`}>
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
-              
-              <div className="relative z-10 flex items-center justify-between">
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-black/60 backdrop-blur-md text-white border border-white/10">
-                  {template.category}
-                </span>
-                {template.badge && (
-                  <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-amber-500/90 text-slate-950 shadow-sm flex items-center gap-1">
-                    <Sparkles className="w-2.5 h-2.5" />
-                    <span>{template.badge}</span>
-                  </span>
-                )}
+            {/* Live template preview: show the actual card composition instead of a generic color swatch */}
+            <div className="relative h-72 w-full overflow-hidden bg-slate-950">
+              <div
+                className="pointer-events-none absolute left-1/2 top-0 w-[190%] origin-top"
+                style={{ transform: 'translateX(-50%) scale(0.52)' }}
+                aria-hidden="true"
+              >
+                <DigitalCardView card={template.cardData} />
               </div>
-
-              <div className="relative z-10">
-                <p className="text-white font-black text-lg tracking-tight drop-shadow-md">
+              <div className="absolute inset-x-0 bottom-0 z-10 bg-gradient-to-t from-black/95 via-black/60 to-transparent px-4 pb-3 pt-10 pointer-events-none">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-black/70 text-white border border-white/15">
+                    {template.category}
+                  </span>
+                  {template.badge && (
+                    <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-amber-500/90 text-slate-950 shadow-sm">
+                      {template.badge}
+                    </span>
+                  )}
+                </div>
+                <p className="text-white font-black text-lg tracking-tight drop-shadow-md mt-2">
                   {template.name}
                 </p>
-                {template.animationPreview && (
-                  <p className="text-[10px] text-white/80 truncate font-medium flex items-center gap-1 mt-0.5">
-                    <Wand2 className="w-2.5 h-2.5 text-cyan-300 flex-shrink-0" />
-                    <span className="truncate">{template.animationPreview}</span>
-                  </p>
-                )}
               </div>
             </div>
 
