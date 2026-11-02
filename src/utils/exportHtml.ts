@@ -906,7 +906,7 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
       z-index: 9999;
     }
     /* El color de texto es independiente de la paleta y se aplica a la tarjeta publicada. */
-    .card-container :is(div,h1,h2,h3,h4,p,span,strong,em,label,small,li,a,button):not(.social-icon-btn) {
+    .card-container :is(div,h1,h2,h3,h4,p,span,strong,em,label,small,li,a,button):not(.social-icon-btn):not(.catalog-item-title):not(.catalog-item-description):not(.catalog-item-price) {
       color: var(--card-text-color) !important;
     }
   </style>
@@ -1074,6 +1074,9 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
             const titleColor = escapeHtml(titleStyle.color || '#ffffff');
             const descriptionColor = escapeHtml(descriptionStyle.color || 'rgba(255,255,255,.78)');
             const priceColor = escapeHtml(priceStyle.color || card.design.accentColor || '#38bdf8');
+            const titleFont = titleStyle.fontFamily ? `font-family:'${escapeHtml(titleStyle.fontFamily)}',sans-serif;` : '';
+            const descriptionFont = descriptionStyle.fontFamily ? `font-family:'${escapeHtml(descriptionStyle.fontFamily)}',sans-serif;` : '';
+            const priceFont = priceStyle.fontFamily ? `font-family:'${escapeHtml(priceStyle.fontFamily)}',sans-serif;` : '';
             const titleSize = Math.max(8, Math.min(32, Number(titleStyle.fontSize || card.design.catalogStyle?.titleSize || 14)));
             const descriptionSize = Math.max(8, Math.min(32, Number(descriptionStyle.fontSize || card.design.catalogStyle?.descriptionSize || 12)));
             const priceSize = Math.max(8, Math.min(32, Number(priceStyle.fontSize || card.design.catalogStyle?.priceSize || 13)));
@@ -1086,9 +1089,9 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
           <div class="catalog-card" style="font-family:${font};text-align:${alignment};flex-direction:${card.design.catalogStyle?.imagePosition === 'top' ? 'column' : 'row'}">
             ${item.imageUrl ? `<img src="${escapeHtml(item.imageUrl)}" class="catalog-img" alt="${escapeHtml(item.title)}" style="width:${card.design.catalogStyle?.imageSize || 76}px;height:${card.design.catalogStyle?.imageSize || 76}px">` : ''}
             <div class="catalog-info">
-              <div style="font-weight:700;font-size:${titleSize}px;color:${titleColor} !important;text-align:${titleAlign};">${escapeHtml(item.title)}</div>
-              <div style="font-size:${descriptionSize}px;color:${descriptionColor} !important;text-align:${descriptionAlign};margin:4px 0 7px;line-height:1.5;white-space:pre-wrap;">${escapeHtml(item.description || '')}</div>
-              ${item.price ? `<div class="catalog-price" style="font-size:${priceSize}px;color:${priceColor} !important;text-align:${priceAlign};">${escapeHtml(item.price)}</div>` : ''}
+              <div class="catalog-item-title" style="${titleFont}font-weight:700;font-size:${titleSize}px;color:${titleColor} !important;text-align:${titleAlign};">${escapeHtml(item.title)}</div>
+              <div class="catalog-item-description" style="${descriptionFont}font-size:${descriptionSize}px;color:${descriptionColor} !important;text-align:${descriptionAlign};margin:4px 0 7px;line-height:1.5;white-space:pre-wrap;">${escapeHtml(item.description || '')}</div>
+              ${item.price ? `<div class="catalog-price catalog-item-price" style="${priceFont}font-size:${priceSize}px;color:${priceColor} !important;text-align:${priceAlign};">${escapeHtml(item.price)}</div>` : ''}
             </div>
             ${productUrl ? `<a href="${escapeHtml(productUrl)}" target="_blank" rel="noopener noreferrer" style="padding:8px 13px;background:linear-gradient(135deg,${escapeHtml(card.design.primaryColor || '#334155')},${escapeHtml(card.design.accentColor || '#0f172a')});border:1px solid rgba(255,255,255,.16);box-shadow:0 5px 14px rgba(0,0,0,.18);border-radius:11px;color:#fff;text-decoration:none;font-size:11px;font-weight:700;white-space:nowrap;">${escapeHtml(item.ctaLabel || 'Consultar')}</a>` : ''}
           </div>`;

@@ -229,7 +229,7 @@ export const CardEditor: React.FC<CardEditorProps> = ({
   const updateCatalogItemTextStyle = (
     id: string,
     field: 'title' | 'description' | 'price',
-    property: 'color' | 'fontSize' | 'textAlign',
+    property: 'color' | 'fontFamily' | 'fontSize' | 'textAlign',
     value: string | number
   ) => {
     setCard((prev) => ({
@@ -2917,8 +2917,15 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                             ['price', 'Precio', 13],
                           ] as const).map(([field, label, defaultSize]) => {
                             const style = item.textStyles?.[field] || {};
+                            const catalogFonts = ['Inter','Outfit','DM Sans','Montserrat','Poppins','Manrope','Plus Jakarta Sans','Urbanist','Roboto','Open Sans','Lato','Nunito Sans','Source Sans 3','Work Sans','Figtree','Lora','Merriweather','Playfair Display','Cormorant Garamond','Cinzel','DM Serif Display','Oswald','Bebas Neue','Raleway','Space Grotesk','Archivo','Barlow Condensed','Josefin Sans','Ubuntu'];
                             return (
-                              <div key={field} className="grid grid-cols-3 gap-2 items-end">
+                              <div key={field} className="grid grid-cols-2 sm:grid-cols-4 gap-2 items-end">
+                                <label className="text-[10px] text-slate-400">Tipo de letra {label}
+                                  <select value={style.fontFamily || ''} onChange={(e) => updateCatalogItemTextStyle(item.id, field, 'fontFamily', e.target.value)} className="mt-1 w-full min-w-0 rounded-md bg-slate-800 border border-slate-700 px-1 py-1.5 text-[10px] text-white">
+                                    <option value="">Predeterminada</option>
+                                    {catalogFonts.map((font) => <option key={font} value={font}>{font}</option>)}
+                                  </select>
+                                </label>
                                 <label className="text-[10px] text-slate-400">Color {label}
                                   <input type="color" value={style.color || (field === 'price' ? '#38bdf8' : '#ffffff')} onChange={(e) => updateCatalogItemTextStyle(item.id, field, 'color', e.target.value)} className="mt-1 block h-8 w-full rounded bg-transparent border-0" />
                                 </label>
