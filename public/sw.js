@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lav-tarjetas-shell-v4';
+const CACHE_NAME = 'lav-tarjetas-shell-v5';
 const APP_SCOPE = '/tarjetas-digitales/';
 const APP_START = APP_SCOPE;
 
