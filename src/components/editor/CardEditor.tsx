@@ -222,7 +222,7 @@ export const CardEditor: React.FC<CardEditorProps> = ({
   };
 
   const updateCatalogWhatsapp = (id: string, value: string) => {
-    const number = value.replace(/\\D/g, '');
+    const number = value.replace(/\D/g, '');
     setCard((prev) => ({ ...prev, catalog: (prev.catalog || []).map((item) => item.id === id ? { ...item, whatsappNumber: number, ctaLink: number ? `https://wa.me/${number}` : '' } : item) }));
   };
 
