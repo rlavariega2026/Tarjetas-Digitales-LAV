@@ -39,7 +39,7 @@ export const TemplatesView: React.FC<TemplatesViewProps> = ({
   const collectionOptions = [
     { id: 'all', label: 'Todas las Plantillas', icon: Sparkles },
     { id: 'new-22', label: '🌟 22 Nuevas Plantillas', icon: Sparkles },
-    { id: 'reference-designs', label: '20 Diseños de referencia', icon: Layers },
+    { id: 'reference-designs', label: 'LAV Style', icon: Layers },
     { id: 'special-restaurant', label: '🍽️ Restaurante & Menú', icon: Utensils },
     { id: 'special-reviews', label: '⭐ Google Reviews', icon: Star },
     { id: 'special-banking', label: '🏦 Transferencias SPEI', icon: Landmark },
@@ -102,7 +102,7 @@ export const TemplatesView: React.FC<TemplatesViewProps> = ({
         <div>
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-amber-500/10 via-pink-500/10 to-indigo-500/10 text-amber-400 border border-amber-500/20 text-xs font-semibold mb-2">
             <Sparkles className="w-3.5 h-3.5" />
-            <span>Biblioteca Premium LAV Digital &bull; 22 Nuevas Plantillas Exclusivas</span>
+            <span>Biblioteca Premium LAV Digital &bull; Colección LAV Style</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
             Plantillas Digitales de Alta Gama
