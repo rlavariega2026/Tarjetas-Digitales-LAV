@@ -913,6 +913,7 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                         className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none"
                         placeholder="Ej. Dr. Roberto Mendoza"
                       />
+                      <div className="mt-2 flex items-center gap-2"><label className="text-[10px] text-slate-400">Color del nombre</label><input type="color" value={card.design.nameColor || '#FFFFFF'} onChange={(e) => updateDesignField('nameColor', e.target.value)} aria-label="Color independiente del nombre completo" className="w-7 h-7 rounded-lg cursor-pointer bg-transparent border-0" /></div>
                     </div>
                     <div className="grid grid-cols-2 gap-2">
                       <div>
@@ -939,6 +940,7 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                           className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none"
                           placeholder="Ej. Salud y Odontología"
                         />
+                        <div className="mt-2 flex items-center gap-2"><label className="text-[10px] text-slate-400">Color del giro</label><input type="color" value={card.design.categoryColor || '#FFFFFF'} onChange={(e) => updateDesignField('categoryColor', e.target.value)} aria-label="Color independiente del giro o categoría" className="w-7 h-7 rounded-lg cursor-pointer bg-transparent border-0" /></div>
                       </div>
                     </div>
                     <div>
@@ -950,6 +952,7 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                         className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none"
                         placeholder="Ej. Cirujano Dentista & Especialista"
                       />
+                      <div className="mt-2 flex items-center gap-2"><label className="text-[10px] text-slate-400">Color del cargo o profesión</label><input type="color" value={card.design.jobTitleColor || '#FFFFFF'} onChange={(e) => updateDesignField('jobTitleColor', e.target.value)} aria-label="Color independiente del cargo o profesión" className="w-7 h-7 rounded-lg cursor-pointer bg-transparent border-0" /></div>
                     </div>
                     <div>
                       <div className="flex items-center justify-between mb-1">
@@ -969,6 +972,7 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                         className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none"
                         placeholder="Describe los servicios clave o propuesta de valor que te distingue."
                       />
+                      <div className="mt-2 flex items-center gap-2"><label className="text-[10px] text-slate-400">Color de la descripción</label><input type="color" value={card.design.bioColor || '#FFFFFF'} onChange={(e) => updateDesignField('bioColor', e.target.value)} aria-label="Color independiente de la descripción" className="w-7 h-7 rounded-lg cursor-pointer bg-transparent border-0" /></div>
                     </div>
                   </div>
                 </div>
