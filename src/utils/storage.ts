@@ -323,28 +323,47 @@ export function deleteClient(id: string): void {
 export function getStoredTemplates(): CardTemplate[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEYS.TEMPLATES);
+    const currentTemplates = [...INITIAL_TEMPLATES, ...REFERENCE_INSPIRED_TEMPLATES];
+    const currentReferenceById = new Map(
+      REFERENCE_INSPIRED_TEMPLATES.map((template) => [template.id, template])
+    );
+
     if (!raw) {
-      const allTemplates = [...INITIAL_TEMPLATES, ...REFERENCE_INSPIRED_TEMPLATES];
-      localStorage.setItem(STORAGE_KEYS.TEMPLATES, JSON.stringify(allTemplates));
-      return allTemplates;
+      localStorage.setItem(STORAGE_KEYS.TEMPLATES, JSON.stringify(currentTemplates));
+      return currentTemplates;
     }
+
     const stored = JSON.parse(raw) as CardTemplate[];
-    const storedIds = new Set(stored.map((t) => t.id));
-    let hasNew = false;
-    const merged = [...stored];
-    // Las plantillas de referencia se incorporan al catálogo sin crear tarjetas de ejemplo.
-    for (const initial of [...INITIAL_TEMPLATES, ...REFERENCE_INSPIRED_TEMPLATES]) {
-      if (!storedIds.has(initial.id)) {
-        merged.push(initial);
-        hasNew = true;
+    const storedIds = new Set(stored.map((template) => template.id));
+
+    // Refresh only the built-in LAV Style presets so updated layouts reach
+    // browsers that already have an older copy in localStorage. User-created
+    // templates and existing non-reference templates remain untouched.
+    const merged = stored.map((template) =>
+      currentReferenceById.get(template.id) || template
+    );
+
+    // Add built-in templates that were not present in the saved catalog.
+    for (const template of currentTemplates) {
+      if (!storedIds.has(template.id)) {
+        merged.push(template);
       }
     }
-    if (hasNew) {
+
+    const hasUpdatedReference = stored.some((template) => {
+      const current = currentReferenceById.get(template.id);
+      return current && JSON.stringify(template) !== JSON.stringify(current);
+    });
+    const hasNewTemplate = merged.length !== stored.length;
+
+    if (hasUpdatedReference || hasNewTemplate) {
       localStorage.setItem(STORAGE_KEYS.TEMPLATES, JSON.stringify(merged));
     }
+
     return merged;
   } catch (err) {
-    return INITIAL_TEMPLATES;
+    console.error('Failed reading templates from storage', err);
+    return [...INITIAL_TEMPLATES, ...REFERENCE_INSPIRED_TEMPLATES];
   }
 }
 
