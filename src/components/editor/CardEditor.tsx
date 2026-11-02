@@ -229,7 +229,7 @@ export const CardEditor: React.FC<CardEditorProps> = ({
   const updateCatalogItemTextStyle = (
     id: string,
     field: 'title' | 'description' | 'price',
-    property: 'color' | 'fontSize' | 'textAlign',
+    property: 'color' | 'fontFamily' | 'fontSize' | 'textAlign',
     value: string | number
   ) => {
     setCard((prev) => ({
