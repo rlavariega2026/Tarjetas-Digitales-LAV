@@ -221,8 +221,12 @@ export interface CardDesign {
   showVideo?: boolean;
   /** Text alignment for the personal and professional information block. */
   infoTextAlign?: 'left' | 'center' | 'right';
-  /** Independent text color for the business / company name. */
+  /** Independent text colors for each editable text field. */
   businessNameColor?: string;
+  nameColor?: string;
+  categoryColor?: string;
+  jobTitleColor?: string;
+  bioColor?: string;
 
   // Physical Card Front & Back for print
   physicalCard: {
