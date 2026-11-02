@@ -332,6 +332,7 @@ export function getStoredTemplates(): CardTemplate[] {
     const storedIds = new Set(stored.map((t) => t.id));
     let hasNew = false;
     const merged = [...stored];
+    // Las plantillas de referencia se incorporan al catálogo sin crear tarjetas de ejemplo.
     for (const initial of [...INITIAL_TEMPLATES, ...REFERENCE_INSPIRED_TEMPLATES]) {
       if (!storedIds.has(initial.id)) {
         merged.push(initial);
