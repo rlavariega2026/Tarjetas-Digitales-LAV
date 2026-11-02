@@ -20,6 +20,7 @@ export interface CatalogItem {
   /** Estilos independientes de título, descripción y precio para este producto. */
   textStyles?: Partial<Record<'title' | 'description' | 'price', {
     color?: string;
+    fontFamily?: string;
     fontSize?: number;
     textAlign?: 'left' | 'center' | 'right';
   }>>;
