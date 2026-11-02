@@ -159,6 +159,16 @@ export const CardEditor: React.FC<CardEditorProps> = ({
       showSocials: initialCard.design?.showSocials ?? true,
       showCustomButtons: initialCard.design?.showCustomButtons ?? true,
       showMapButton: initialCard.design?.showMapButton ?? true,
+      catalogStyle: {
+        imageSize: 104,
+        imagePosition: 'left',
+        textAlign: 'left',
+        fontFamily: 'Inter',
+        titleSize: 15,
+        descriptionSize: 13,
+        priceSize: 15,
+        ...(initialCard.design?.catalogStyle || {}),
+      },
     },
   }));
   // Conserva la última portada válida. No borres esta copia de respaldo si
@@ -2699,6 +2709,69 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                     />
                     <div className="w-11 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
                   </label>
+                </div>
+
+                <div className="rounded-2xl border border-indigo-500/30 bg-slate-900/70 p-3 space-y-3">
+                  <div>
+                    <h4 className="text-xs font-bold text-white">Diseño de productos y servicios</h4>
+                    <p className="text-[10px] text-slate-400 mt-1">Estos ajustes se aplican a la vista previa y a la tarjeta publicada.</p>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <label className="text-[10px] text-slate-400">Distribución de foto
+                      <select
+                        value={card.design.catalogStyle?.imagePosition || 'left'}
+                        onChange={(e) => updateDesignField('catalogStyle', { ...card.design.catalogStyle, imagePosition: e.target.value as 'left' | 'top' })}
+                        className="mt-1 w-full rounded-lg bg-slate-900 border border-slate-700 text-white text-xs px-2 py-2"
+                      >
+                        <option value="left">Foto a la izquierda</option>
+                        <option value="top">Foto arriba</option>
+                      </select>
+                    </label>
+                    <label className="text-[10px] text-slate-400">Alineación del texto
+                      <select
+                        value={card.design.catalogStyle?.textAlign || 'left'}
+                        onChange={(e) => updateDesignField('catalogStyle', { ...card.design.catalogStyle, textAlign: e.target.value as 'left' | 'center' | 'right' })}
+                        className="mt-1 w-full rounded-lg bg-slate-900 border border-slate-700 text-white text-xs px-2 py-2"
+                      >
+                        <option value="left">Izquierda</option>
+                        <option value="center">Centrado</option>
+                        <option value="right">Derecha</option>
+                      </select>
+                    </label>
+                  </div>
+                  <label className="block text-[10px] text-slate-400">Tipografía
+                    <select
+                      value={card.design.catalogStyle?.fontFamily || 'Inter'}
+                      onChange={(e) => updateDesignField('catalogStyle', { ...card.design.catalogStyle, fontFamily: e.target.value })}
+                      className="mt-1 w-full rounded-lg bg-slate-900 border border-slate-700 text-white text-xs px-2 py-2"
+                    >
+                      {['Inter','Outfit','DM Sans','Montserrat','Poppins','Manrope','Plus Jakarta Sans','Urbanist','Roboto','Open Sans','Lato','Nunito Sans','Source Sans 3','Work Sans','Figtree','Lora','Merriweather','Playfair Display','Cormorant Garamond','Cinzel','DM Serif Display','Oswald','Bebas Neue','Raleway','Space Grotesk','Archivo','Barlow Condensed','Josefin Sans','Ubuntu'].map((font) => <option key={font} value={font}>{font}</option>)}
+                    </select>
+                  </label>
+                  <label className="block text-[10px] text-slate-400">Tamaño de fotografía: {card.design.catalogStyle?.imageSize ?? 104} px
+                    <input
+                      type="range" min="56" max="220" step="4"
+                      value={card.design.catalogStyle?.imageSize ?? 104}
+                      onChange={(e) => updateDesignField('catalogStyle', { ...card.design.catalogStyle, imageSize: Number(e.target.value) })}
+                      className="mt-2 w-full accent-indigo-500"
+                    />
+                  </label>
+                  <div className="grid grid-cols-3 gap-2">
+                    {([
+                      { key: 'titleSize', label: 'Título', fallback: 15 },
+                      { key: 'descriptionSize', label: 'Descripción', fallback: 13 },
+                      { key: 'priceSize', label: 'Precio', fallback: 15 },
+                    ] as const).map(({ key, label, fallback }) => (
+                      <label key={key} className="text-[10px] text-slate-400">{label} (px)
+                        <input
+                          type="number" min="9" max="30"
+                          value={card.design.catalogStyle?.[key] ?? fallback}
+                          onChange={(e) => updateDesignField('catalogStyle', { ...card.design.catalogStyle, [key]: Math.max(9, Math.min(30, Number(e.target.value) || fallback)) })}
+                          className="mt-1 w-full rounded-lg bg-slate-900 border border-slate-700 text-white text-xs px-2 py-2"
+                        />
+                      </label>
+                    ))}
+                  </div>
                 </div>
 
                 <div className="space-y-3">
