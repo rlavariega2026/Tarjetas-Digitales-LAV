@@ -460,10 +460,7 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
   ].filter(Boolean);
 
   // Business logo renderer with 12 animations and positions
-  const renderLogo = (targetPosition: 'card-top' | 'center-banner' | 'top-right' | 'above-avatar' | 'floating' | 'header') => {
-    if (!design.logoUrl) return null;
-    const currentPosition = design.logoPosition || 'header';
-    if (currentPosition !== targetPosition) return null;
+  const renderLogo = (_targetPosition: 'card-top' | 'center-banner' | 'top-right' | 'above-avatar' | 'floating' | 'header') => null;
 
     const animClass = design.logoAnimation && design.logoAnimation !== 'none'
       ? `anim-logo-${design.logoAnimation} anim-speed-${design.logoAnimationSpeed || 'normal'}`
@@ -920,6 +917,11 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
         ['--card-text-color' as any]: /^#[0-9a-fA-F]{6}$/.test(design.textColor || '') ? design.textColor : '#f8fafc',
       }}
     >
+      {design.logoUrl && (
+        <div className="absolute z-30 pointer-events-none" style={{ left: (design.logoX ?? 50) + '%', top: (design.logoY ?? 12) + '%', transform: 'translate(-50%, -50%)', maxWidth: '90%' }}>
+          <img src={design.logoUrl} alt={card.businessName || 'Logotipo'} style={{ width: 'min(' + (design.logoWidth || 100) + 'px, 80vw)', maxHeight: '160px' }} className={'object-contain drop-shadow-lg ' + (design.logoAnimation && design.logoAnimation !== 'none' ? 'anim-logo-' + design.logoAnimation + ' anim-speed-' + (design.logoAnimationSpeed || 'normal') : '')} />
+        </div>
+      )}
       {design.backgroundTextureUrl && (
         <div
           aria-hidden="true"
