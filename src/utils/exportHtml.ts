@@ -22,6 +22,22 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
     ? `https://wa.me/${card.whatsapp.replace(/\D/g, '')}?text=${encodeURIComponent(card.whatsappMessage || `Hola ${card.name}, vi tu tarjeta digital y me gustaría obtener más información.`)}`
     : '';
 
+  // Aplicar en el HTML publicado los mismos estilos independientes configurados en el editor.
+  const fieldInlineStyle = (field: string): string => {
+    const style = card.design.textFieldStyles?.[field] || {};
+    const declarations = [
+      style.fontFamily ? `font-family:'${escapeHtml(style.fontFamily)}',sans-serif` : '',
+      style.fontSize ? `font-size:${Math.max(8, Math.min(64, Number(style.fontSize)))}px` : '',
+      style.color ? `color:${escapeHtml(style.color)}` : '',
+      style.textAlign ? `text-align:${style.textAlign}` : '',
+    ].filter(Boolean);
+    return declarations.join(';');
+  };
+  const fieldStyleAttribute = (field: string): string => {
+    const value = fieldInlineStyle(field);
+    return value ? ` style="${value}"` : '';
+  };
+
   // Parse embed video
   let embedVideoUrl = '';
   if (card.videoUrl) {
@@ -671,12 +687,50 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
     .catalog-card {
       display: flex;
       gap: 14px;
-      padding: 12px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.08);
+      padding: 14px;
+      background: rgba(255,255,255,0.045);
+      border: 1px solid rgba(255,255,255,0.09);
       border-radius: 16px;
       margin-bottom: 12px;
       align-items: center;
+      min-width: 0;
+    }
+    .catalog-card[style*="flex-direction:column"] {
+      align-items: stretch;
+    }
+    .catalog-card[style*="text-align:center"] .catalog-info {
+      text-align: center;
+    }
+    .catalog-card[style*="text-align:right"] .catalog-info {
+      text-align: right;
+    }
+    .catalog-card[style*="flex-direction:column"] .catalog-img {
+      align-self: center;
+      max-width: 100%;
+    }
+    .catalog-info {
+      flex: 1 1 0;
+      min-width: 0;
+      overflow-wrap: anywhere;
+    }
+    .catalog-card > a {
+      flex: 0 0 auto;
+      white-space: nowrap;
+      align-self: center;
+    }
+    @media (max-width: 380px) {
+      .catalog-card:not([style*="flex-direction:column"]) {
+        gap: 9px;
+        padding: 10px;
+      }
+      .catalog-card:not([style*="flex-direction:column"]) .catalog-img {
+        width: 64px !important;
+        height: 64px !important;
+      }
+      .catalog-card > a {
+        padding: 6px 9px !important;
+        font-size: 10px !important;
+      }
     }
     .catalog-img {
       width: 70px;
@@ -838,11 +892,11 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
       ${photoCompositionHtml}
 
       <div class="info-block" style="text-align:${card.design.infoTextAlign || 'left'};">
-        ${card.businessName ? `<div class="company-title headline-font card-stagger-2">${escapeHtml(card.businessName)}</div>` : ''}
-        ${card.category ? `<div class="category-title card-stagger-2">${escapeHtml(card.category)}</div>` : ''}
-        <h1 class="headline-font card-stagger-2">${escapeHtml(card.name)}</h1>
-        ${card.jobTitle ? `<div class="job-title card-stagger-2">${escapeHtml(card.jobTitle)}</div>` : ''}
-        ${card.bio ? `<div class="bio-text card-stagger-2">${escapeHtml(card.bio)}</div>` : ''}
+        ${card.businessName ? `<div class="company-title headline-font card-stagger-2"${fieldStyleAttribute('businessName')}>${escapeHtml(card.businessName)}</div>` : ''}
+        ${card.category ? `<div class="category-title card-stagger-2"${fieldStyleAttribute('category')}>${escapeHtml(card.category)}</div>` : ''}
+        <h1 class="headline-font card-stagger-2"${fieldStyleAttribute('name')}>${escapeHtml(card.name)}</h1>
+        ${card.jobTitle ? `<div class="job-title card-stagger-2"${fieldStyleAttribute('jobTitle')}>${escapeHtml(card.jobTitle)}</div>` : ''}
+        ${card.bio ? `<div class="bio-text card-stagger-2"${fieldStyleAttribute('bio')}>${escapeHtml(card.bio)}</div>` : ''}
       </div>
       ${bottomPhotoHtml}
 
