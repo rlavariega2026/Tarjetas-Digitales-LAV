@@ -1258,7 +1258,7 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
           );
         })()}
 
-        {/* Catalog / Products, Services & Restaurant Gastro Menu */}
+        {/* Catalog & Services: collapsible, with user-controlled layout and typography. */}
         {design.showCatalog && (!card.catalog || card.catalog.length === 0) ? (
           <div className="mb-5 rounded-2xl border border-dashed border-white/20 bg-white/[0.03] p-4 text-center">
             <h2 className="text-xs font-bold uppercase tracking-wider mb-1">Catálogo & Servicios</h2>
@@ -1269,97 +1269,123 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
           const filteredItems = selectedCatalogCategory === 'Todos'
             ? card.catalog
             : card.catalog.filter(c => c.category === selectedCatalogCategory);
+          const catalogStyle = design.catalogStyle || {};
+          const imageSize = Math.max(56, Math.min(220, catalogStyle.imageSize || 104));
+          const catalogFont = catalogStyle.fontFamily || bodyFontFamily;
+          const imageOnTop = catalogStyle.imagePosition === 'top';
+          const textAlign = catalogStyle.textAlign || 'left';
 
           return (
-            <div className="mb-5">
-              <div className="flex items-center justify-between mb-2.5">
-                <h2
-                  className="text-xs font-bold uppercase tracking-wider opacity-75 flex items-center gap-1.5"
-                  style={{ fontFamily: headlineFontFamily }}
-                >
-                  <Utensils className="w-3.5 h-3.5 text-amber-400" />
-                  <span>{design.theme === 'gastro-menu' ? 'Menú & Carta Digital' : 'Catálogo & Servicios'}</span>
-                </h2>
-                <span className="text-[10px] text-slate-400 font-medium">
-                  {filteredItems.length} {filteredItems.length === 1 ? 'opción' : 'opciones'}
+            <details className="catalog-accordion mb-5 rounded-2xl overflow-hidden border border-white/10 bg-white/[0.035]">
+              <summary className="flex items-center justify-between gap-3 px-4 py-3.5 cursor-pointer list-none bg-white/[0.055] hover:bg-white/[0.09] transition">
+                <span className="min-w-0 flex items-center gap-2">
+                  <Utensils className="w-4 h-4 text-amber-400 flex-shrink-0" />
+                  <span className="text-sm font-bold tracking-wide" style={{ fontFamily: headlineFontFamily }}>
+                    {design.theme === 'gastro-menu' ? 'Menú & Carta Digital' : 'Catálogo & Servicios'}
+                  </span>
                 </span>
-              </div>
-
-              {/* Category Filter Tabs for Menu / Catalog */}
-              {categories.length > 1 && (
-                <div className="flex items-center gap-1.5 overflow-x-auto pb-2 mb-2.5 no-scrollbar">
-                  {categories.map((cat) => (
-                    <button
-                      key={cat}
-                      type="button"
-                      onClick={() => setSelectedCatalogCategory(cat)}
-                      className={`px-3 py-1 rounded-xl text-[11px] font-bold whitespace-nowrap transition ${
-                        selectedCatalogCategory === cat
-                          ? 'bg-amber-500 text-slate-950 shadow-md font-extrabold'
-                          : 'bg-white/[0.06] text-white/70 hover:bg-white/[0.12] hover:text-white'
+                <span className="flex items-center gap-2 text-[10px] font-semibold text-slate-300 flex-shrink-0">
+                  {card.catalog.length} {card.catalog.length === 1 ? 'opción' : 'opciones'}
+                  <span className="catalog-chevron text-base leading-none">⌄</span>
+                </span>
+              </summary>
+              <div className="p-3 pt-3">
+                {categories.length > 1 && (
+                  <div className="flex items-center gap-1.5 overflow-x-auto pb-2 mb-3 no-scrollbar">
+                    {categories.map((cat) => (
+                      <button
+                        key={cat}
+                        type="button"
+                        onClick={() => setSelectedCatalogCategory(cat)}
+                        className={`px-3 py-1.5 rounded-full text-[11px] font-bold whitespace-nowrap transition ${
+                          selectedCatalogCategory === cat
+                            ? 'bg-amber-500 text-slate-950 shadow-md'
+                            : 'bg-white/[0.07] text-white/70 hover:bg-white/[0.13] hover:text-white'
+                        }`}
+                      >
+                        {cat}
+                      </button>
+                    ))}
+                  </div>
+                )}
+                <div className="grid grid-cols-1 gap-3">
+                  {filteredItems.map((item) => (
+                    <article
+                      key={item.id}
+                      className={`rounded-2xl overflow-hidden border border-white/10 bg-white/[0.045] shadow-sm flex ${
+                        imageOnTop ? 'flex-col' : 'flex-row'
                       }`}
                     >
-                      {cat}
-                    </button>
-                  ))}
-                </div>
-              )}
-
-              <div className="space-y-2.5">
-                {filteredItems.map((item) => (
-                  <div
-                    key={item.id}
-                    className="flex gap-3 p-3 rounded-2xl bg-white/[0.04] border border-white/[0.08] items-center hover:bg-white/[0.07] transition"
-                  >
-                    {item.imageUrl ? (
-                      <img
-                        src={item.imageUrl}
-                        alt={item.title}
-                        className="w-16 h-16 rounded-xl object-cover bg-slate-800 flex-shrink-0"
-                      />
-                    ) : (
+                      {item.imageUrl ? (
+                        <img
+                          src={item.imageUrl}
+                          alt={item.title}
+                          className="object-cover bg-slate-800 flex-shrink-0"
+                          style={imageOnTop
+                            ? { width: '100%', height: imageSize, objectPosition: 'center' }
+                            : { width: imageSize, height: imageSize, objectPosition: 'center' }}
+                        />
+                      ) : (
+                        <div
+                          className="flex items-center justify-center flex-shrink-0"
+                          style={{
+                            width: imageOnTop ? '100%' : imageSize,
+                            height: imageSize,
+                            backgroundColor: `${design.primaryColor}22`,
+                          }}
+                        >
+                          <Sparkles className="w-7 h-7" style={{ color: design.accentColor }} />
+                        </div>
+                      )}
                       <div
-                        className="w-16 h-16 rounded-xl flex items-center justify-center flex-shrink-0"
-                        style={{ backgroundColor: `${design.primaryColor}22` }}
+                        className="flex-1 min-w-0 p-3.5 flex flex-col justify-center"
+                        style={{ textAlign, fontFamily: catalogFont }}
                       >
-                        <Sparkles className="w-6 h-6" style={{ color: design.accentColor }} />
-                      </div>
-                    )}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-1.5">
-                        <p className="text-xs font-bold text-white truncate">{item.title}</p>
                         {item.category && item.category !== 'General' && (
-                          <span className="text-[9px] font-semibold px-1.5 py-0.2 rounded bg-white/10 text-slate-300">
+                          <span
+                            className="inline-block self-start text-[9px] font-bold tracking-wide uppercase px-2 py-1 rounded-full bg-white/10 text-slate-300 mb-1.5"
+                            style={textAlign === 'center' ? { alignSelf: 'center' } : textAlign === 'right' ? { alignSelf: 'flex-end' } : undefined}
+                          >
                             {item.category}
                           </span>
                         )}
-                      </div>
-                      {item.description && (
-                        <p className="text-[11px] opacity-75 line-clamp-2 mt-0.5">{item.description}</p>
-                      )}
-                      {item.price && (
-                        <p
-                          className="text-xs font-extrabold mt-1"
-                          style={{ color: design.accentColor || '#38bdf8' }}
+                        <h3
+                          className="font-bold text-white leading-snug"
+                          style={{ fontSize: `${catalogStyle.titleSize || 15}px`, textAlign, fontFamily: catalogFont }}
                         >
-                          {item.price}
-                        </p>
-                      )}
-                    </div>
-                    {item.ctaLink && (
-                      <a
-                        href={item.ctaLink}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="px-2.5 py-1.5 rounded-lg text-[10px] font-bold bg-white/10 hover:bg-white/20 text-white transition flex-shrink-0 shadow-sm"
-                      >
-                        {item.ctaLabel || 'Pedir'}
-                      </a>
-                    )}
-                  </div>
-                ))}
+                          {item.title}
+                        </h3>
+                        {item.description && (
+                          <p
+                            className="opacity-75 leading-relaxed mt-1"
+                            style={{ fontSize: `${catalogStyle.descriptionSize || 13}px`, textAlign, fontFamily: catalogFont }}
+                          >
+                            {item.description}
+                          </p>
+                        )}
+                        <div className={`flex items-center gap-2 mt-2 ${textAlign === 'center' ? 'justify-center' : textAlign === 'right' ? 'justify-end' : 'justify-between'}`}>
+                          {item.price && (
+                            <p className="font-extrabold" style={{ color: design.accentColor || '#38bdf8', fontSize: `${catalogStyle.priceSize || 15}px`, fontFamily: catalogFont }}>
+                              {item.price}
+                            </p>
+                          )}
+                          {item.ctaLink && (
+                            <a
+                              href={item.ctaLink}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="px-3 py-2 rounded-xl text-[10px] font-bold bg-white/10 hover:bg-white/20 text-white transition shadow-sm"
+                            >
+                              {item.ctaLabel || 'Consultar'}
+                            </a>
+                          )}
+                        </div>
+                      </div>
+                    </article>
+                  ))}
+                </div>
               </div>
-            </div>
+            </details>
           );
         })()}
 
