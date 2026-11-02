@@ -474,8 +474,8 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
         <img
           src={design.logoUrl}
           alt={card.businessName || 'Logo'}
-          style={{ width: `${design.logoWidth || 100}px` }}
-          className="max-h-14 object-contain filter drop-shadow-md"
+          style={{ width: `${design.logoWidth || 100}px`, maxHeight: `${Math.max(36, Math.round((design.logoWidth || 100) * 0.72))}px` }}
+          className="object-contain filter drop-shadow-md"
         />
       </div>
     );
@@ -863,16 +863,11 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
               <img
                 src={avatarUrl}
                 alt={card.name}
-                className={`object-cover bg-slate-800 shadow-xl transition-transform ${
-                  design.avatarSize === 'lg' ? 'w-24 h-24' : design.avatarSize === 'sm' ? 'w-16 h-16' : 'w-20 h-20'
-                } ${
-                  design.avatarShape === 'circle'
-                    ? 'rounded-full'
-                    : design.avatarShape === 'squircle'
-                    ? 'rounded-2xl'
-                    : 'rounded-lg'
-                } ${design.avatarBorder ? 'ring-4' : ''}`}
+                className={`lav-user-avatar object-cover bg-slate-800 shadow-xl transition-transform ${design.avatarBorder ? 'ring-4' : ''}`}
                 style={{
+                  width: design.avatarSize === 'lg' ? '112px' : design.avatarSize === 'sm' ? '64px' : '84px',
+                  height: design.avatarSize === 'lg' ? '112px' : design.avatarSize === 'sm' ? '64px' : '84px',
+                  borderRadius: design.avatarShape === 'circle' ? '9999px' : design.avatarShape === 'squircle' ? '28%' : '8px',
                   boxShadow: design.avatarBorder ? `0 0 0 4px ${design.backgroundColor || '#0f172a'}` : undefined,
                   borderColor: design.primaryColor,
                 }}
@@ -914,15 +909,31 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
         backgroundColor: design.backgroundColor || '#0f172a',
         color: design.textColor || '#f8fafc',
         fontSize: `${design.bodyFontSize || 14}px`,
-        backgroundImage: cardBackgroundImage,
+        backgroundImage: design.backgroundTextureUrl ? 'none' : cardBackgroundImage,
         backgroundSize: cardBackgroundSize,
         backgroundPosition: 'center',
         backgroundRepeat: cardBackgroundRepeat,
         backgroundBlendMode: cardBackgroundBlendMode,
         ['--beam-color' as any]: design.primaryColor || '#06b6d4',
+        ['--lav-avatar-size' as any]: design.avatarSize === 'lg' ? '112px' : design.avatarSize === 'sm' ? '64px' : '84px',
+        ['--lav-avatar-radius' as any]: design.avatarShape === 'circle' ? '9999px' : design.avatarShape === 'squircle' ? '28%' : '8px',
         ['--card-text-color' as any]: /^#[0-9a-fA-F]{6}$/.test(design.textColor || '') ? design.textColor : '#f8fafc',
       }}
     >
+      {design.backgroundTextureUrl && (
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 z-0 pointer-events-none"
+          style={{
+            backgroundImage: cardBackgroundImage,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            filter: `blur(${design.backgroundImageFilters?.blur || 0}px) brightness(${design.backgroundImageFilters?.brightness ?? 100}%) contrast(${design.backgroundImageFilters?.contrast ?? 100}%) saturate(${design.backgroundImageFilters?.saturate ?? 100}%) grayscale(${design.backgroundImageFilters?.grayscale || 0}%) sepia(${design.backgroundImageFilters?.sepia || 0}%)`,
+            transform: design.backgroundImageFilters?.blur ? 'scale(1.04)' : undefined,
+          }}
+        />
+      )}
       <style>{`
         .lav-card-preview { isolation:isolate; }
         .lav-card-preview :is(h1,h2,h3,h4,p,span,strong,em,label,small,li,a,button):not(.social-icon-btn):not(.text-emerald-400):not(.text-amber-400) { color:var(--card-text-color); }
@@ -939,7 +950,7 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
         .lav-layout-right-photo > .relative.z-10.px-6.pb-8 > :first-child { display:flex; flex-direction:row-reverse; align-items:center; gap:1rem; padding:1rem; border:1px solid var(--beam-color); border-radius:1.25rem; background:linear-gradient(250deg,#ffffff18,transparent 70%); }
         .lav-layout-right-photo > .relative.z-10.px-6.pb-8 > :first-child img { width:6.5rem; height:8rem; border-radius:1rem; object-fit:cover; }
         .lav-layout-circle-portrait > .relative.z-10.px-6.pb-8 > :first-child { justify-content:center; }
-        .lav-layout-circle-portrait > .relative.z-10.px-6.pb-8 > :first-child img { width:8rem!important;height:8rem!important;border-radius:50%!important;border:4px solid var(--beam-color);box-shadow:0 0 0 8px #ffffff12,0 12px 30px #0008; }
+        .lav-layout-circle-portrait > .relative.z-10.px-6.pb-8 > :first-child img.lav-user-avatar { width:var(--lav-avatar-size)!important;height:var(--lav-avatar-size)!important;border-radius:var(--lav-avatar-radius)!important;border:4px solid var(--beam-color);box-shadow:0 0 0 8px #ffffff12,0 12px 30px #0008; }
         .lav-layout-panoramic > .relative.z-10.px-6.pb-8 > :first-child { margin-top:-2.25rem; border-radius:1.5rem; overflow:hidden; box-shadow:0 18px 35px #0009; }
         .lav-layout-card-bg { background-size:cover!important; background-position:center!important; }
         .lav-layout-card-bg:after { content:"";position:absolute;inset:0;z-index:0;background:linear-gradient(180deg,#0002 0%,#0009 45%,#000e 100%);pointer-events:none; }
