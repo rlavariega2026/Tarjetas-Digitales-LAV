@@ -1708,7 +1708,7 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
                   <strong style={fieldTextStyle('schedule-' + day.id + '-label')}>{day.day}</strong>
                   <span className="opacity-80">{day.closed ? 'Cerrado' : `${day.open || ''} – ${day.close || ''}`}</span>
                 </div>
-              )) : <p className="opacity-80 pt-1">{card.businessHours}</p>}
+              )) : <p className="opacity-80 pt-1" style={fieldTextStyle('businessHours')}>{card.businessHours}</p>}
             </div>
           </details>
         )}
