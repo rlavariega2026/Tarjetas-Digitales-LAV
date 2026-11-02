@@ -1372,7 +1372,7 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
                 {filteredItems.map((item) => (
                   <div
                     key={item.id}
-                    className="flex gap-3 p-3 rounded-2xl bg-white/[0.04] border border-white/[0.08] items-center hover:bg-white/[0.07] transition" style={{ fontFamily: catalogStyle.fontFamily || bodyFontFamily, textAlign: catalogStyle.textAlign || 'left' }}
+                    className="flex gap-3 p-3 rounded-2xl bg-white/[0.04] border border-white/[0.08] items-center hover:bg-white/[0.07] transition" style={{ fontFamily: catalogStyle.fontFamily || bodyFontFamily, textAlign: catalogStyle.textAlign || 'left', flexDirection: catalogStyle.imagePosition === 'top' ? 'column' : 'row' }}
                   >
                     {item.imageUrl ? (
                       <img
@@ -1411,7 +1411,7 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
                     </div>
                     {item.ctaLink && (
                       <a
-                        href={item.ctaLink}
+                        href={item.whatsappNumber ? 'https://wa.me/' + item.whatsappNumber.replace(/\\D/g, '') : item.ctaLink}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="px-2.5 py-1.5 rounded-lg text-[10px] font-bold bg-white/10 hover:bg-white/20 text-white transition flex-shrink-0 shadow-sm"
