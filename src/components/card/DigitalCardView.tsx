@@ -1396,9 +1396,9 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
                         </p>
                       )}
                     </div>
-                    {item.ctaLink && (
+                    {(item.ctaLink || item.whatsappNumber) && (
                       <a
-                        href={item.whatsappNumber ? 'https://wa.me/' + item.whatsappNumber.replace(/\D/g, '') : item.ctaLink}
+                        href={item.whatsappNumber ? 'https://wa.me/' + item.whatsappNumber.replace(/\D/g, '') : item.ctaLink || ''}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="px-3 py-2 rounded-lg text-[10px] font-bold bg-white/10 hover:bg-white/20 text-white transition flex-shrink-0 shadow-sm"
