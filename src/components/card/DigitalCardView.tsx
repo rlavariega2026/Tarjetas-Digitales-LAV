@@ -1385,7 +1385,7 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
                         )}
                       </div>
                       {item.description && (
-                        <p className="mt-1 whitespace-pre-wrap" style={{ fontSize: item.textStyles?.description?.fontSize || catalogStyle.descriptionSize || 12, color: item.textStyles?.description?.color || 'rgba(255,255,255,.78)', textAlign: item.textStyles?.description?.textAlign || catalogStyle.textAlign || 'left' }}>{item.description}</p>
+                        <p className="mt-1 whitespace-pre-wrap" style={{ fontFamily: item.textStyles?.description?.fontFamily || catalogStyle.fontFamily || undefined, fontSize: item.textStyles?.description?.fontSize || catalogStyle.descriptionSize || 12, color: item.textStyles?.description?.color || 'rgba(255,255,255,.78)', textAlign: item.textStyles?.description?.textAlign || catalogStyle.textAlign || 'left' }}>{item.description}</p>
                       )}
                       {item.price && (
                         <p
