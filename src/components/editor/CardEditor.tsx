@@ -2165,6 +2165,16 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                         <option value="Work Sans">Work Sans</option>
                       </select>
                     </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-xs font-medium text-slate-400 mb-1">Tamaño de encabezados: {card.design.headlineFontSize || 26}px</label>
+                        <input type="range" min="20" max="42" step="1" value={card.design.headlineFontSize || 26} onChange={(e) => updateDesignField('headlineFontSize', Number(e.target.value))} className="w-full accent-indigo-500" />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium text-slate-400 mb-1">Tamaño de texto: {card.design.bodyFontSize || 14}px</label>
+                        <input type="range" min="11" max="20" step="1" value={card.design.bodyFontSize || 14} onChange={(e) => updateDesignField('bodyFontSize', Number(e.target.value))} className="w-full accent-indigo-500" />
+                      </div>
+                    </div>
                   </div>
                 </div>
 
