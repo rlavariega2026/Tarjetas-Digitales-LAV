@@ -1335,19 +1335,6 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
                 <span className="text-[10px] text-slate-400">{filteredItems.length} opciones　⌄</span>
               </summary>
               <div className="p-3 pt-1">
-              <div className="flex items-center justify-between mb-2.5">
-                <h2
-                  className="text-xs font-bold uppercase tracking-wider opacity-75 flex items-center gap-1.5"
-                  style={{ fontFamily: headlineFontFamily }}
-                >
-                  <Utensils className="w-3.5 h-3.5 text-amber-400" />
-                  <span>{design.theme === 'gastro-menu' ? 'Menú & Carta Digital' : 'Catálogo & Servicios'}</span>
-                </h2>
-                <span className="text-[10px] text-slate-400 font-medium">
-                  {filteredItems.length} {filteredItems.length === 1 ? 'opción' : 'opciones'}
-                </span>
-              </div>
-
               {/* Category Filter Tabs for Menu / Catalog */}
               {categories.length > 1 && (
                 <div className="flex items-center gap-1.5 overflow-x-auto pb-2 mb-2.5 no-scrollbar">
@@ -1411,7 +1398,7 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
                     </div>
                     {item.ctaLink && (
                       <a
-                        href={item.whatsappNumber ? 'https://wa.me/' + item.whatsappNumber.replace(/\\D/g, '') : item.ctaLink}
+                        href={item.whatsappNumber ? 'https://wa.me/' + item.whatsappNumber.replace(/\D/g, '') : item.ctaLink}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="px-2.5 py-1.5 rounded-lg text-[10px] font-bold bg-white/10 hover:bg-white/20 text-white transition flex-shrink-0 shadow-sm"
