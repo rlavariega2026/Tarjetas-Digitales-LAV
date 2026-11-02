@@ -176,6 +176,7 @@ export interface CardDesign {
   textColor: string;
   backgroundFinish?: 'solid' | 'gradient' | 'metallic';
   backgroundTextureUrl?: string;
+  backgroundImageFilters?: { blur?: number; brightness?: number; contrast?: number; saturate?: number; grayscale?: number; sepia?: number };
   backgroundPattern: BackgroundPattern;
   fontHeadline: FontHeadline;
   fontBody: FontBody;
