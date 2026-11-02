@@ -600,26 +600,69 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
       text-transform: uppercase;
       opacity: 0.7;
     }
+    .catalog-accordion {
+      margin: 20px 0;
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 18px;
+      overflow: hidden;
+      background: rgba(255,255,255,.035);
+    }
+    .catalog-accordion > summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 15px 16px;
+      cursor: pointer;
+      list-style: none;
+      background: rgba(255,255,255,.06);
+      color: #fff;
+      font-weight: 700;
+      font-size: 14px;
+    }
+    .catalog-accordion > summary::-webkit-details-marker { display: none; }
+    .catalog-accordion > summary:after {
+      content: "⌄";
+      font-size: 18px;
+      line-height: 1;
+      color: #cbd5e1;
+      transition: transform .2s ease;
+    }
+    .catalog-accordion[open] > summary:after { transform: rotate(180deg); }
+    .catalog-items { display: grid; gap: 12px; padding: 12px; }
     .catalog-card {
       display: flex;
-      gap: 14px;
-      padding: 12px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.08);
+      gap: 0;
+      overflow: hidden;
+      background: rgba(255,255,255,.045);
+      border: 1px solid rgba(255,255,255,.1);
       border-radius: 16px;
-      margin-bottom: 12px;
-      align-items: center;
+      align-items: stretch;
     }
+    .catalog-card.image-top { flex-direction: column; }
     .catalog-img {
-      width: 70px;
-      height: 70px;
-      border-radius: 12px;
+      width: var(--catalog-image-size,104px);
+      height: var(--catalog-image-size,104px);
+      flex: 0 0 auto;
+      border-radius: 0;
       object-fit: cover;
       background: rgba(255,255,255,0.1);
     }
+    .catalog-card.image-top .catalog-img { width: 100%; }
     .catalog-info {
       flex: 1;
+      min-width: 0;
+      padding: 13px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      text-align: var(--catalog-align,left);
+      font-family: var(--catalog-font,Inter),sans-serif;
     }
+    .catalog-info h3 { margin: 0; font-size: var(--catalog-title-size,15px); line-height: 1.35; font-weight: 700; color: #fff; }
+    .catalog-info p { margin: 5px 0 0; font-size: var(--catalog-description-size,13px); line-height: 1.5; opacity: .8; }
+    .catalog-info .catalog-price { margin-top: 9px; font-weight: 800; color: ${card.design.accentColor || '#38bdf8'}; font-size: var(--catalog-price-size,15px); }
+    .catalog-info .catalog-category { display: inline-block; font-size: 9px; letter-spacing: .08em; text-transform: uppercase; opacity: .7; margin-bottom: 6px; }
     .catalog-price {
       font-weight: 700;
       color: ${card.design.accentColor || '#38bdf8'};
@@ -899,23 +942,33 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
         `).join('')}
       </div>` : `<div class="section-title">Portafolio &amp; Galería de Fotos</div><div style="margin-bottom:20px;padding:14px;border:1px dashed rgba(255,255,255,.2);border-radius:14px;color:#94a3b8;font-size:12px;text-align:center;">Añade fotos desde la pestaña Galería del editor.</div>`) : ''}
 
-      <!-- Catalog -->
-      ${card.design.showCatalog ? (card.catalog && card.catalog.length > 0 ? `
-      <div class="section-title">Productos & Servicios</div>
-      <div>
-        ${card.catalog.map(item => `
-          <div class="catalog-card">
-            ${item.imageUrl ? `<img src="${escapeHtml(item.imageUrl)}" class="catalog-img" alt="${escapeHtml(item.title)}">` : ''}
-            <div class="catalog-info">
-              <div style="font-weight:600; font-size:14px;">${escapeHtml(item.title)}</div>
-              <div style="font-size:12px; opacity:0.8; margin:2px 0 4px 0;">${escapeHtml(item.description || '')}</div>
-              ${item.price ? `<div class="catalog-price">${escapeHtml(item.price)}</div>` : ''}
+      <!-- Catalog & Services: collapsible and styled from saved catalog settings -->
+      ${card.design.showCatalog ? (card.catalog && card.catalog.length > 0 ? (() => {
+        const catalogStyle = card.design.catalogStyle || {};
+        const imageSize = Math.max(56, Math.min(220, catalogStyle.imageSize || 104));
+        const imagePosition = catalogStyle.imagePosition === 'top' ? 'top' : 'left';
+        const textAlign = ['left','center','right'].includes(catalogStyle.textAlign || '') ? catalogStyle.textAlign : 'left';
+        const fontFamily = ['Inter','Outfit','DM Sans','Montserrat','Poppins','Manrope','Plus Jakarta Sans','Urbanist','Roboto','Open Sans','Lato','Nunito Sans','Source Sans 3','Work Sans','Figtree','Lora','Merriweather','Playfair Display','Cormorant Garamond','Cinzel','DM Serif Display','Oswald','Bebas Neue','Raleway','Space Grotesk','Archivo','Barlow Condensed','Josefin Sans','Ubuntu'].includes(catalogStyle.fontFamily || '') ? catalogStyle.fontFamily : 'Inter';
+        return `
+          <details class="catalog-accordion">
+            <summary>${card.design.theme === 'gastro-menu' ? 'Menú & Carta Digital' : 'Catálogo & Servicios'} <span style="font-size:10px;font-weight:500;opacity:.7;">${card.catalog.length} ${card.catalog.length === 1 ? 'opción' : 'opciones'}</span></summary>
+            <div class="catalog-items">
+              ${card.catalog.map(item => `
+                <article class="catalog-card ${imagePosition === 'top' ? 'image-top' : ''}" style="--catalog-image-size:${imageSize}px;--catalog-align:${textAlign};--catalog-font:'${fontFamily}';--catalog-title-size:${Math.max(9,Math.min(30,catalogStyle.titleSize || 15))}px;--catalog-description-size:${Math.max(9,Math.min(30,catalogStyle.descriptionSize || 13))}px;--catalog-price-size:${Math.max(9,Math.min(30,catalogStyle.priceSize || 15))}px;">
+                  ${item.imageUrl ? `<img src="${escapeHtml(item.imageUrl)}" class="catalog-img" alt="${escapeHtml(item.title)}" loading="lazy">` : ''}
+                  <div class="catalog-info">
+                    ${item.category && item.category !== 'General' ? `<span class="catalog-category">${escapeHtml(item.category)}</span>` : ''}
+                    <h3>${escapeHtml(item.title)}</h3>
+                    ${item.description ? `<p>${escapeHtml(item.description)}</p>` : ''}
+                    ${item.price ? `<div class="catalog-price">${escapeHtml(item.price)}</div>` : ''}
+                    ${item.ctaLink ? `<a href="${escapeHtml(item.ctaLink)}" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-self:${textAlign === 'center' ? 'center' : textAlign === 'right' ? 'flex-end' : 'flex-start'};margin-top:10px;padding:8px 12px;background:rgba(255,255,255,.1);border-radius:10px;color:#fff;text-decoration:none;font-size:11px;font-weight:700;">${escapeHtml(item.ctaLabel || 'Consultar')}</a>` : ''}
+                  </div>
+                </article>
+              `).join('')}
             </div>
-            ${item.ctaLink ? `<a href="${escapeHtml(item.ctaLink)}" target="_blank" rel="noopener noreferrer" style="padding:6px 12px; background:rgba(255,255,255,0.1); border-radius:10px; color:#fff; text-decoration:none; font-size:11px; font-weight:600;">${escapeHtml(item.ctaLabel || 'Ver')}</a>` : ''}
-          </div>
-        `).join('')}
-      </div>` : `<div class="section-title">Productos &amp; Servicios</div><div style="margin-bottom:20px;padding:14px;border:1px dashed rgba(255,255,255,.2);border-radius:14px;color:#94a3b8;font-size:12px;text-align:center;">Añade productos o servicios desde la pestaña Catálogo del editor.</div>`) : ''}
-
+          </details>`;
+      })() : '<div class="section-title">Catálogo &amp; Servicios</div><div style="margin-bottom:20px;padding:14px;border:1px dashed rgba(255,255,255,.2);border-radius:14px;color:#94a3b8;font-size:12px;text-align:center;">Añade productos o servicios desde la pestaña Catálogo del editor.</div>') : ''}
+ 
       <!-- Business Hours -->
       ${card.design.showHours ? `
       <div class="section-title">Horarios de Atención</div>
