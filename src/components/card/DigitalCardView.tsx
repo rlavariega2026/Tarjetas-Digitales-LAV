@@ -152,7 +152,7 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
   const design = card.design;
   const fieldTextStyle = (field: string, fallback: React.CSSProperties = {}): React.CSSProperties => {
     const custom = design.textFieldStyles?.[field] || {};
-    return { ...fallback, ...(custom.fontFamily ? { fontFamily: custom.fontFamily } : {}), ...(custom.fontSize ? { fontSize: custom.fontSize + 'px' } : {}), ...(custom.color ? { color: custom.color } : {}) };
+    return { ...fallback, ...(custom.fontFamily ? { fontFamily: custom.fontFamily } : {}), ...(custom.fontSize ? { fontSize: custom.fontSize + 'px' } : {}), ...(custom.color ? { color: custom.color } : {}), ...(custom.textAlign ? { textAlign: custom.textAlign } : {}) };
   };
   const toSafeCardSlug = (value?: string) => (value || '')
     .normalize('NFD')
