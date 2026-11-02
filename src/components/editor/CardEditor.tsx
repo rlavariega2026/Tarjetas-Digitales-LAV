@@ -325,14 +325,14 @@ export const CardEditor: React.FC<CardEditorProps> = ({
     }
     // Catálogo y fotografías aceptan imágenes originales de hasta 25 MB.
     // Se redimensionan y comprimen antes de guardarlas en la tarjeta.
-    if (file.size > 25 * 1024 * 1024) {
-      window.alert('La imagen supera el límite de 25 MB. Selecciona una imagen de menor tamaño.');
+    if (file.size > 50 * 1024 * 1024) {
+      window.alert('La imagen supera el límite de 50 MB. Selecciona una imagen de menor tamaño.');
       input.value = '';
       return;
     }
 
     try {
-      const optimizedDataUrl = await optimizeImageFile(file, 1600, 1600, 0.78);
+      const optimizedDataUrl = await optimizeImageFile(file, 1800, 1800, 0.76, 'image/webp');
       if (!optimizedDataUrl || !optimizedDataUrl.startsWith('data:image/')) {
         throw new Error('No se pudo procesar la imagen.');
       }
@@ -351,7 +351,7 @@ export const CardEditor: React.FC<CardEditorProps> = ({
           });
     } catch (err) {
       console.error('Error al cargar imagen del módulo:', err);
-      window.alert('No se pudo cargar la imagen. Prueba con PNG, JPG o WebP de menos de 5 MB.');
+      window.alert('No se pudo procesar la imagen. Prueba con JPG, PNG o WebP de menos de 50 MB.');
     } finally {
       input.value = '';
     }
