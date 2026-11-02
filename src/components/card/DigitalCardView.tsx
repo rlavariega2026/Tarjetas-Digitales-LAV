@@ -150,6 +150,10 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
   const [zoomedGalleryPhoto, setZoomedGalleryPhoto] = useState<{ url: string; title: string } | null>(null);
 
   const design = card.design;
+  const fieldTextStyle = (field: string, fallback: React.CSSProperties = {}): React.CSSProperties => {
+    const custom = design.textFieldStyles?.[field] || {};
+    return { ...fallback, ...(custom.fontFamily ? { fontFamily: custom.fontFamily } : {}), ...(custom.fontSize ? { fontSize: custom.fontSize + 'px' } : {}), ...(custom.color ? { color: custom.color } : {}) };
+  };
   const toSafeCardSlug = (value?: string) => (value || '')
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
@@ -1095,22 +1099,22 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
           {card.businessName && (
             <p
               className="text-xs font-bold tracking-wider uppercase mb-0.5"
-              style={{ color: design.businessNameColor || design.accentColor || '#38bdf8', fontFamily: headlineFontFamily }}
+              style={fieldTextStyle('businessName', { color: design.businessNameColor || design.accentColor || '#38bdf8', fontFamily: headlineFontFamily })}
             >
               {card.businessName}
             </p>
           )}
           {card.category && (
-            <p className="text-xs font-medium opacity-80 mb-0.5" style={{ color: design.categoryColor || design.textColor || '#FFFFFF' }}>{card.category}</p>
+            <p className="text-xs font-medium opacity-80 mb-0.5" style={fieldTextStyle('category', { color: design.categoryColor || design.textColor || '#FFFFFF' })}>{card.category}</p>
           )}
           <h1
             className="text-2xl font-extrabold tracking-tight text-white leading-tight"
-            style={{ fontFamily: headlineFontFamily, fontSize: `${design.headlineFontSize || 26}px`, color: design.nameColor || design.textColor || '#FFFFFF' }}
+            style={fieldTextStyle('name', { fontFamily: headlineFontFamily, fontSize: `${design.headlineFontSize || 26}px`, color: design.nameColor || design.textColor || '#FFFFFF' })}
           >
             {card.name || 'Nombre Completo'}
           </h1>
           {card.jobTitle && (
-            <p className="text-sm font-medium opacity-80 mt-0.5" style={{ color: design.jobTitleColor || design.textColor || '#FFFFFF' }}>{card.jobTitle}</p>
+            <p className="text-sm font-medium opacity-80 mt-0.5" style={fieldTextStyle('jobTitle', { color: design.jobTitleColor || design.textColor || '#FFFFFF' })}>{card.jobTitle}</p>
           )}
         </div>
 
@@ -1118,7 +1122,7 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
         {card.bio && (
           <p
             className="text-xs leading-relaxed opacity-85 mb-5 p-3 rounded-xl bg-white/[0.04] border border-white/[0.06] card-stagger-2"
-            style={{ textAlign: design.infoTextAlign || 'left', color: design.bioColor || design.textColor || '#FFFFFF' }}
+            style={fieldTextStyle('bio', { textAlign: design.infoTextAlign || 'left', color: design.bioColor || design.textColor || '#FFFFFF' })}
           >
             {card.bio}
           </p>
@@ -1153,7 +1157,7 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
               }}
             >
               <svg className="w-5 h-5 mb-1 group-hover:scale-110 transition-transform" viewBox="0 0 24 24" aria-hidden="true" role="img" fill="currentColor"><path d="M20.52 3.48A11.86 11.86 0 0 0 12.04 0C5.47 0 .12 5.34.12 11.9c0 2.1.55 4.15 1.6 5.96L0 24l6.3-1.65a11.94 11.94 0 0 0 5.73 1.46h.01c6.56 0 11.9-5.34 11.91-11.9a11.82 11.82 0 0 0-3.43-8.43ZM12.04 21.8a9.9 9.9 0 0 1-5.04-1.38l-.36-.21-3.74.98 1-3.65-.24-.37a9.84 9.84 0 0 1-1.52-5.27c0-5.47 4.46-9.92 9.94-9.92a9.86 9.86 0 0 1 7.02 2.91 9.86 9.86 0 0 1 2.9 7.03c0 5.48-4.46 9.93-9.96 9.93Zm5.45-7.43c-.3-.15-1.77-.87-2.04-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.47-.89-.79-1.49-1.77-1.66-2.07-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.08-.79.37-.27.3-1.04 1.02-1.04 2.49s1.07 2.89 1.22 3.09c.15.2 2.1 3.2 5.08 4.49.71.31 1.27.5 1.7.64.71.23 1.36.2 1.87.12.57-.09 1.77-.72 2.02-1.42.25-.7.25-1.3.17-1.42-.07-.13-.27-.2-.57-.35Z"/></svg>
-              <span className="text-[10px] font-semibold">WhatsApp</span>
+              <span className="text-[10px] font-semibold" style={fieldTextStyle('whatsapp')}>WhatsApp</span>
             </a>
           )}
 
@@ -1164,14 +1168,14 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
               className="flex flex-col items-center justify-center py-2.5 px-1 rounded-2xl bg-white/[0.08] hover:bg-white/[0.12] transition text-white group active:scale-95 border border-white/[0.08] text-center"
             >
               <Phone className="w-5 h-5 mb-1 group-hover:scale-110 transition-transform" />
-              <span className="text-[10px] font-semibold">Llamar</span>
+              <span className="text-[10px] font-semibold" style={fieldTextStyle('phone')}>Llamar</span>
             </a>
           )}
 
           {officePhoneClean && (
             <a href={`tel:${officePhoneClean}`} className="flex flex-col items-center justify-center py-2.5 px-1 rounded-2xl bg-white/[0.08] hover:bg-white/[0.12] transition text-white group active:scale-95 border border-white/[0.08] text-center">
               <Building2 className="w-5 h-5 mb-1 group-hover:scale-110 transition-transform" />
-              <span className="text-[10px] font-semibold">Llamar a oficina</span>
+              <span className="text-[10px] font-semibold" style={fieldTextStyle('officePhone')}>Llamar a oficina</span>
             </a>
           )}
 
@@ -1182,7 +1186,7 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
               className="flex flex-col items-center justify-center py-2.5 px-1 rounded-2xl bg-white/[0.08] hover:bg-white/[0.12] transition text-white group active:scale-95 border border-white/[0.08] text-center"
             >
               <Mail className="w-5 h-5 mb-1 group-hover:scale-110 transition-transform" />
-              <span className="text-[10px] font-semibold">Correo</span>
+              <span className="text-[10px] font-semibold" style={fieldTextStyle('email')}>Correo</span>
             </a>
           )}
 
@@ -1195,7 +1199,7 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
               className="flex flex-col items-center justify-center py-2.5 px-1 rounded-2xl bg-white/[0.08] hover:bg-white/[0.12] transition text-white group active:scale-95 border border-white/[0.08] text-center"
             >
               <MapPin className="w-5 h-5 mb-1 group-hover:scale-110 transition-transform" />
-              <span className="text-[10px] font-semibold">Mapa</span>
+              <span className="text-[10px] font-semibold" style={fieldTextStyle('googleMapsUrl')}>Mapa</span>
             </a>
           )}
           {card.website && (
@@ -1691,7 +1695,7 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
         {/* Business Hours: compact, expandable schedule */}
         {design.showHours && ((Array.isArray(card.schedule) && card.schedule.length > 0) || card.businessHours?.trim()) && (
           <details className="mb-5 rounded-2xl bg-white/[0.04] border border-white/[0.08] overflow-hidden group">
-            <summary className="flex items-center justify-between gap-3 px-4 py-3 cursor-pointer list-none text-sm font-semibold text-white">
+            <summary style={fieldTextStyle('businessHours')} className="flex items-center justify-between gap-3 px-4 py-3 cursor-pointer list-none text-sm font-semibold text-white">
               <span className="flex items-center gap-2.5">
                 <Clock className="w-4 h-4 text-amber-400 flex-shrink-0" />
                 Horarios de atención
@@ -1701,7 +1705,7 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
             <div className="px-4 pb-3 text-xs">
               {Array.isArray(card.schedule) && card.schedule.length > 0 ? card.schedule.map((day, index) => (
                 <div key={day.id || index} className="flex items-center justify-between gap-3 py-2 border-t border-white/[0.06]">
-                  <strong>{day.day}</strong>
+                  <strong style={fieldTextStyle('schedule-' + day.id + '-label')}>{day.day}</strong>
                   <span className="opacity-80">{day.closed ? 'Cerrado' : `${day.open || ''} – ${day.close || ''}`}</span>
                 </div>
               )) : <p className="opacity-80 pt-1">{card.businessHours}</p>}
@@ -1715,7 +1719,7 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
             <MapPin className="w-4 h-4 text-rose-400 flex-shrink-0 mt-0.5" />
             <div className="text-xs">
               <span className="font-semibold block text-white">Dirección:</span>
-              <span className="opacity-80 text-[11px]">{card.address}</span>
+              <span className="opacity-80 text-[11px]" style={fieldTextStyle('address')}>{card.address}</span>
             </div>
           </div>
         )}
