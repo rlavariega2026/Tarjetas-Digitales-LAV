@@ -278,7 +278,7 @@ export const CardEditor: React.FC<CardEditorProps> = ({
     if (!file) return;
 
     setAiError('');
-    if (!file.type.startsWith('image/')) {
+    if (!['image/png', 'image/jpeg', 'image/webp', 'image/svg+xml'].includes(file.type)) {
       window.alert('El archivo seleccionado no es una imagen. Elige JPG, PNG o WebP.');
       input.value = '';
       return;
@@ -290,7 +290,7 @@ export const CardEditor: React.FC<CardEditorProps> = ({
     }
 
     try {
-      const maxDim = target === 'avatar' ? 400 : target === 'logo' ? 500 : target === 'texture' ? 900 : 1000;
+      const maxDim = target === 'avatar' ? 800 : target === 'logo' ? 800 : target === 'texture' ? 1200 : 1200;
       const optimizedDataUrl = await optimizeImageFile(file, maxDim, maxDim, target === 'banner' ? 0.68 : 0.82);
       if (!optimizedDataUrl || !optimizedDataUrl.startsWith('data:image/')) {
         throw new Error('No se pudo procesar el archivo de imagen.');
@@ -2390,14 +2390,9 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                       className="w-16 h-16 rounded-2xl object-cover bg-slate-900 shadow"
                     />
                     <div className="flex-1 space-y-1.5">
-                      <label className="cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow transition">
-                        <span>Subir desde dispositivo</span>
-                        <input
-                          type="file"
-                          accept="image/png,image/jpeg,image/webp,image/svg+xml"
-                          onChange={(e) => handleFileUpload(e, 'avatar')}
-                          className="hidden"
-                        />
+                      <label className="relative cursor-pointer inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow transition overflow-hidden">
+                        <span className="pointer-events-none">Subir desde dispositivo</span>
+                        <input type="file" accept="image/png,image/jpeg,image/webp" onChange={(event) => { void handleFileUpload(event, 'avatar'); }} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" aria-label="Subir fotografía personal o profesional" />
                       </label>
                       <p className="text-[11px] text-slate-400">PNG, JPG o WebP. Máximo 5MB.</p>
                     </div>
@@ -2446,14 +2441,9 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                     </div>
                     <div className="flex-1 space-y-1.5">
                       <div className="flex items-center gap-2">
-                        <label className="cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-700 hover:bg-slate-600 text-white text-xs font-semibold transition">
-                          <span>Subir Logo (PNG/SVG)</span>
-                          <input
-                            type="file"
-                            accept="image/png,image/svg+xml,image/webp,image/jpeg"
-                            onChange={(e) => handleFileUpload(e, 'logo')}
-                            className="hidden"
-                          />
+                        <label className="relative cursor-pointer inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-700 hover:bg-slate-600 text-white text-xs font-semibold transition overflow-hidden">
+                          <span className="pointer-events-none">Subir Logo (PNG/SVG)</span>
+                          <input type="file" accept="image/png,image/svg+xml,image/webp,image/jpeg" onChange={(event) => { void handleFileUpload(event, 'logo'); }} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" aria-label="Subir logotipo empresarial" />
                         </label>
                         {card.design.logoUrl && (
                           <button
@@ -2486,6 +2476,18 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                         />
                       </div>
 
+                      <div>
+                        <label className="block text-[11px] font-bold text-slate-300 uppercase tracking-wider mb-1.5">Ubicación libre del logotipo</label>
+                        <div className="grid grid-cols-2 gap-3">
+                          <label className="text-[11px] text-slate-400">Horizontal: {card.design.logoX ?? 50}%
+                            <input type="range" min="0" max="100" value={card.design.logoX ?? 50} onChange={(event) => updateDesignField('logoX', Number(event.target.value))} className="w-full accent-indigo-500" />
+                          </label>
+                          <label className="text-[11px] text-slate-400">Vertical: {card.design.logoY ?? 12}%
+                            <input type="range" min="0" max="100" value={card.design.logoY ?? 12} onChange={(event) => updateDesignField('logoY', Number(event.target.value))} className="w-full accent-indigo-500" />
+                          </label>
+                        </div>
+                        <p className="text-[10px] text-slate-500">Ajusta la ubicación del logotipo en cualquier zona de la tarjeta.</p>
+                      </div>
                       {/* Posición del Logotipo */}
                       <div>
                         <label className="block text-[11px] font-bold text-slate-300 uppercase tracking-wider mb-1.5">
