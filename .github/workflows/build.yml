@@ -74,6 +74,6 @@ jobs:
             set net:timeout 30;
             set net:max-retries 2;
             set net:reconnect-interval-base 5;
-            mirror --reverse --verbose --no-perms --only-newer ./dist/ /public_html/tarjetas-digitales/;
+            mirror --reverse --verbose --no-perms ./dist/ /public_html/tarjetas-digitales/;
             bye
           "
