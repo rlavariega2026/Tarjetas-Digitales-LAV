@@ -202,6 +202,8 @@ export interface CardDesign {
   logoUrl?: string;
   logoPosition: 'header' | 'above-avatar' | 'top-right' | 'card-top' | 'center-banner' | 'floating';
   logoWidth: number; // in pixels
+  logoX?: number;
+  logoY?: number;
   logoAnimation?: LogoAnimation;
   logoAnimationSpeed?: 'slow' | 'normal' | 'fast';
   
