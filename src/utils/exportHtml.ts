@@ -1080,7 +1080,7 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
             const titleAlign = titleStyle.textAlign || alignment;
             const descriptionAlign = descriptionStyle.textAlign || alignment;
             const priceAlign = priceStyle.textAlign || alignment;
-            const whatsapp = (item.whatsappNumber || '').replace(/\\D/g, '');
+            const whatsapp = (item.whatsappNumber || '').replace(/\D/g, '');
             const productUrl = whatsapp ? 'https://wa.me/' + whatsapp : item.ctaLink || '';
             return `
           <div class="catalog-card" style="font-family:${font};text-align:${alignment};flex-direction:${card.design.catalogStyle?.imagePosition === 'top' ? 'column' : 'row'}">
