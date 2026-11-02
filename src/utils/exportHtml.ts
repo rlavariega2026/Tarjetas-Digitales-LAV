@@ -124,13 +124,14 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
   })();
   const isGradientFinish = card.design.backgroundFinish === 'gradient' || (!card.design.backgroundFinish && ['urban-gradient','color-motion','aurora-glass','soft-gradient','bold-gradient','aurora-flow','prismatic-light','royal-velvet'].includes(theme));
   const isMetallicFinish = card.design.backgroundFinish === 'metallic' || (!card.design.backgroundFinish && ['executive-black','champagne-gold','royal-navy','black-gold','platinum-edition','liquid-metal','lawyer-elite','elegance-luxury','cyber-chrome'].includes(theme));
-  // El patrón se superpone al color, degradado, metal o textura seleccionados.
-  const cardBaseBackgroundImage = card.design.backgroundFinish === 'gradient'
+  // La imagen personalizada tiene prioridad sobre el acabado; igual que en la vista previa.
+  // Así no desaparece al exportar aunque el acabado seleccionado sea degradado o metálico.
+  const cardBaseBackgroundImage = card.design.backgroundTextureUrl
+    ? `url("${card.design.backgroundTextureUrl}")`
+    : card.design.backgroundFinish === 'gradient'
     ? gradientBackground
     : card.design.backgroundFinish === 'metallic'
     ? metallicBackground
-    : card.design.backgroundTextureUrl
-    ? `url("${card.design.backgroundTextureUrl}")`
     : card.design.backgroundFinish === 'solid'
     ? 'none'
     : isMetallicFinish
