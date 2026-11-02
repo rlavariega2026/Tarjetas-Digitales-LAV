@@ -1101,16 +1101,16 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
             </p>
           )}
           {card.category && (
-            <p className="text-xs font-medium opacity-80 mb-0.5">{card.category}</p>
+            <p className="text-xs font-medium opacity-80 mb-0.5" style={{ color: design.categoryColor || design.textColor || '#FFFFFF' }}>{card.category}</p>
           )}
           <h1
             className="text-2xl font-extrabold tracking-tight text-white leading-tight"
-            style={{ fontFamily: headlineFontFamily, fontSize: `${design.headlineFontSize || 26}px` }}
+            style={{ fontFamily: headlineFontFamily, fontSize: `${design.headlineFontSize || 26}px`, color: design.nameColor || design.textColor || '#FFFFFF' }}
           >
             {card.name || 'Nombre Completo'}
           </h1>
           {card.jobTitle && (
-            <p className="text-sm font-medium opacity-80 mt-0.5">{card.jobTitle}</p>
+            <p className="text-sm font-medium opacity-80 mt-0.5" style={{ color: design.jobTitleColor || design.textColor || '#FFFFFF' }}>{card.jobTitle}</p>
           )}
         </div>
 
@@ -1118,7 +1118,7 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
         {card.bio && (
           <p
             className="text-xs leading-relaxed opacity-85 mb-5 p-3 rounded-xl bg-white/[0.04] border border-white/[0.06] card-stagger-2"
-            style={{ textAlign: design.infoTextAlign || 'left' }}
+            style={{ textAlign: design.infoTextAlign || 'left', color: design.bioColor || design.textColor || '#FFFFFF' }}
           >
             {card.bio}
           </p>
