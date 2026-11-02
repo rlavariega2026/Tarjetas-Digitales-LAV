@@ -909,6 +909,7 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
       style={{
         backgroundColor: design.backgroundColor || '#0f172a',
         color: design.textColor || '#f8fafc',
+        fontSize: `${design.bodyFontSize || 14}px`,
         backgroundImage: cardBackgroundImage,
         backgroundSize: cardBackgroundSize,
         backgroundPosition: 'center',
@@ -1086,7 +1087,7 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
           )}
           <h1
             className="text-2xl font-extrabold tracking-tight text-white leading-tight"
-            style={{ fontFamily: headlineFontFamily }}
+            style={{ fontFamily: headlineFontFamily, fontSize: `${design.headlineFontSize || 26}px` }}
           >
             {card.name || 'Nombre Completo'}
           </h1>
