@@ -1059,20 +1059,42 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
 
       <!-- Catalog -->
       ${card.design.showCatalog ? (card.catalog && card.catalog.length > 0 ? `
-      <div class="section-title">Productos & Servicios</div>
-      <div>
-        ${card.catalog.map(item => `
-          <div class="catalog-card" style="font-family:${escapeHtml(card.design.catalogStyle?.fontFamily || card.design.fontBody || 'Inter')};text-align:${card.design.catalogStyle?.textAlign || 'left'};flex-direction:${card.design.catalogStyle?.imagePosition === 'top' ? 'column' : 'row'}">
+      <details class="catalog-disclosure">
+        <summary class="catalog-toggle">
+          <span>Productos &amp; Servicios</span>
+          <span>${card.catalog.length} productos · Ver catálogo　⌄</span>
+        </summary>
+        <div class="catalog-items">
+          ${card.catalog.map(item => {
+            const titleStyle = item.textStyles?.title || {};
+            const descriptionStyle = item.textStyles?.description || {};
+            const priceStyle = item.textStyles?.price || {};
+            const font = escapeHtml(card.design.catalogStyle?.fontFamily || card.design.fontBody || 'Inter');
+            const alignment = card.design.catalogStyle?.textAlign || 'left';
+            const titleColor = escapeHtml(titleStyle.color || '#ffffff');
+            const descriptionColor = escapeHtml(descriptionStyle.color || 'rgba(255,255,255,.78)');
+            const priceColor = escapeHtml(priceStyle.color || card.design.accentColor || '#38bdf8');
+            const titleSize = Math.max(8, Math.min(32, Number(titleStyle.fontSize || card.design.catalogStyle?.titleSize || 14)));
+            const descriptionSize = Math.max(8, Math.min(32, Number(descriptionStyle.fontSize || card.design.catalogStyle?.descriptionSize || 12)));
+            const priceSize = Math.max(8, Math.min(32, Number(priceStyle.fontSize || card.design.catalogStyle?.priceSize || 13)));
+            const titleAlign = titleStyle.textAlign || alignment;
+            const descriptionAlign = descriptionStyle.textAlign || alignment;
+            const priceAlign = priceStyle.textAlign || alignment;
+            const whatsapp = (item.whatsappNumber || '').replace(/\\D/g, '');
+            const productUrl = whatsapp ? 'https://wa.me/' + whatsapp : item.ctaLink || '';
+            return `
+          <div class="catalog-card" style="font-family:${font};text-align:${alignment};flex-direction:${card.design.catalogStyle?.imagePosition === 'top' ? 'column' : 'row'}">
             ${item.imageUrl ? `<img src="${escapeHtml(item.imageUrl)}" class="catalog-img" alt="${escapeHtml(item.title)}" style="width:${card.design.catalogStyle?.imageSize || 76}px;height:${card.design.catalogStyle?.imageSize || 76}px">` : ''}
             <div class="catalog-info">
-              <div style="font-weight:700;font-size:${card.design.catalogStyle?.titleSize || 14}px;">${escapeHtml(item.title)}</div>
-              <div style="font-size:${card.design.catalogStyle?.descriptionSize || 12}px;opacity:0.8;margin:3px 0 5px 0;">${escapeHtml(item.description || '')}</div>
-              ${item.price ? `<div class="catalog-price" style="font-size:${card.design.catalogStyle?.priceSize || 13}px;">${escapeHtml(item.price)}</div>` : ''}
+              <div style="font-weight:700;font-size:${titleSize}px;color:${titleColor} !important;text-align:${titleAlign};">${escapeHtml(item.title)}</div>
+              <div style="font-size:${descriptionSize}px;color:${descriptionColor} !important;text-align:${descriptionAlign};margin:4px 0 7px;line-height:1.5;white-space:pre-wrap;">${escapeHtml(item.description || '')}</div>
+              ${item.price ? `<div class="catalog-price" style="font-size:${priceSize}px;color:${priceColor} !important;text-align:${priceAlign};">${escapeHtml(item.price)}</div>` : ''}
             </div>
-            ${item.ctaLink || item.whatsappNumber ? `<a href="${escapeHtml(item.whatsappNumber ? 'https://wa.me/' + item.whatsappNumber.replace(/\\D/g, '') : item.ctaLink || '')}" target="_blank" rel="noopener noreferrer" style="padding:6px 12px;background:rgba(255,255,255,0.1);border-radius:10px;color:#fff;text-decoration:none;font-size:11px;font-weight:600;">${escapeHtml(item.ctaLabel || 'Consultar')}</a>` : ''}
-          </div>
-        `).join('')}
-      </div>` : `<div class="section-title">Productos &amp; Servicios</div><div style="margin-bottom:20px;padding:14px;border:1px dashed rgba(255,255,255,.2);border-radius:14px;color:#94a3b8;font-size:12px;text-align:center;">Añade productos o servicios desde la pestaña Catálogo del editor.</div>`) : ''}
+            ${productUrl ? `<a href="${escapeHtml(productUrl)}" target="_blank" rel="noopener noreferrer" style="padding:8px 13px;background:linear-gradient(135deg,${escapeHtml(card.design.primaryColor || '#334155')},${escapeHtml(card.design.accentColor || '#0f172a')});border:1px solid rgba(255,255,255,.16);box-shadow:0 5px 14px rgba(0,0,0,.18);border-radius:11px;color:#fff;text-decoration:none;font-size:11px;font-weight:700;white-space:nowrap;">${escapeHtml(item.ctaLabel || 'Consultar')}</a>` : ''}
+          </div>`;
+          }).join('')}
+        </div>
+      </details>` : `<div class="section-title">Productos &amp; Servicios</div><div style="margin-bottom:20px;padding:14px;border:1px dashed rgba(255,255,255,.2);border-radius:14px;color:#94a3b8;font-size:12px;text-align:center;">Añade productos o servicios desde la pestaña Catálogo del editor.</div>`) : ''}
 
       <!-- Business Hours: compact native disclosure button -->
       ${card.design.showHours && ((Array.isArray(card.schedule) && card.schedule.length > 0) || card.businessHours?.trim()) ? `
