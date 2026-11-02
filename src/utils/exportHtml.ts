@@ -1074,6 +1074,9 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
             const titleColor = escapeHtml(titleStyle.color || '#ffffff');
             const descriptionColor = escapeHtml(descriptionStyle.color || 'rgba(255,255,255,.78)');
             const priceColor = escapeHtml(priceStyle.color || card.design.accentColor || '#38bdf8');
+            const titleFont = titleStyle.fontFamily ? `font-family:'${escapeHtml(titleStyle.fontFamily)}',sans-serif;` : '';
+            const descriptionFont = descriptionStyle.fontFamily ? `font-family:'${escapeHtml(descriptionStyle.fontFamily)}',sans-serif;` : '';
+            const priceFont = priceStyle.fontFamily ? `font-family:'${escapeHtml(priceStyle.fontFamily)}',sans-serif;` : '';
             const titleSize = Math.max(8, Math.min(32, Number(titleStyle.fontSize || card.design.catalogStyle?.titleSize || 14)));
             const descriptionSize = Math.max(8, Math.min(32, Number(descriptionStyle.fontSize || card.design.catalogStyle?.descriptionSize || 12)));
             const priceSize = Math.max(8, Math.min(32, Number(priceStyle.fontSize || card.design.catalogStyle?.priceSize || 13)));
