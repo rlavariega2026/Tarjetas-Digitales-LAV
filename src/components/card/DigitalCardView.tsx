@@ -1377,7 +1377,7 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
                     )}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-1.5 flex-wrap w-full" style={{ justifyContent: catalogStyle.textAlign === 'center' ? 'center' : catalogStyle.textAlign === 'right' ? 'flex-end' : 'flex-start' }}>
-                        <p className="font-bold text-white break-words" style={{ fontSize: catalogStyle.titleSize || 14, textAlign: catalogStyle.textAlign || 'left' }}>{item.title}</p>
+                        <p className="font-bold break-words" style={{ fontSize: item.textStyles?.title?.fontSize || catalogStyle.titleSize || 14, color: item.textStyles?.title?.color || '#ffffff', textAlign: item.textStyles?.title?.textAlign || catalogStyle.textAlign || 'left' }}>{item.title}</p>
                         {item.category && item.category !== 'General' && (
                           <span className="text-[9px] font-semibold px-1.5 py-0.2 rounded bg-white/10 text-slate-300">
                             {item.category}
@@ -1385,20 +1385,20 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
                         )}
                       </div>
                       {item.description && (
-                        <p className="opacity-75 mt-1 whitespace-pre-wrap" style={{ fontSize: catalogStyle.descriptionSize || 12, textAlign: catalogStyle.textAlign || 'left' }}>{item.description}</p>
+                        <p className="mt-1 whitespace-pre-wrap" style={{ fontSize: item.textStyles?.description?.fontSize || catalogStyle.descriptionSize || 12, color: item.textStyles?.description?.color || 'rgba(255,255,255,.78)', textAlign: item.textStyles?.description?.textAlign || catalogStyle.textAlign || 'left' }}>{item.description}</p>
                       )}
                       {item.price && (
                         <p
                           className="font-extrabold mt-1"
-                          style={{ color: design.accentColor || '#38bdf8', fontSize: catalogStyle.priceSize || 13, textAlign: catalogStyle.textAlign || 'left' }}
+                          style={{ color: item.textStyles?.price?.color || design.accentColor || '#38bdf8', fontSize: item.textStyles?.price?.fontSize || catalogStyle.priceSize || 13, textAlign: item.textStyles?.price?.textAlign || catalogStyle.textAlign || 'left' }}
                         >
                           {item.price}
                         </p>
                       )}
                     </div>
-                    {item.ctaLink && (
+                    {(item.ctaLink || item.whatsappNumber) && (
                       <a
-                        href={item.whatsappNumber ? 'https://wa.me/' + item.whatsappNumber.replace(/\D/g, '') : item.ctaLink}
+                        href={item.whatsappNumber ? 'https://wa.me/' + item.whatsappNumber.replace(/\D/g, '') : item.ctaLink || ''}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="px-3 py-2 rounded-lg text-[10px] font-bold bg-white/10 hover:bg-white/20 text-white transition flex-shrink-0 shadow-sm"
