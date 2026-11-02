@@ -1109,6 +1109,7 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                         {(card.schedule || []).map((day) => (
                           <div key={day.id} className="grid grid-cols-[1fr_1fr_1fr_auto] items-center gap-2 rounded-xl bg-slate-900/70 p-2">
                             <span className="text-[11px] text-slate-200">{day.day}</span>
+                            {renderTextFieldStyle('schedule-' + day.id + '-label', day.day + ' (día)')}
                             {renderTextFieldStyle('schedule-' + day.id, day.day + ' (horario)')}
                             <input aria-label={day.day + ' abre'} type="time" disabled={day.closed} value={day.open} onChange={(e) => setCard((prev) => ({ ...prev, schedule: (prev.schedule || []).map((item) => item.id === day.id ? { ...item, open: e.target.value } : item) }))} className="min-w-0 rounded-lg border border-slate-700 bg-slate-800 px-2 py-1.5 text-xs text-white disabled:opacity-40" />
                             <input aria-label={day.day + ' cierra'} type="time" disabled={day.closed} value={day.close} onChange={(e) => setCard((prev) => ({ ...prev, schedule: (prev.schedule || []).map((item) => item.id === day.id ? { ...item, close: e.target.value } : item) }))} className="min-w-0 rounded-lg border border-slate-700 bg-slate-800 px-2 py-1.5 text-xs text-white disabled:opacity-40" />
