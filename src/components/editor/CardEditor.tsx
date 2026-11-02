@@ -2059,13 +2059,13 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                         <button type="button" onClick={() => setCard((prev) => ({ ...prev, design: { ...prev.design, backgroundFinish: 'gradient' } }))} className={'rounded-lg px-2 py-2 text-[11px] border ' + (card.design.backgroundFinish === 'gradient' ? 'border-white' : 'border-slate-700')} style={{ backgroundImage: 'linear-gradient(120deg,#06b6d4,#7c3aed,#ec4899)' }}>Degradado</button>
                         <button type="button" onClick={() => setCard((prev) => ({ ...prev, design: { ...prev.design, backgroundFinish: 'metallic' } }))} className={'rounded-lg px-2 py-2 text-[11px] border text-slate-950 font-semibold ' + (card.design.backgroundFinish === 'metallic' ? 'border-white' : 'border-slate-700')} style={{ backgroundImage: 'linear-gradient(115deg,#4b5563,#f8fafc,#9ca3af,#fef3c7,#a16207)' }}>Metálico</button>
                       </div>
-                      <label className="block text-[11px] font-semibold text-slate-200 mt-3 mb-2">Textura propia para el fondo principal</label>
+                      <label className="block text-[11px] font-semibold text-slate-200 mt-3 mb-2">IMAGEN PERSONALIZADA PARA TODO EL FONDO</label>
                       <div className="flex items-center gap-2 flex-wrap">
-                        <label className="cursor-pointer rounded-lg px-3 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold">Subir imagen de textura<input type="file" accept="image/png,image/jpeg,image/webp" className="hidden" onChange={(e) => handleFileUpload(e, 'texture')} /></label>
-                        {card.design.backgroundTextureUrl && <button type="button" onClick={() => updateDesignField('backgroundTextureUrl', '')} className="rounded-lg px-3 py-2 bg-rose-950 text-rose-200 text-xs">Quitar textura</button>}
+                        <label className="cursor-pointer rounded-lg px-3 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold">Elegir imagen de fondo<input type="file" accept="image/png,image/jpeg,image/webp" className="hidden" onChange={(e) => handleFileUpload(e, 'texture')} /></label>
+                        {card.design.backgroundTextureUrl && <button type="button" onClick={() => updateDesignField('backgroundTextureUrl', '')} className="rounded-lg px-3 py-2 bg-rose-950 text-rose-200 text-xs">Quitar fondo personalizado</button>}
                       </div>
-                      {card.design.backgroundTextureUrl && <img src={card.design.backgroundTextureUrl} alt="Textura de fondo" className="mt-2 h-20 w-full object-cover rounded-lg border border-slate-700" />}
-                      <p className="text-[10px] text-slate-400 mt-2">La textura y el acabado no reemplazan ni borran la foto de portada.</p>
+                      {card.design.backgroundTextureUrl && <img src={card.design.backgroundTextureUrl} alt="Vista previa del fondo personalizado" className="mt-2 h-24 w-full object-cover rounded-lg border border-indigo-500/50" />}
+                      <p className="text-[10px] text-slate-400 mt-2">La imagen se aplica como fondo de toda la tarjeta. Puedes combinarla con los acabados y colores.</p>
                     </div>
                     <div className="col-span-2 rounded-xl border border-cyan-500/40 bg-slate-900 p-3">
                       <label className="block text-xs font-bold text-white mb-2">COLOR DEL TEXTO DE LA TARJETA</label>
