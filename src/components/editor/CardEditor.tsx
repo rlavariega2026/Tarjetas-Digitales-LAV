@@ -2096,8 +2096,26 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                         <label className="cursor-pointer rounded-lg px-3 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold">Elegir imagen de fondo<input type="file" accept="image/png,image/jpeg,image/webp" className="hidden" onChange={(e) => handleFileUpload(e, 'texture')} /></label>
                         {card.design.backgroundTextureUrl && <button type="button" onClick={() => updateDesignField('backgroundTextureUrl', '')} className="rounded-lg px-3 py-2 bg-rose-950 text-rose-200 text-xs">Quitar fondo personalizado</button>}
                       </div>
-                      {card.design.backgroundTextureUrl && <img src={card.design.backgroundTextureUrl} alt="Vista previa del fondo personalizado" className="mt-2 h-24 w-full object-cover rounded-lg border border-indigo-500/50" />}
-                      <p className="text-[10px] text-slate-400 mt-2">La imagen se aplica como fondo de toda la tarjeta. Puedes combinarla con los acabados y colores.</p>
+                      {card.design.backgroundTextureUrl && (
+                        <div className="mt-3 space-y-3 rounded-xl border border-slate-700 bg-slate-900/70 p-3">
+                          <img src={card.design.backgroundTextureUrl} alt="Vista previa del fondo personalizado" className="h-24 w-full object-cover rounded-lg border border-indigo-500/50" style={{ filter: `blur(${card.design.backgroundImageFilters?.blur || 0}px) brightness(${card.design.backgroundImageFilters?.brightness ?? 100}%) contrast(${card.design.backgroundImageFilters?.contrast ?? 100}%) saturate(${card.design.backgroundImageFilters?.saturate ?? 100}%) grayscale(${card.design.backgroundImageFilters?.grayscale || 0}%) sepia(${card.design.backgroundImageFilters?.sepia || 0}%)` }} />
+                          {([
+                            ['blur', 'Desenfoque', 0, 20, 1, 'px'],
+                            ['brightness', 'Brillo', 50, 150, 1, '%'],
+                            ['contrast', 'Contraste', 50, 180, 1, '%'],
+                            ['saturate', 'Saturación', 0, 200, 1, '%'],
+                            ['grayscale', 'Blanco y negro', 0, 100, 1, '%'],
+                            ['sepia', 'Sepia', 0, 100, 1, '%'],
+                          ] as const).map(([key, label, min, max, step, unit]) => (
+                            <label key={key} className="block text-[11px] text-slate-300">
+                              <span className="flex justify-between mb-1"><span>{label}</span><strong className="text-indigo-300">{card.design.backgroundImageFilters?.[key] ?? (key === 'brightness' || key === 'contrast' || key === 'saturate' ? 100 : 0)}{unit}</strong></span>
+                              <input type="range" min={min} max={max} step={step} value={card.design.backgroundImageFilters?.[key] ?? (key === 'brightness' || key === 'contrast' || key === 'saturate' ? 100 : 0)} onChange={(event) => updateDesignField('backgroundImageFilters', { blur: 0, brightness: 100, contrast: 100, saturate: 100, grayscale: 0, sepia: 0, ...card.design.backgroundImageFilters, [key]: Number(event.target.value) })} className="w-full accent-indigo-500" />
+                            </label>
+                          ))}
+                          <button type="button" onClick={() => updateDesignField('backgroundImageFilters', { blur: 0, brightness: 100, contrast: 100, saturate: 100, grayscale: 0, sepia: 0 })} className="rounded-lg px-3 py-2 bg-slate-700 hover:bg-slate-600 text-white text-xs">Restablecer filtros</button>
+                        </div>
+                      )}
+                      <p className="text-[10px] text-slate-400 mt-2">Los filtros afectan únicamente la imagen personalizada de fondo, no los textos ni los botones.</p>
                     </div>
                     <div className="col-span-2 rounded-xl border border-cyan-500/40 bg-slate-900 p-3">
                       <label className="block text-xs font-bold text-white mb-2">COLOR DEL TEXTO DE LA TARJETA</label>
@@ -2421,7 +2439,7 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                   <div className="flex items-center gap-4 p-3 rounded-2xl bg-slate-800/80 border border-slate-700">
                     <div className="w-16 h-16 rounded-xl bg-slate-950 flex items-center justify-center p-2 border border-slate-800">
                       {card.design.logoUrl ? (
-                        <img src={card.design.logoUrl} alt="Logo" className="max-h-full max-w-full object-contain" />
+                        <img src={card.design.logoUrl} alt="Logo" style={{ width: `${card.design.logoWidth || 100}px`, maxHeight: "100%" }} className="max-w-full object-contain" />
                       ) : (
                         <span className="text-[10px] text-slate-500 font-bold">Sin logo</span>
                       )}
@@ -2455,13 +2473,13 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                     <div className="mt-4 space-y-3.5 p-3 rounded-2xl bg-slate-900/80 border border-slate-800">
                       <div>
                         <div className="flex items-center justify-between text-xs text-slate-400 mb-1">
-                          <span>Ancho de Logotipo</span>
+                          <span>Tamaño del Logotipo</span>
                           <span className="font-mono text-indigo-400 font-bold">{card.design.logoWidth}px</span>
                         </div>
                         <input
                           type="range"
-                          min="50"
-                          max="220"
+                          min="35"
+                          max="300"
                           value={card.design.logoWidth}
                           onChange={(e) => updateDesignField('logoWidth', parseInt(e.target.value, 10))}
                           className="w-full accent-indigo-500"
