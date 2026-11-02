@@ -920,87 +920,58 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
       }}
     >
       <style>{`
-        .lav-card-preview :is(h1,h2,h3,h4,p,span,strong,em,label,small,li,a,button):not(.social-icon-btn):not(.text-emerald-400):not(.text-amber-400) {
-          color: var(--card-text-color);
-        }
-        /* LAV Style: composiciones fotográficas diferenciadas */
-        .lav-layout-top-large .relative.z-10.px-6.pb-8 { padding-top: 0; }
-        .lav-layout-bottom-compact .relative.z-10.px-6.pb-8 { display:flex; flex-direction:column; }
-        .lav-layout-bottom-compact .relative.z-10.px-6.pb-8 > :first-child { order:4; margin-top:1rem; }
-        .lav-layout-left-photo .relative.z-10.px-6.pb-8 > :first-child { float:left; width:42%; margin:0 1rem 1rem 0; }
-        .lav-layout-right-photo .relative.z-10.px-6.pb-8 > :first-child { float:right; width:42%; margin:0 0 1rem 1rem; }
-        .lav-layout-circle-portrait .relative.z-10.px-6.pb-8 { text-align:center; }
-        .lav-layout-circle-portrait .relative.z-10.px-6.pb-8 > :first-child { justify-content:center; }
-        .lav-layout-panoramic > div:first-of-type { height:15rem!important; }
-        .lav-layout-panoramic .relative.z-10.px-6.pb-8 { margin-top:-2.5rem; }
-        .lav-layout-card-bg .relative.z-10.px-6.pb-8 { background:linear-gradient(180deg,#07101b22,#07101bee 25%); border-radius:2rem 2rem 0 0; }
-        .lav-layout-elegant-frame { border:5px double #d6ad60!important; }
-        .lav-layout-elegant-frame .relative.z-10.px-6.pb-8 { margin:.5rem; border:1px solid #d6ad6066; border-radius:1.4rem; padding-top:1rem; }
-        .lav-layout-rounded-squircle .relative.z-10.px-6.pb-8 > :first-child img { border-radius:2rem!important; width:6.5rem!important; height:6.5rem!important; }
-        .lav-layout-asymmetric .relative.z-10.px-6.pb-8 { padding-left:2rem; padding-right:1rem; }
-        .lav-layout-asymmetric .relative.z-10.px-6.pb-8 > :nth-child(2) { border-left:4px solid var(--beam-color); padding-left:1rem; }
-        .lav-layout-multi-grid .relative.z-10.px-6.pb-8 > :first-child { display:grid; grid-template-columns:1fr 1fr; gap:.5rem; }
-        .lav-layout-horizontal-slider .relative.z-10.px-6.pb-8 { padding-left:0; padding-right:0; }
-        .lav-layout-horizontal-slider .relative.z-10.px-6.pb-8 > :not(:first-child) { margin-left:1.5rem; margin-right:1.5rem; }
-        .lav-layout-main-thumbnails .relative.z-10.px-6.pb-8 > :first-child img { width:100%!important; height:13rem!important; border-radius:1rem!important; }
-        .lav-layout-editorial-spread .relative.z-10.px-6.pb-8 > :nth-child(2) h1 { font-size:2.4rem; line-height:.98; letter-spacing:-.06em; }
-        .lav-layout-editorial-spread .relative.z-10.px-6.pb-8 > :nth-child(2) { border-bottom:1px solid currentColor; padding-bottom:1rem; }
-        .lav-layout-overlapping-depth .relative.z-10.px-6.pb-8 > :first-child { transform:translateY(-1rem); }
-        .lav-layout-photo-cards .relative.z-10.px-6.pb-8 > :first-child { justify-content:center; }
-        .lav-layout-photo-cards .relative.z-10.px-6.pb-8 > :first-child img { border:8px solid white; box-shadow:0 14px 35px #0008; }
-        .lav-layout-minimal-small .relative.z-10.px-6.pb-8 { padding:2rem 2.2rem; }
-        .lav-layout-minimal-small .relative.z-10.px-6.pb-8 > :nth-child(2) { border-bottom:1px solid currentColor; padding-bottom:1rem; }
-        .lav-layout-vertical-large > div:first-of-type { height:20rem!important; }
-        .lav-layout-vertical-large .relative.z-10.px-6.pb-8 { margin-top:-4rem; }
-        .lav-layout-geometric-cut .relative.z-10.px-6.pb-8 > :first-child img { clip-path:polygon(15% 0,100% 0,100% 80%,80% 100%,0 100%,0 20%); border-radius:0!important; width:7rem!important; height:7rem!important; }
-        .lav-layout-multi-zone .relative.z-10.px-6.pb-8 > :nth-child(2) { padding:1rem; border-radius:1rem; background:linear-gradient(120deg,#ffffff22,transparent); border-left:3px solid var(--beam-color); }
-        /* Acabados premium y jerarquía tipográfica */
-        .lav-card-preview h1 { letter-spacing:-.035em; }
+        .lav-card-preview { isolation:isolate; }
+        .lav-card-preview :is(h1,h2,h3,h4,p,span,strong,em,label,small,li,a,button):not(.social-icon-btn):not(.text-emerald-400):not(.text-amber-400) { color:var(--card-text-color); }
+        .lav-card-preview h1 { letter-spacing:-.035em; line-height:1.05; }
         .lav-card-preview button { transition:transform .2s ease,filter .2s ease,box-shadow .2s ease; }
         .lav-card-preview button:hover { filter:brightness(1.12); }
+        .lav-card-preview > .relative.z-10.px-6.pb-8 > :first-child { position:relative; }
+        /* 20 composiciones LAV Style: cada selector actúa sobre el bloque fotográfico real */
+        .lav-layout-top-large > .relative.z-10.px-6.pb-8 > :first-child { border-radius:0 0 2rem 2rem; box-shadow:0 18px 35px #0008; }
+        .lav-layout-bottom-compact > .relative.z-10.px-6.pb-8 > :first-child { min-height:2.5rem; }
+        .lav-layout-bottom-compact > .relative.z-10.px-6.pb-8 > :nth-last-child(3) { border-radius:1.5rem 1.5rem .5rem .5rem; }
+        .lav-layout-left-photo > .relative.z-10.px-6.pb-8 > :first-child { display:flex; flex-direction:row; align-items:center; gap:1rem; padding:1rem; border:1px solid var(--beam-color); border-radius:1.25rem; background:linear-gradient(110deg,#ffffff18,transparent 70%); }
+        .lav-layout-left-photo > .relative.z-10.px-6.pb-8 > :first-child img { width:6.5rem; height:8rem; border-radius:1rem; object-fit:cover; }
+        .lav-layout-right-photo > .relative.z-10.px-6.pb-8 > :first-child { display:flex; flex-direction:row-reverse; align-items:center; gap:1rem; padding:1rem; border:1px solid var(--beam-color); border-radius:1.25rem; background:linear-gradient(250deg,#ffffff18,transparent 70%); }
+        .lav-layout-right-photo > .relative.z-10.px-6.pb-8 > :first-child img { width:6.5rem; height:8rem; border-radius:1rem; object-fit:cover; }
+        .lav-layout-circle-portrait > .relative.z-10.px-6.pb-8 > :first-child { justify-content:center; }
+        .lav-layout-circle-portrait > .relative.z-10.px-6.pb-8 > :first-child img { width:8rem!important;height:8rem!important;border-radius:50%!important;border:4px solid var(--beam-color);box-shadow:0 0 0 8px #ffffff12,0 12px 30px #0008; }
+        .lav-layout-panoramic > .relative.z-10.px-6.pb-8 > :first-child { margin-top:-2.25rem; border-radius:1.5rem; overflow:hidden; box-shadow:0 18px 35px #0009; }
+        .lav-layout-card-bg { background-size:cover!important; background-position:center!important; }
+        .lav-layout-card-bg:after { content:"";position:absolute;inset:0;z-index:0;background:linear-gradient(180deg,#0002 0%,#0009 45%,#000e 100%);pointer-events:none; }
+        .lav-layout-card-bg > .relative.z-10.px-6.pb-8 { position:relative;z-index:2; }
+        .lav-layout-elegant-frame { border:5px double #d6ad60!important; box-shadow:inset 0 0 0 1px #fff4,0 22px 55px #0009; }
+        .lav-layout-elegant-frame > .relative.z-10.px-6.pb-8 > :first-child img { border:3px solid #d6ad60; padding:3px; background:#17120a; }
+        .lav-layout-rounded-squircle > .relative.z-10.px-6.pb-8 > :first-child img { width:7.5rem!important;height:7.5rem!important;border-radius:2rem!important;box-shadow:0 0 0 5px var(--beam-color),0 0 32px var(--beam-color); }
+        .lav-layout-asymmetric > .relative.z-10.px-6.pb-8 { padding-left:2rem;padding-right:1rem; }
+        .lav-layout-asymmetric > .relative.z-10.px-6.pb-8 > :first-child { transform:rotate(-2deg); transform-origin:left center; }
+        .lav-layout-multi-grid > .relative.z-10.px-6.pb-8 > :first-child { padding:.6rem;border-radius:1.2rem;background:linear-gradient(135deg,#ffffff20,transparent); }
+        .lav-layout-multi-grid > .relative.z-10.px-6.pb-8 > :first-child img { border-radius:.65rem; }
+        .lav-layout-horizontal-slider > .relative.z-10.px-6.pb-8 > :first-child { margin-left:-1.5rem;margin-right:-1.5rem;padding:.75rem 1.5rem;background:linear-gradient(90deg,#0005,transparent,#0005); }
+        .lav-layout-horizontal-slider > .relative.z-10.px-6.pb-8 > :first-child img { width:7.5rem;height:7.5rem;border-radius:1rem; }
+        .lav-layout-main-thumbnails > .relative.z-10.px-6.pb-8 > :first-child img:first-child { width:9rem;height:9rem;border-radius:1.25rem;border:2px solid var(--beam-color); }
+        .lav-layout-editorial-spread > .relative.z-10.px-6.pb-8 > :first-child { display:grid;grid-template-columns:1fr auto;align-items:end;gap:1rem;border-bottom:1px solid #ffffff35;padding-bottom:1rem; }
+        .lav-layout-editorial-spread > .relative.z-10.px-6.pb-8 > :first-child img { width:8rem;height:10rem;object-fit:cover;border-radius:.25rem;box-shadow:8px 8px 0 var(--beam-color); }
+        .lav-layout-overlapping-depth > .relative.z-10.px-6.pb-8 > :first-child { padding:.5rem 0 .5rem .5rem; }
+        .lav-layout-overlapping-depth > .relative.z-10.px-6.pb-8 > :first-child img { width:7.5rem;height:7.5rem;border-radius:1.25rem;box-shadow:12px 12px 0 var(--beam-color),0 18px 30px #0008; }
+        .lav-layout-photo-cards > .relative.z-10.px-6.pb-8 > :first-child { padding:.5rem; }
+        .lav-layout-photo-cards > .relative.z-10.px-6.pb-8 > :first-child img { border:7px solid #fff!important;border-bottom-width:22px!important;border-radius:.25rem!important;box-shadow:0 14px 30px #0008;transform:rotate(-3deg); }
+        .lav-layout-minimal-small > .relative.z-10.px-6.pb-8 > :first-child img { width:3.5rem!important;height:3.5rem!important;border-radius:50%!important;filter:saturate(.75); }
+        .lav-layout-vertical-large > .relative.z-10.px-6.pb-8 > :first-child { margin-top:-1rem;border-radius:1rem;overflow:hidden; }
+        .lav-layout-geometric-cut > .relative.z-10.px-6.pb-8 > :first-child img { clip-path:polygon(25% 0,75% 0,100% 50%,75% 100%,25% 100%,0 50%);width:8rem!important;height:8rem!important; }
+        .lav-layout-multi-zone > .relative.z-10.px-6.pb-8 > :first-child { padding:1rem;border-radius:1.5rem;background:linear-gradient(120deg,#ffffff20,transparent 65%);border-left:4px solid var(--beam-color); }
+        /* Acabados premium independientes de la composición */
         .lav-layout-noir-gold { box-shadow:inset 0 0 0 1px #d6ad6088,0 24px 60px #0009; }
         .lav-layout-scarlet-edge { border-left:5px solid #ef233c!important; }
         .lav-layout-cobalt-pro { box-shadow:inset 0 0 0 1px #67e8f955,0 22px 55px #020617aa; }
         .lav-layout-violet-glass,.lav-layout-frosted-crystal { backdrop-filter:blur(22px) saturate(1.35); }
-        .lav-layout-neon-cyan,.lav-layout-magenta-pulse { box-shadow:inset 0 0 0 1px #22d3ee55,0 0 35px #22d3ee22; }
-        .lav-layout-champagne-luxe,.lav-layout-platinum-silver,.lav-layout-royal-navy { border:1px solid #d6ad6088!important; }
+        .lav-layout-neon-cyan,.lav-layout-magenta-pulse { box-shadow:inset 0 0 0 1px #22d3ee77,0 0 35px #22d3ee33; }
+        .lav-layout-champagne-luxe,.lav-layout-platinum-silver,.lav-layout-royal-navy { border:1px solid #d6ad60aa!important; }
         @media(max-width:480px) {
-          .lav-layout-left-photo .relative.z-10.px-6.pb-8 > :first-child,
-          .lav-layout-right-photo .relative.z-10.px-6.pb-8 > :first-child { float:none; width:100%; margin:0 0 1rem; }
-        }
-
-        .lav-layout-top-large .relative.z-10.px-6.pb-8{padding-top:0}
-        .lav-layout-bottom-compact .relative.z-10.px-6.pb-8{display:flex;flex-direction:column}
-        .lav-layout-bottom-compact .relative.z-10.px-6.pb-8>:first-child{order:4;margin-top:1rem}
-        .lav-layout-left-photo .relative.z-10.px-6.pb-8>:first-child{float:left;width:42%;margin:0 1rem 1rem 0}
-        .lav-layout-right-photo .relative.z-10.px-6.pb-8>:first-child{float:right;width:42%;margin:0 0 1rem 1rem}
-        .lav-layout-circle-portrait .relative.z-10.px-6.pb-8{text-align:center}
-        .lav-layout-circle-portrait .relative.z-10.px-6.pb-8>:first-child{justify-content:center}
-        .lav-layout-panoramic>div:first-of-type{height:15rem!important}
-        .lav-layout-panoramic .relative.z-10.px-6.pb-8{margin-top:-2.5rem}
-        .lav-layout-card-bg .relative.z-10.px-6.pb-8{background:linear-gradient(180deg,#07101b22,#07101bee 25%);border-radius:2rem 2rem 0 0}
-        .lav-layout-elegant-frame{border:5px double #d6ad60!important}
-        .lav-layout-elegant-frame .relative.z-10.px-6.pb-8{margin:.5rem;border:1px solid #d6ad6066;border-radius:1.4rem;padding-top:1rem}
-        .lav-layout-rounded-squircle .relative.z-10.px-6.pb-8>:first-child img{border-radius:2rem!important;width:6.5rem!important;height:6.5rem!important}
-        .lav-layout-asymmetric .relative.z-10.px-6.pb-8{padding-left:2rem;padding-right:1rem}
-        .lav-layout-asymmetric .relative.z-10.px-6.pb-8>:nth-child(2){border-left:4px solid var(--beam-color);padding-left:1rem}
-        .lav-layout-multi-grid .relative.z-10.px-6.pb-8>:first-child{display:grid;grid-template-columns:1fr 1fr;gap:.5rem}
-        .lav-layout-horizontal-slider .relative.z-10.px-6.pb-8{padding-left:0;padding-right:0}
-        .lav-layout-horizontal-slider .relative.z-10.px-6.pb-8>:not(:first-child){margin-left:1.5rem;margin-right:1.5rem}
-        .lav-layout-main-thumbnails .relative.z-10.px-6.pb-8>:first-child img{width:100%!important;height:13rem!important;border-radius:1rem!important}
-        .lav-layout-editorial-spread .relative.z-10.px-6.pb-8>:nth-child(2) h1{font-size:2.4rem;line-height:.98;letter-spacing:-.06em}
-        .lav-layout-editorial-spread .relative.z-10.px-6.pb-8>:nth-child(2){border-bottom:1px solid currentColor;padding-bottom:1rem}
-        .lav-layout-overlapping-depth .relative.z-10.px-6.pb-8>:first-child{transform:translateY(-1rem)}
-        .lav-layout-photo-cards .relative.z-10.px-6.pb-8>:first-child{justify-content:center}
-        .lav-layout-photo-cards .relative.z-10.px-6.pb-8>:first-child img{border:8px solid white;box-shadow:0 14px 35px #0008}
-        .lav-layout-minimal-small .relative.z-10.px-6.pb-8{padding:2rem 2.2rem}
-        .lav-layout-minimal-small .relative.z-10.px-6.pb-8>:nth-child(2){border-bottom:1px solid currentColor;padding-bottom:1rem}
-        .lav-layout-vertical-large>div:first-of-type{height:20rem!important}
-        .lav-layout-vertical-large .relative.z-10.px-6.pb-8{margin-top:-4rem}
-        .lav-layout-geometric-cut .relative.z-10.px-6.pb-8>:first-child img{clip-path:polygon(15% 0,100% 0,100% 80%,80% 100%,0 100%,0 20%);border-radius:0!important;width:7rem!important;height:7rem!important}
-        .lav-layout-multi-zone .relative.z-10.px-6.pb-8>:nth-child(2){padding:1rem;border-radius:1rem;background:linear-gradient(120deg,#ffffff22,transparent);border-left:3px solid var(--beam-color)}
-        @media(max-width:480px){.lav-layout-left-photo .relative.z-10.px-6.pb-8>:first-child,.lav-layout-right-photo .relative.z-10.px-6.pb-8>:first-child{float:none;width:100%;margin:0 0 1rem}}
-
+          .lav-layout-left-photo > .relative.z-10.px-6.pb-8 > :first-child,
+          .lav-layout-right-photo > .relative.z-10.px-6.pb-8 > :first-child { gap:.65rem;padding:.65rem; }
+          .lav-layout-left-photo > .relative.z-10.px-6.pb-8 > :first-child img,
+          .lav-layout-right-photo > .relative.z-10.px-6.pb-8 > :first-child img { width:5rem;height:6rem; }
         }
       `}</style>
       {/* Background Ambient Floating Orbs for Glass & Motion */}
