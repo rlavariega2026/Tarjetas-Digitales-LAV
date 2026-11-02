@@ -176,6 +176,12 @@ export interface CardDesign {
   textColor: string;
   backgroundFinish?: 'solid' | 'gradient' | 'metallic';
   backgroundTextureUrl?: string;
+  /** Independent typography and color for the three business identity fields. */
+  fieldTypography?: Partial<Record<'businessName' | 'category' | 'jobTitle', {
+    fontFamily?: string;
+    fontSize?: number;
+    color?: string;
+  }>>;
   backgroundPattern: BackgroundPattern;
   fontHeadline: FontHeadline;
   fontBody: FontBody;
