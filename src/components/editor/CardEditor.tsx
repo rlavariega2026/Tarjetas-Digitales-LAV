@@ -2908,6 +2908,32 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                             placeholder="Detalles sobre qué incluye o beneficios."
                           />
                         </div>
+
+                        <div className="rounded-xl border border-slate-700 bg-slate-900/60 p-3 space-y-2">
+                          <p className="text-[10px] font-bold uppercase tracking-wide text-slate-300">Estilo de texto de este producto</p>
+                          {([
+                            ['title', 'Título', 14],
+                            ['description', 'Descripción', 12],
+                            ['price', 'Precio', 13],
+                          ] as const).map(([field, label, defaultSize]) => {
+                            const style = item.textStyles?.[field] || {};
+                            return (
+                              <div key={field} className="grid grid-cols-3 gap-2 items-end">
+                                <label className="text-[10px] text-slate-400">Color {label}
+                                  <input type="color" value={style.color || (field === 'price' ? '#38bdf8' : '#ffffff')} onChange={(e) => updateCatalogItemTextStyle(item.id, field, 'color', e.target.value)} className="mt-1 block h-8 w-full rounded bg-transparent border-0" />
+                                </label>
+                                <label className="text-[10px] text-slate-400">Tamaño (px)
+                                  <input type="number" min="8" max="32" value={style.fontSize ?? defaultSize} onChange={(e) => updateCatalogItemTextStyle(item.id, field, 'fontSize', Math.max(8, Math.min(32, Number(e.target.value) || defaultSize)))} className="mt-1 w-full rounded-md bg-slate-800 border border-slate-700 px-2 py-1.5 text-[10px] text-white" />
+                                </label>
+                                <label className="text-[10px] text-slate-400">Alineación
+                                  <select value={style.textAlign || 'inherit'} onChange={(e) => updateCatalogItemTextStyle(item.id, field, 'textAlign', e.target.value === 'inherit' ? '' : e.target.value)} className="mt-1 w-full rounded-md bg-slate-800 border border-slate-700 px-1 py-1.5 text-[10px] text-white">
+                                    <option value="inherit">Predeterminada</option><option value="left">Izquierda</option><option value="center">Centro</option><option value="right">Derecha</option>
+                                  </select>
+                                </label>
+                              </div>
+                            );
+                          })}
+                        </div>
                       </div>
                     ))
                   ) : (
