@@ -684,6 +684,43 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
       text-transform: uppercase;
       opacity: 0.7;
     }
+    .catalog-disclosure {
+      margin: 18px 0 22px;
+      border: 1px solid rgba(255,255,255,.13);
+      border-radius: 18px;
+      overflow: hidden;
+      background: linear-gradient(145deg, rgba(255,255,255,.075), rgba(255,255,255,.025));
+      box-shadow: 0 10px 28px rgba(0,0,0,.16);
+    }
+    .catalog-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 15px 17px;
+      color: #fff;
+      cursor: pointer;
+      list-style: none;
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: .055em;
+      text-transform: uppercase;
+    }
+    .catalog-toggle::-webkit-details-marker { display: none; }
+    .catalog-toggle span:last-child {
+      flex: 0 0 auto;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.11);
+      color: rgba(255,255,255,.88);
+      font-size: 10px;
+      letter-spacing: .02em;
+      text-transform: none;
+    }
+    .catalog-disclosure[open] .catalog-toggle {
+      border-bottom: 1px solid rgba(255,255,255,.09);
+    }
+    .catalog-items { padding: 13px; }
     .catalog-card {
       display: flex;
       gap: 14px;
