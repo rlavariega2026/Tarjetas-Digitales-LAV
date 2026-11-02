@@ -15,6 +15,8 @@ export interface CatalogItem {
   badge?: string;
   ctaLabel?: string;
   ctaLink?: string;
+  /** Número de WhatsApp específico para el botón Consultar de este producto/servicio. */
+  whatsappNumber?: string;
   category?: string; // e.g. Entradas, Platos Fuertes, Bebidas, Postres
   isAvailable?: boolean;
 }
@@ -225,7 +227,9 @@ export interface CardDesign {
   /** Text alignment for the personal and professional information block. */
   infoTextAlign?: 'left' | 'center' | 'right';
   /** Independent typography settings for every editable text field. */
-  textFieldStyles?: Record<string, { fontFamily?: string; fontSize?: number; color?: string }>;
+  textFieldStyles?: Record<string, { fontFamily?: string; fontSize?: number; color?: string; textAlign?: 'left' | 'center' | 'right' }>;
+  /** Presentación tipográfica y fotográfica del catálogo. */
+  catalogStyle?: { textAlign?: 'left' | 'center' | 'right'; fontFamily?: string; titleSize?: number; descriptionSize?: number; priceSize?: number; imageSize?: number; imagePosition?: 'left' | 'top' };
   /** Independent text colors for each editable text field. */
   businessNameColor?: string;
   nameColor?: string;

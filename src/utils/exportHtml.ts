@@ -22,6 +22,22 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
     ? `https://wa.me/${card.whatsapp.replace(/\D/g, '')}?text=${encodeURIComponent(card.whatsappMessage || `Hola ${card.name}, vi tu tarjeta digital y me gustaría obtener más información.`)}`
     : '';
 
+  // Aplicar en el HTML publicado los mismos estilos independientes configurados en el editor.
+  const fieldInlineStyle = (field: string): string => {
+    const style = card.design.textFieldStyles?.[field] || {};
+    const declarations = [
+      style.fontFamily ? `font-family:'${escapeHtml(style.fontFamily)}',sans-serif` : '',
+      style.fontSize ? `font-size:${Math.max(8, Math.min(64, Number(style.fontSize)))}px` : '',
+      style.color ? `color:${escapeHtml(style.color)}` : '',
+      style.textAlign ? `text-align:${style.textAlign}` : '',
+    ].filter(Boolean);
+    return declarations.join(';');
+  };
+  const fieldStyleAttribute = (field: string): string => {
+    const value = fieldInlineStyle(field);
+    return value ? ` style="${value}"` : '';
+  };
+
   // Parse embed video
   let embedVideoUrl = '';
   if (card.videoUrl) {
@@ -671,12 +687,50 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
     .catalog-card {
       display: flex;
       gap: 14px;
-      padding: 12px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.08);
+      padding: 14px;
+      background: rgba(255,255,255,0.045);
+      border: 1px solid rgba(255,255,255,0.09);
       border-radius: 16px;
       margin-bottom: 12px;
       align-items: center;
+      min-width: 0;
+    }
+    .catalog-card[style*="flex-direction:column"] {
+      align-items: stretch;
+    }
+    .catalog-card[style*="text-align:center"] .catalog-info {
+      text-align: center;
+    }
+    .catalog-card[style*="text-align:right"] .catalog-info {
+      text-align: right;
+    }
+    .catalog-card[style*="flex-direction:column"] .catalog-img {
+      align-self: center;
+      max-width: 100%;
+    }
+    .catalog-info {
+      flex: 1 1 0;
+      min-width: 0;
+      overflow-wrap: anywhere;
+    }
+    .catalog-card > a {
+      flex: 0 0 auto;
+      white-space: nowrap;
+      align-self: center;
+    }
+    @media (max-width: 380px) {
+      .catalog-card:not([style*="flex-direction:column"]) {
+        gap: 9px;
+        padding: 10px;
+      }
+      .catalog-card:not([style*="flex-direction:column"]) .catalog-img {
+        width: 64px !important;
+        height: 64px !important;
+      }
+      .catalog-card > a {
+        padding: 6px 9px !important;
+        font-size: 10px !important;
+      }
     }
     .catalog-img {
       width: 70px;
@@ -838,11 +892,11 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
       ${photoCompositionHtml}
 
       <div class="info-block" style="text-align:${card.design.infoTextAlign || 'left'};">
-        ${card.businessName ? `<div class="company-title headline-font card-stagger-2">${escapeHtml(card.businessName)}</div>` : ''}
-        ${card.category ? `<div class="category-title card-stagger-2">${escapeHtml(card.category)}</div>` : ''}
-        <h1 class="headline-font card-stagger-2">${escapeHtml(card.name)}</h1>
-        ${card.jobTitle ? `<div class="job-title card-stagger-2">${escapeHtml(card.jobTitle)}</div>` : ''}
-        ${card.bio ? `<div class="bio-text card-stagger-2">${escapeHtml(card.bio)}</div>` : ''}
+        ${card.businessName ? `<div class="company-title headline-font card-stagger-2"${fieldStyleAttribute('businessName')}>${escapeHtml(card.businessName)}</div>` : ''}
+        ${card.category ? `<div class="category-title card-stagger-2"${fieldStyleAttribute('category')}>${escapeHtml(card.category)}</div>` : ''}
+        <h1 class="headline-font card-stagger-2"${fieldStyleAttribute('name')}>${escapeHtml(card.name)}</h1>
+        ${card.jobTitle ? `<div class="job-title card-stagger-2"${fieldStyleAttribute('jobTitle')}>${escapeHtml(card.jobTitle)}</div>` : ''}
+        ${card.bio ? `<div class="bio-text card-stagger-2"${fieldStyleAttribute('bio')}>${escapeHtml(card.bio)}</div>` : ''}
       </div>
       ${bottomPhotoHtml}
 
@@ -971,14 +1025,14 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
       <div class="section-title">Productos & Servicios</div>
       <div>
         ${card.catalog.map(item => `
-          <div class="catalog-card">
-            ${item.imageUrl ? `<img src="${escapeHtml(item.imageUrl)}" class="catalog-img" alt="${escapeHtml(item.title)}">` : ''}
+          <div class="catalog-card" style="font-family:${escapeHtml(card.design.catalogStyle?.fontFamily || card.design.fontBody || 'Inter')};text-align:${card.design.catalogStyle?.textAlign || 'left'};flex-direction:${card.design.catalogStyle?.imagePosition === 'top' ? 'column' : 'row'}">
+            ${item.imageUrl ? `<img src="${escapeHtml(item.imageUrl)}" class="catalog-img" alt="${escapeHtml(item.title)}" style="width:${card.design.catalogStyle?.imageSize || 76}px;height:${card.design.catalogStyle?.imageSize || 76}px">` : ''}
             <div class="catalog-info">
-              <div style="font-weight:600; font-size:14px;">${escapeHtml(item.title)}</div>
-              <div style="font-size:12px; opacity:0.8; margin:2px 0 4px 0;">${escapeHtml(item.description || '')}</div>
-              ${item.price ? `<div class="catalog-price">${escapeHtml(item.price)}</div>` : ''}
+              <div style="font-weight:700;font-size:${card.design.catalogStyle?.titleSize || 14}px;">${escapeHtml(item.title)}</div>
+              <div style="font-size:${card.design.catalogStyle?.descriptionSize || 12}px;opacity:0.8;margin:3px 0 5px 0;">${escapeHtml(item.description || '')}</div>
+              ${item.price ? `<div class="catalog-price" style="font-size:${card.design.catalogStyle?.priceSize || 13}px;">${escapeHtml(item.price)}</div>` : ''}
             </div>
-            ${item.ctaLink ? `<a href="${escapeHtml(item.ctaLink)}" target="_blank" rel="noopener noreferrer" style="padding:6px 12px; background:rgba(255,255,255,0.1); border-radius:10px; color:#fff; text-decoration:none; font-size:11px; font-weight:600;">${escapeHtml(item.ctaLabel || 'Ver')}</a>` : ''}
+            ${item.ctaLink || item.whatsappNumber ? `<a href="${escapeHtml(item.whatsappNumber ? 'https://wa.me/' + item.whatsappNumber.replace(/\\D/g, '') : item.ctaLink || '')}" target="_blank" rel="noopener noreferrer" style="padding:6px 12px;background:rgba(255,255,255,0.1);border-radius:10px;color:#fff;text-decoration:none;font-size:11px;font-weight:600;">${escapeHtml(item.ctaLabel || 'Consultar')}</a>` : ''}
           </div>
         `).join('')}
       </div>` : `<div class="section-title">Productos &amp; Servicios</div><div style="margin-bottom:20px;padding:14px;border:1px dashed rgba(255,255,255,.2);border-radius:14px;color:#94a3b8;font-size:12px;text-align:center;">Añade productos o servicios desde la pestaña Catálogo del editor.</div>`) : ''}

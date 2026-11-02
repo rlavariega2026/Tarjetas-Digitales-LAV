@@ -204,7 +204,7 @@ export const CardEditor: React.FC<CardEditorProps> = ({
     }));
   };
 
-  const updateTextFieldStyle = (field: string, property: 'fontFamily' | 'fontSize' | 'color', value: string | number) => {
+  const updateTextFieldStyle = (field: string, property: 'fontFamily' | 'fontSize' | 'color' | 'textAlign', value: string | number) => {
     setCard((prev) => ({ ...prev, design: { ...prev.design, textFieldStyles: { ...(prev.design.textFieldStyles || {}), [field]: { ...(prev.design.textFieldStyles?.[field] || {}), [property]: value } } } }));
   };
   const renderTextFieldStyle = (field: string, label: string) => {
@@ -214,8 +214,18 @@ export const CardEditor: React.FC<CardEditorProps> = ({
       <label className="text-[10px] text-slate-400">Tipografía<select aria-label={'Tipografía de ' + label} value={style.fontFamily || ''} onChange={(e) => updateTextFieldStyle(field, 'fontFamily', e.target.value)} className="mt-1 w-full min-w-0 rounded-md bg-slate-800 border border-slate-700 px-1 py-1.5 text-[10px] text-white"><option value="">Predeterminada</option>{fonts.map((font) => <option key={font} value={font}>{font}</option>)}</select></label>
       <label className="text-[10px] text-slate-400">Tamaño (px)<input aria-label={'Tamaño de ' + label} type="number" min="8" max="64" value={style.fontSize || ''} placeholder="Auto" onChange={(e) => updateTextFieldStyle(field, 'fontSize', e.target.value === '' ? 0 : Math.max(8, Math.min(64, Number(e.target.value))))} className="mt-1 w-full rounded-md bg-slate-800 border border-slate-700 px-1 py-1.5 text-[10px] text-white" /></label>
       <label className="text-[10px] text-slate-400">Color<input aria-label={'Color de ' + label} type="color" value={style.color || '#FFFFFF'} onChange={(e) => updateTextFieldStyle(field, 'color', e.target.value)} className="mt-1 block h-7 w-full rounded-md bg-transparent border-0" /></label>
+      <label className="col-span-3 text-[10px] text-slate-400">Alineación del texto<select aria-label={'Alineación de ' + label} value={style.textAlign || ''} onChange={(e) => updateTextFieldStyle(field, 'textAlign', e.target.value)} className="mt-1 w-full rounded-md bg-slate-800 border border-slate-700 px-2 py-1.5 text-[10px] text-white"><option value="">Predeterminada</option><option value="left">Izquierda</option><option value="center">Centrado</option><option value="right">Derecha</option></select></label>
     </div>;
   };
+  const updateCatalogStyle = (field: keyof NonNullable<CardData['design']['catalogStyle']>, value: string | number) => {
+    setCard((prev) => ({ ...prev, design: { ...prev.design, catalogStyle: { ...(prev.design.catalogStyle || {}), [field]: value } } }));
+  };
+
+  const updateCatalogWhatsapp = (id: string, value: string) => {
+    const number = value.replace(/\D/g, '');
+    setCard((prev) => ({ ...prev, catalog: (prev.catalog || []).map((item) => item.id === id ? { ...item, whatsappNumber: number, ctaLink: number ? `https://wa.me/${number}` : '' } : item) }));
+  };
+
   const updatePhysicalField = <K extends keyof CardData['design']['physicalCard']>(
     field: K,
     value: CardData['design']['physicalCard'][K]
@@ -494,6 +504,7 @@ export const CardEditor: React.FC<CardEditorProps> = ({
       price: '$500 MXN',
       ctaLabel: 'Consultar',
       ctaLink: card.whatsapp ? `https://wa.me/${card.whatsapp.replace(/\D/g, '')}` : '',
+      whatsappNumber: card.whatsapp ? card.whatsapp.replace(/\D/g, '') : '',
     };
     setCard((prev) => ({
       ...prev,
@@ -2765,6 +2776,16 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                   </label>
                 </div>
 
+                <div className="rounded-2xl border border-indigo-500/30 bg-indigo-950/20 p-3 space-y-3">
+                  <div><p className="text-xs font-bold text-slate-200">Diseño del catálogo</p><p className="text-[10px] text-slate-400">Ajusta la presentación de todos los productos y servicios.</p></div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <label className="text-[10px] text-slate-400">Tipografía<select value={card.design.catalogStyle?.fontFamily || ''} onChange={(e) => updateCatalogStyle('fontFamily', e.target.value)} className="mt-1 w-full rounded-lg bg-slate-900 border border-slate-700 p-2 text-xs text-white"><option value="">Heredar de tarjeta</option>{['Inter','Outfit','DM Sans','Montserrat','Poppins','Manrope','Plus Jakarta Sans','Urbanist','Roboto','Open Sans','Lato','Nunito Sans','Lora','Merriweather','Playfair Display','Cormorant Garamond','Cinzel','DM Serif Display','Oswald','Raleway','Space Grotesk'].map(font => <option key={font} value={font}>{font}</option>)}</select></label>
+                    <label className="text-[10px] text-slate-400">Alineación<select value={card.design.catalogStyle?.textAlign || 'left'} onChange={(e) => updateCatalogStyle('textAlign', e.target.value)} className="mt-1 w-full rounded-lg bg-slate-900 border border-slate-700 p-2 text-xs text-white"><option value="left">Izquierda</option><option value="center">Centrado</option><option value="right">Derecha</option></select></label>
+                    {([['titleSize','Tamaño del título',14],['descriptionSize','Tamaño de descripción',12],['priceSize','Tamaño del precio',13],['imageSize','Tamaño de foto',76]] as const).map(([field,label,initial]) => <label key={field} className="text-[10px] text-slate-400">{label} (px)<input type="number" min="8" max={field === 'imageSize' ? 220 : 32} value={card.design.catalogStyle?.[field] ?? initial} onChange={(e) => updateCatalogStyle(field, Math.max(8, Math.min(field === 'imageSize' ? 220 : 32, Number(e.target.value))))} className="mt-1 w-full rounded-lg bg-slate-900 border border-slate-700 p-2 text-xs text-white" /></label>)}
+                    <label className="text-[10px] text-slate-400">Fotografía<select value={card.design.catalogStyle?.imagePosition || 'left'} onChange={(e) => updateCatalogStyle('imagePosition', e.target.value)} className="mt-1 w-full rounded-lg bg-slate-900 border border-slate-700 p-2 text-xs text-white"><option value="left">A la izquierda</option><option value="top">Arriba</option></select></label>
+                  </div>
+                </div>
+
                 <div className="space-y-3">
                   {card.catalog && card.catalog.length > 0 ? (
                     card.catalog.map((item, idx) => (
@@ -2852,6 +2873,11 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                             </div>
                             {item.imageUrl && <img src={item.imageUrl} alt={item.title || 'Producto'} className="mt-2 h-24 w-full rounded-lg object-cover border border-slate-700" />}
                           </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-2">
+                          <label className="block text-[10px] text-slate-400">WhatsApp para «Consultar»<input type="tel" value={item.whatsappNumber || ''} onChange={(e) => updateCatalogWhatsapp(item.id, e.target.value)} className="mt-1 w-full px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-white text-xs" placeholder="5217771234567" /></label>
+                          <label className="block text-[10px] text-slate-400">Texto del botón<input type="text" value={item.ctaLabel || 'Consultar'} onChange={(e) => handleUpdateCatalogItem(item.id, 'ctaLabel', e.target.value)} className="mt-1 w-full px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-white text-xs" placeholder="Consultar" /></label>
                         </div>
 
                         <div>
