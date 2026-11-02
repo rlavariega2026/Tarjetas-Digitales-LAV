@@ -1202,16 +1202,22 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
                 href={btn.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full py-3 px-4 rounded-xl flex items-center justify-between text-xs font-bold transition duration-200 group active:scale-[0.99] border"
+                className={`w-full py-3 px-4 flex items-center justify-between text-xs font-bold transition duration-200 group active:scale-[0.99] border ${design.buttonStyle === 'glass' ? 'backdrop-blur-xl shadow-lg' : ''} ${design.buttonStyle === 'outline' ? 'bg-transparent' : ''}`}
                 style={{
-                  backgroundColor:
-                    btn.style === 'primary'
-                      ? design.primaryColor
+                  background:
+                    design.buttonStyle === 'gradient'
+                      ? `linear-gradient(135deg, ${design.primaryColor}, ${design.secondaryColor})`
+                      : design.buttonStyle === 'glass'
+                      ? 'rgba(255,255,255,0.10)'
+                      : design.buttonStyle === 'outline'
+                      ? 'transparent'
                       : btn.style === 'accent'
                       ? design.accentColor
-                      : 'rgba(255, 255, 255, 0.06)',
-                  color: '#ffffff',
-                  borderColor: 'rgba(255, 255, 255, 0.1)',
+                      : design.primaryColor,
+                  color: design.buttonStyle === 'outline' ? design.primaryColor : '#ffffff',
+                  borderColor: design.buttonStyle === 'outline' ? design.primaryColor : 'rgba(255,255,255,0.22)',
+                  borderRadius: design.cardShape === 'rounded-none' ? '2px' : design.cardShape === 'rounded-xl' ? '12px' : design.cardShape === 'rounded-2xl' ? '18px' : '26px',
+                  boxShadow: design.buttonStyle === 'gradient' ? `0 8px 22px ${design.primaryColor}40` : undefined,
                   fontFamily: headlineFontFamily,
                 }}
               >
