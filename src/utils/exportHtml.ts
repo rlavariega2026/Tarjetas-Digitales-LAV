@@ -971,14 +971,14 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
       <div class="section-title">Productos & Servicios</div>
       <div>
         ${card.catalog.map(item => `
-          <div class="catalog-card">
-            ${item.imageUrl ? `<img src="${escapeHtml(item.imageUrl)}" class="catalog-img" alt="${escapeHtml(item.title)}">` : ''}
+          <div class="catalog-card" style="font-family:${escapeHtml(card.design.catalogStyle?.fontFamily || card.design.fontBody || 'Inter')};text-align:${card.design.catalogStyle?.textAlign || 'left'};flex-direction:${card.design.catalogStyle?.imagePosition === 'top' ? 'column' : 'row'}">
+            ${item.imageUrl ? `<img src="${escapeHtml(item.imageUrl)}" class="catalog-img" alt="${escapeHtml(item.title)}" style="width:${card.design.catalogStyle?.imageSize || 76}px;height:${card.design.catalogStyle?.imageSize || 76}px">` : ''}
             <div class="catalog-info">
-              <div style="font-weight:600; font-size:14px;">${escapeHtml(item.title)}</div>
-              <div style="font-size:12px; opacity:0.8; margin:2px 0 4px 0;">${escapeHtml(item.description || '')}</div>
-              ${item.price ? `<div class="catalog-price">${escapeHtml(item.price)}</div>` : ''}
+              <div style="font-weight:700;font-size:${card.design.catalogStyle?.titleSize || 14}px;">${escapeHtml(item.title)}</div>
+              <div style="font-size:${card.design.catalogStyle?.descriptionSize || 12}px;opacity:0.8;margin:3px 0 5px 0;">${escapeHtml(item.description || '')}</div>
+              ${item.price ? `<div class="catalog-price" style="font-size:${card.design.catalogStyle?.priceSize || 13}px;">${escapeHtml(item.price)}</div>` : ''}
             </div>
-            ${item.ctaLink ? `<a href="${escapeHtml(item.ctaLink)}" target="_blank" rel="noopener noreferrer" style="padding:6px 12px; background:rgba(255,255,255,0.1); border-radius:10px; color:#fff; text-decoration:none; font-size:11px; font-weight:600;">${escapeHtml(item.ctaLabel || 'Ver')}</a>` : ''}
+            ${item.ctaLink || item.whatsappNumber ? `<a href="${escapeHtml(item.whatsappNumber ? 'https://wa.me/' + item.whatsappNumber.replace(/\\D/g, '') : item.ctaLink || '')}" target="_blank" rel="noopener noreferrer" style="padding:6px 12px;background:rgba(255,255,255,0.1);border-radius:10px;color:#fff;text-decoration:none;font-size:11px;font-weight:600;">${escapeHtml(item.ctaLabel || 'Consultar')}</a>` : ''}
           </div>
         `).join('')}
       </div>` : `<div class="section-title">Productos &amp; Servicios</div><div style="margin-bottom:20px;padding:14px;border:1px dashed rgba(255,255,255,.2);border-radius:14px;color:#94a3b8;font-size:12px;text-align:center;">Añade productos o servicios desde la pestaña Catálogo del editor.</div>`) : ''}
