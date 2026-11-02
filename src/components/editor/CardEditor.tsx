@@ -323,14 +323,16 @@ export const CardEditor: React.FC<CardEditorProps> = ({
       input.value = '';
       return;
     }
-    if (file.size > 5 * 1024 * 1024) {
-      window.alert('La imagen supera los 5 MB. Elige una imagen más ligera.');
+    // Catálogo y fotografías aceptan imágenes originales de hasta 25 MB.
+    // Se redimensionan y comprimen antes de guardarlas en la tarjeta.
+    if (file.size > 25 * 1024 * 1024) {
+      window.alert('La imagen supera el límite de 25 MB. Selecciona una imagen de menor tamaño.');
       input.value = '';
       return;
     }
 
     try {
-      const optimizedDataUrl = await optimizeImageFile(file, 900, 900, 0.7);
+      const optimizedDataUrl = await optimizeImageFile(file, 1600, 1600, 0.78);
       if (!optimizedDataUrl || !optimizedDataUrl.startsWith('data:image/')) {
         throw new Error('No se pudo procesar la imagen.');
       }
