@@ -1327,8 +1327,14 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
             ? card.catalog
             : card.catalog.filter(c => c.category === selectedCatalogCategory);
 
+          const catalogStyle = design.catalogStyle || {};
           return (
-            <div className="mb-5">
+            <details className="mb-5 rounded-2xl border border-white/10 bg-white/[0.025] overflow-hidden">
+              <summary className="flex items-center justify-between gap-3 px-4 py-3 cursor-pointer list-none text-white hover:bg-white/[0.05]">
+                <span className="text-xs font-bold uppercase tracking-wider">{design.theme === 'gastro-menu' ? 'Menú & Carta Digital' : 'Catálogo & Servicios'}</span>
+                <span className="text-[10px] text-slate-400">{filteredItems.length} opciones　⌄</span>
+              </summary>
+              <div className="p-3 pt-1">
               <div className="flex items-center justify-between mb-2.5">
                 <h2
                   className="text-xs font-bold uppercase tracking-wider opacity-75 flex items-center gap-1.5"
@@ -1366,13 +1372,13 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
                 {filteredItems.map((item) => (
                   <div
                     key={item.id}
-                    className="flex gap-3 p-3 rounded-2xl bg-white/[0.04] border border-white/[0.08] items-center hover:bg-white/[0.07] transition"
+                    className="flex gap-3 p-3 rounded-2xl bg-white/[0.04] border border-white/[0.08] items-center hover:bg-white/[0.07] transition" style={{ fontFamily: catalogStyle.fontFamily || bodyFontFamily, textAlign: catalogStyle.textAlign || 'left' }}
                   >
                     {item.imageUrl ? (
                       <img
                         src={item.imageUrl}
                         alt={item.title}
-                        className="w-16 h-16 rounded-xl object-cover bg-slate-800 flex-shrink-0"
+                        className="rounded-xl object-cover bg-slate-800 flex-shrink-0" style={{ width: catalogStyle.imageSize || 76, height: catalogStyle.imageSize || 76 }}
                       />
                     ) : (
                       <div
@@ -1384,7 +1390,7 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
                     )}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-1.5">
-                        <p className="text-xs font-bold text-white truncate">{item.title}</p>
+                        <p className="font-bold text-white break-words" style={{ fontSize: catalogStyle.titleSize || 14, textAlign: catalogStyle.textAlign || 'left' }}>{item.title}</p>
                         {item.category && item.category !== 'General' && (
                           <span className="text-[9px] font-semibold px-1.5 py-0.2 rounded bg-white/10 text-slate-300">
                             {item.category}
@@ -1392,12 +1398,12 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
                         )}
                       </div>
                       {item.description && (
-                        <p className="text-[11px] opacity-75 line-clamp-2 mt-0.5">{item.description}</p>
+                        <p className="opacity-75 mt-1 whitespace-pre-wrap" style={{ fontSize: catalogStyle.descriptionSize || 12, textAlign: catalogStyle.textAlign || 'left' }}>{item.description}</p>
                       )}
                       {item.price && (
                         <p
-                          className="text-xs font-extrabold mt-1"
-                          style={{ color: design.accentColor || '#38bdf8' }}
+                          className="font-extrabold mt-1"
+                          style={{ color: design.accentColor || '#38bdf8', fontSize: catalogStyle.priceSize || 13, textAlign: catalogStyle.textAlign || 'left' }}
                         >
                           {item.price}
                         </p>
@@ -1416,7 +1422,8 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
                   </div>
                 ))}
               </div>
-            </div>
+              </div>
+            </details>
           );
         })()}
 
