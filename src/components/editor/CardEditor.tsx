@@ -226,6 +226,24 @@ export const CardEditor: React.FC<CardEditorProps> = ({
     setCard((prev) => ({ ...prev, catalog: (prev.catalog || []).map((item) => item.id === id ? { ...item, whatsappNumber: number, ctaLink: number ? `https://wa.me/${number}` : '' } : item) }));
   };
 
+  const updateCatalogItemTextStyle = (
+    id: string,
+    field: 'title' | 'description' | 'price',
+    property: 'color' | 'fontSize' | 'textAlign',
+    value: string | number
+  ) => {
+    setCard((prev) => ({
+      ...prev,
+      catalog: (prev.catalog || []).map((item) => item.id === id ? {
+        ...item,
+        textStyles: {
+          ...(item.textStyles || {}),
+          [field]: { ...(item.textStyles?.[field] || {}), [property]: value },
+        },
+      } : item),
+    }));
+  };
+
   const updatePhysicalField = <K extends keyof CardData['design']['physicalCard']>(
     field: K,
     value: CardData['design']['physicalCard'][K]
