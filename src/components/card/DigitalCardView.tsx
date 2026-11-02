@@ -416,13 +416,13 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
   const isBusinessSignature = ['business-signature','corporate-executive','modern-consultant','lawyer-elite','architectural-lines'].includes(design.theme);
   const isGradientFinish = design.backgroundFinish === 'gradient' || (!design.backgroundFinish && ['urban-gradient','color-motion','aurora-glass','soft-gradient','bold-gradient','aurora-flow','prismatic-light','royal-velvet'].includes(design.theme));
   const isMetallicFinish = design.backgroundFinish === 'metallic' || (!design.backgroundFinish && ['executive-black','champagne-gold','royal-navy','black-gold','platinum-edition','liquid-metal','lawyer-elite','elegance-luxury','cyber-chrome'].includes(design.theme));
-  // El acabado elegido tiene prioridad y las texturas no bloquean los controles.
-  const cardBackgroundImage = design.backgroundFinish === 'gradient'
+  // La imagen cargada por el usuario siempre tiene prioridad sobre los acabados.
+  const cardBackgroundImage = design.backgroundTextureUrl
+    ? `url("${design.backgroundTextureUrl}")`
+    : design.backgroundFinish === 'gradient'
     ? `linear-gradient(135deg,${design.primaryColor || '#06b6d4'},${design.secondaryColor || '#7c3aed'},${design.accentColor || '#ec4899'})`
     : design.backgroundFinish === 'metallic'
     ? 'linear-gradient(115deg,#27272a 0%,#d4d4d8 14%,#71717a 28%,#fef3c7 43%,#a16207 56%,#f8fafc 70%,#52525b 84%,#e5e7eb 100%)'
-    : design.backgroundTextureUrl
-    ? `url("${design.backgroundTextureUrl}")`
     : design.backgroundFinish === 'solid'
     ? getPatternBg()
     : isMetallicFinish
@@ -430,6 +430,9 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
     : isGradientFinish
     ? `linear-gradient(135deg,${design.primaryColor || '#06b6d4'},${design.secondaryColor || '#7c3aed'},${design.accentColor || '#ec4899'})`
     : getPatternBg();
+  const businessTextStyle = design.fieldTypography?.businessName || {};
+  const categoryTextStyle = design.fieldTypography?.category || {};
+  const jobTextStyle = design.fieldTypography?.jobTitle || {};
 
   const avatarUrl = design.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500';
   const photoComp = design.photoComposition || 'circle-portrait';
@@ -1030,9 +1033,25 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
           {card.businessName && (
             <p
               className="text-xs font-bold tracking-wider uppercase mb-0.5"
-              style={{ color: design.accentColor || '#38bdf8', fontFamily: headlineFontFamily }}
+              style={{
+                color: businessTextStyle.color || design.accentColor || '#38bdf8',
+                fontFamily: businessTextStyle.fontFamily ? `"${businessTextStyle.fontFamily}", sans-serif` : headlineFontFamily,
+                fontSize: businessTextStyle.fontSize ? `${businessTextStyle.fontSize}px` : undefined,
+              }}
             >
               {card.businessName}
+            </p>
+          )}
+          {card.category && (
+            <p
+              className="text-[11px] font-semibold tracking-wide mt-0.5"
+              style={{
+                color: categoryTextStyle.color || design.textColor || '#f8fafc',
+                fontFamily: categoryTextStyle.fontFamily ? `"${categoryTextStyle.fontFamily}", sans-serif` : bodyFontFamily,
+                fontSize: categoryTextStyle.fontSize ? `${categoryTextStyle.fontSize}px` : undefined,
+              }}
+            >
+              {card.category}
             </p>
           )}
           <h1
@@ -1042,7 +1061,16 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
             {card.name || 'Nombre Completo'}
           </h1>
           {card.jobTitle && (
-            <p className="text-sm font-medium opacity-80 mt-0.5">{card.jobTitle}</p>
+            <p
+              className="text-sm font-medium opacity-80 mt-0.5"
+              style={{
+                color: jobTextStyle.color || undefined,
+                fontFamily: jobTextStyle.fontFamily ? `"${jobTextStyle.fontFamily}", sans-serif` : undefined,
+                fontSize: jobTextStyle.fontSize ? `${jobTextStyle.fontSize}px` : undefined,
+              }}
+            >
+              {card.jobTitle}
+            </p>
           )}
         </div>
 
