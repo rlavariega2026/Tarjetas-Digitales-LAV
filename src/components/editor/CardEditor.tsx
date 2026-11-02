@@ -283,15 +283,25 @@ export const CardEditor: React.FC<CardEditorProps> = ({
       input.value = '';
       return;
     }
-    if (file.size > 5 * 1024 * 1024) {
-      window.alert('La imagen supera los 5 MB. Elige una imagen más ligera.');
+    const uploadLimit = target === 'texture' || target === 'banner' ? 50 * 1024 * 1024 : 5 * 1024 * 1024;
+    if (file.size > uploadLimit) {
+      window.alert(target === 'texture' || target === 'banner'
+        ? 'La imagen supera los 50 MB. Elige una imagen de menor tamaño.'
+        : 'La imagen supera los 5 MB. Elige una imagen más ligera.');
       input.value = '';
       return;
     }
 
     try {
-      const maxDim = target === 'avatar' ? 800 : target === 'logo' ? 800 : target === 'texture' ? 1200 : 1200;
-      const optimizedDataUrl = await optimizeImageFile(file, maxDim, maxDim, target === 'banner' ? 0.68 : 0.82);
+      const maxDim = target === 'avatar' ? 800 : target === 'logo' ? 800 : target === 'texture' ? 1800 : 1800;
+      const quality = target === 'banner' || target === 'texture' ? 0.76 : 0.82;
+      const optimizedDataUrl = await optimizeImageFile(
+        file,
+        maxDim,
+        maxDim,
+        quality,
+        target === 'banner' || target === 'texture' ? 'image/webp' : undefined
+      );
       if (!optimizedDataUrl || !optimizedDataUrl.startsWith('data:image/')) {
         throw new Error('No se pudo procesar el archivo de imagen.');
       }
@@ -303,7 +313,9 @@ export const CardEditor: React.FC<CardEditorProps> = ({
       input.value = '';
     } catch (err) {
       console.error('Error al cargar la imagen:', err);
-      window.alert('No se pudo cargar esa imagen. Prueba con un archivo JPG, PNG o WebP de menos de 8 MB.');
+      window.alert(target === 'texture' || target === 'banner'
+        ? 'No se pudo procesar la imagen de fondo. Prueba con JPG, PNG o WebP de menos de 50 MB.'
+        : 'No se pudo cargar esa imagen. Prueba con JPG, PNG o WebP de menos de 5 MB.');
       input.value = '';
     }
   };
