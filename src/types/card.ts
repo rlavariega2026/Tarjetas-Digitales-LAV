@@ -17,6 +17,12 @@ export interface CatalogItem {
   ctaLink?: string;
   /** Número de WhatsApp específico para el botón Consultar de este producto/servicio. */
   whatsappNumber?: string;
+  /** Estilos independientes de título, descripción y precio para este producto. */
+  textStyles?: Partial<Record<'title' | 'description' | 'price', {
+    color?: string;
+    fontSize?: number;
+    textAlign?: 'left' | 'center' | 'right';
+  }>>;
   category?: string; // e.g. Entradas, Platos Fuertes, Bebidas, Postres
   isAvailable?: boolean;
 }
