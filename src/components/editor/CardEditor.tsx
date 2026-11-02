@@ -204,6 +204,18 @@ export const CardEditor: React.FC<CardEditorProps> = ({
     }));
   };
 
+  const updateTextFieldStyle = (field: string, property: 'fontFamily' | 'fontSize' | 'color', value: string | number) => {
+    setCard((prev) => ({ ...prev, design: { ...prev.design, textFieldStyles: { ...(prev.design.textFieldStyles || {}), [field]: { ...(prev.design.textFieldStyles?.[field] || {}), [property]: value } } } }));
+  };
+  const renderTextFieldStyle = (field: string, label: string) => {
+    const style = card.design.textFieldStyles?.[field] || {};
+    const fonts = ['Inter','Outfit','DM Sans','Montserrat','Poppins','Manrope','Plus Jakarta Sans','Urbanist','Roboto','Open Sans','Lato','Nunito Sans','Source Sans 3','Work Sans','Figtree','Lora','Merriweather','Playfair Display','Cormorant Garamond','Cinzel','DM Serif Display','Oswald','Bebas Neue','Raleway','Space Grotesk','Archivo','Barlow Condensed','Josefin Sans','Ubuntu'];
+    return <div className="mt-2 grid grid-cols-3 gap-2 rounded-lg border border-slate-700/70 bg-slate-900/60 p-2" key={'style-' + field}>
+      <label className="text-[10px] text-slate-400">Tipografía<select aria-label={'Tipografía de ' + label} value={style.fontFamily || ''} onChange={(e) => updateTextFieldStyle(field, 'fontFamily', e.target.value)} className="mt-1 w-full min-w-0 rounded-md bg-slate-800 border border-slate-700 px-1 py-1.5 text-[10px] text-white"><option value="">Predeterminada</option>{fonts.map((font) => <option key={font} value={font}>{font}</option>)}</select></label>
+      <label className="text-[10px] text-slate-400">Tamaño (px)<input aria-label={'Tamaño de ' + label} type="number" min="8" max="64" value={style.fontSize || ''} placeholder="Auto" onChange={(e) => updateTextFieldStyle(field, 'fontSize', e.target.value === '' ? 0 : Math.max(8, Math.min(64, Number(e.target.value))))} className="mt-1 w-full rounded-md bg-slate-800 border border-slate-700 px-1 py-1.5 text-[10px] text-white" /></label>
+      <label className="text-[10px] text-slate-400">Color<input aria-label={'Color de ' + label} type="color" value={style.color || '#FFFFFF'} onChange={(e) => updateTextFieldStyle(field, 'color', e.target.value)} className="mt-1 block h-7 w-full rounded-md bg-transparent border-0" /></label>
+    </div>;
+  };
   const updatePhysicalField = <K extends keyof CardData['design']['physicalCard']>(
     field: K,
     value: CardData['design']['physicalCard'][K]
@@ -913,6 +925,7 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                         className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none"
                         placeholder="Ej. Dr. Roberto Mendoza"
                       />
+                        {renderTextFieldStyle('name', 'Nombre completo')}
                       <div className="mt-2 flex items-center gap-2"><label className="text-[10px] text-slate-400">Color del nombre</label><input type="color" value={card.design.nameColor || '#FFFFFF'} onChange={(e) => updateDesignField('nameColor', e.target.value)} aria-label="Color independiente del nombre completo" className="w-7 h-7 rounded-lg cursor-pointer bg-transparent border-0" /></div>
                     </div>
                     <div className="grid grid-cols-2 gap-2">
@@ -925,6 +938,7 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                           className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none"
                           placeholder="Ej. Clínica Dental Sonrisas"
                         />
+                        {renderTextFieldStyle('businessName', 'Empresa o negocio')}
                         <div className="mt-2 flex items-center gap-2">
                           <label className="text-[10px] text-slate-400 whitespace-nowrap">Color del texto</label>
                           <input type="color" value={card.design.businessNameColor || card.design.accentColor || '#38bdf8'} onChange={(e) => updateDesignField('businessNameColor', e.target.value)} aria-label="Color independiente de Empresa o Negocio" className="w-7 h-7 rounded-lg cursor-pointer bg-transparent border-0" />
@@ -940,6 +954,7 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                           className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none"
                           placeholder="Ej. Salud y Odontología"
                         />
+                        {renderTextFieldStyle('category', 'Giro o categoría')}
                         <div className="mt-2 flex items-center gap-2"><label className="text-[10px] text-slate-400">Color del giro</label><input type="color" value={card.design.categoryColor || '#FFFFFF'} onChange={(e) => updateDesignField('categoryColor', e.target.value)} aria-label="Color independiente del giro o categoría" className="w-7 h-7 rounded-lg cursor-pointer bg-transparent border-0" /></div>
                       </div>
                     </div>
@@ -952,6 +967,7 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                         className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none"
                         placeholder="Ej. Cirujano Dentista & Especialista"
                       />
+                        {renderTextFieldStyle('jobTitle', 'Cargo o profesión')}
                       <div className="mt-2 flex items-center gap-2"><label className="text-[10px] text-slate-400">Color del cargo o profesión</label><input type="color" value={card.design.jobTitleColor || '#FFFFFF'} onChange={(e) => updateDesignField('jobTitleColor', e.target.value)} aria-label="Color independiente del cargo o profesión" className="w-7 h-7 rounded-lg cursor-pointer bg-transparent border-0" /></div>
                     </div>
                     <div>
@@ -972,6 +988,7 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                         className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none"
                         placeholder="Describe los servicios clave o propuesta de valor que te distingue."
                       />
+                        {renderTextFieldStyle('bio', 'Descripción breve o bio')}
                       <div className="mt-2 flex items-center gap-2"><label className="text-[10px] text-slate-400">Color de la descripción</label><input type="color" value={card.design.bioColor || '#FFFFFF'} onChange={(e) => updateDesignField('bioColor', e.target.value)} aria-label="Color independiente de la descripción" className="w-7 h-7 rounded-lg cursor-pointer bg-transparent border-0" /></div>
                     </div>
                   </div>
@@ -992,6 +1009,7 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                           className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none"
                           placeholder="+52 55 1234 5678"
                         />
+                        {renderTextFieldStyle('phone', 'Teléfono móvil')}
                       </div>
                       <div>
                         <label className="block text-xs font-medium text-slate-400 mb-1">Teléfono de Oficina</label>
@@ -1002,6 +1020,7 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                           className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none"
                           placeholder="+52 777 000 0000"
                         />
+                        {renderTextFieldStyle('officePhone', 'Teléfono de oficina')}
                       </div>
                       <div>
                         <label className="block text-xs font-medium text-slate-400 mb-1">WhatsApp</label>
@@ -1012,6 +1031,7 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                           className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none"
                           placeholder="+52 55 1234 5678"
                         />
+                        {renderTextFieldStyle('whatsapp', 'WhatsApp')}
                       </div>
                     </div>
                     <div>
@@ -1023,6 +1043,7 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                         className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none"
                         placeholder="Hola, vi tu tarjeta digital y me gustaría agendar una cita."
                       />
+                        {renderTextFieldStyle('whatsappMessage', 'Mensaje inicial de WhatsApp')}
                     </div>
                     <div className="grid grid-cols-2 gap-2">
                       <div>
@@ -1034,6 +1055,7 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                           className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none"
                           placeholder="contacto@empresa.com"
                         />
+                        {renderTextFieldStyle('email', 'Correo electrónico')}
                       </div>
                       <div>
                         <label className="block text-xs font-medium text-slate-400 mb-1">Sitio Web</label>
@@ -1044,6 +1066,7 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                           className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none"
                           placeholder="https://empresa.com"
                         />
+                        {renderTextFieldStyle('website', 'Sitio web')}
                       </div>
                     </div>
                     <div>
@@ -1055,6 +1078,7 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                         className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none"
                         placeholder="Av. Principal 123, Col. Centro"
                       />
+                        {renderTextFieldStyle('address', 'Dirección física')}
                     </div>
                     <div>
                       <label className="block text-xs font-medium text-slate-400 mb-1">Enlace de Google Maps</label>
@@ -1065,6 +1089,7 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                         className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none"
                         placeholder="https://maps.app.goo.gl/..."
                       />
+                        {renderTextFieldStyle('googleMapsUrl', 'Enlace de Google Maps')}
                     </div>
                     <div>
                       <div className="flex items-center justify-between gap-3 mb-1">
@@ -1079,10 +1104,12 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                           Mostrar en tarjeta
                         </label>
                       </div>
+                      {renderTextFieldStyle("businessHours", "Horarios de atención")}
                       <div className="space-y-2">
                         {(card.schedule || []).map((day) => (
                           <div key={day.id} className="grid grid-cols-[1fr_1fr_1fr_auto] items-center gap-2 rounded-xl bg-slate-900/70 p-2">
                             <span className="text-[11px] text-slate-200">{day.day}</span>
+                            {renderTextFieldStyle('schedule-' + day.id, day.day + ' (horario)')}
                             <input aria-label={day.day + ' abre'} type="time" disabled={day.closed} value={day.open} onChange={(e) => setCard((prev) => ({ ...prev, schedule: (prev.schedule || []).map((item) => item.id === day.id ? { ...item, open: e.target.value } : item) }))} className="min-w-0 rounded-lg border border-slate-700 bg-slate-800 px-2 py-1.5 text-xs text-white disabled:opacity-40" />
                             <input aria-label={day.day + ' cierra'} type="time" disabled={day.closed} value={day.close} onChange={(e) => setCard((prev) => ({ ...prev, schedule: (prev.schedule || []).map((item) => item.id === day.id ? { ...item, close: e.target.value } : item) }))} className="min-w-0 rounded-lg border border-slate-700 bg-slate-800 px-2 py-1.5 text-xs text-white disabled:opacity-40" />
                             <label className="flex items-center gap-1 text-[10px] text-slate-300"><input type="checkbox" checked={day.closed} onChange={(e) => setCard((prev) => ({ ...prev, schedule: (prev.schedule || []).map((item) => item.id === day.id ? { ...item, closed: e.target.checked } : item) }))} />Cerrado</label>
