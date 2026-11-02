@@ -1,6 +1,7 @@
 import { CardData } from '../types/card';
 import { Client } from '../types/client';
 import { INITIAL_TEMPLATES, CardTemplate } from '../data/templates';
+import { REFERENCE_INSPIRED_TEMPLATES } from '../data/referenceDesignTemplates';
 
 const STORAGE_KEYS = {
   CARDS: 'lav_digital_cards_v1',
@@ -323,14 +324,15 @@ export function getStoredTemplates(): CardTemplate[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEYS.TEMPLATES);
     if (!raw) {
-      localStorage.setItem(STORAGE_KEYS.TEMPLATES, JSON.stringify(INITIAL_TEMPLATES));
-      return INITIAL_TEMPLATES;
+      const allTemplates = [...INITIAL_TEMPLATES, ...REFERENCE_INSPIRED_TEMPLATES];
+      localStorage.setItem(STORAGE_KEYS.TEMPLATES, JSON.stringify(allTemplates));
+      return allTemplates;
     }
     const stored = JSON.parse(raw) as CardTemplate[];
     const storedIds = new Set(stored.map((t) => t.id));
     let hasNew = false;
     const merged = [...stored];
-    for (const initial of INITIAL_TEMPLATES) {
+    for (const initial of [...INITIAL_TEMPLATES, ...REFERENCE_INSPIRED_TEMPLATES]) {
       if (!storedIds.has(initial.id)) {
         merged.push(initial);
         hasNew = true;
