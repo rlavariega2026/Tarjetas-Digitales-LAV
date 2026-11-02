@@ -922,6 +922,53 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
       <style>{`
         .lav-card-preview :is(h1,h2,h3,h4,p,span,strong,em,label,small,li,a,button):not(.social-icon-btn):not(.text-emerald-400):not(.text-amber-400) {
           color: var(--card-text-color);
+        }
+        /* LAV Style: composiciones fotográficas diferenciadas */
+        .lav-layout-top-large .relative.z-10.px-6.pb-8 { padding-top: 0; }
+        .lav-layout-bottom-compact .relative.z-10.px-6.pb-8 { display:flex; flex-direction:column; }
+        .lav-layout-bottom-compact .relative.z-10.px-6.pb-8 > :first-child { order:4; margin-top:1rem; }
+        .lav-layout-left-photo .relative.z-10.px-6.pb-8 > :first-child { float:left; width:42%; margin:0 1rem 1rem 0; }
+        .lav-layout-right-photo .relative.z-10.px-6.pb-8 > :first-child { float:right; width:42%; margin:0 0 1rem 1rem; }
+        .lav-layout-circle-portrait .relative.z-10.px-6.pb-8 { text-align:center; }
+        .lav-layout-circle-portrait .relative.z-10.px-6.pb-8 > :first-child { justify-content:center; }
+        .lav-layout-panoramic > div:first-of-type { height:15rem!important; }
+        .lav-layout-panoramic .relative.z-10.px-6.pb-8 { margin-top:-2.5rem; }
+        .lav-layout-card-bg .relative.z-10.px-6.pb-8 { background:linear-gradient(180deg,#07101b22,#07101bee 25%); border-radius:2rem 2rem 0 0; }
+        .lav-layout-elegant-frame { border:5px double #d6ad60!important; }
+        .lav-layout-elegant-frame .relative.z-10.px-6.pb-8 { margin:.5rem; border:1px solid #d6ad6066; border-radius:1.4rem; padding-top:1rem; }
+        .lav-layout-rounded-squircle .relative.z-10.px-6.pb-8 > :first-child img { border-radius:2rem!important; width:6.5rem!important; height:6.5rem!important; }
+        .lav-layout-asymmetric .relative.z-10.px-6.pb-8 { padding-left:2rem; padding-right:1rem; }
+        .lav-layout-asymmetric .relative.z-10.px-6.pb-8 > :nth-child(2) { border-left:4px solid var(--beam-color); padding-left:1rem; }
+        .lav-layout-multi-grid .relative.z-10.px-6.pb-8 > :first-child { display:grid; grid-template-columns:1fr 1fr; gap:.5rem; }
+        .lav-layout-horizontal-slider .relative.z-10.px-6.pb-8 { padding-left:0; padding-right:0; }
+        .lav-layout-horizontal-slider .relative.z-10.px-6.pb-8 > :not(:first-child) { margin-left:1.5rem; margin-right:1.5rem; }
+        .lav-layout-main-thumbnails .relative.z-10.px-6.pb-8 > :first-child img { width:100%!important; height:13rem!important; border-radius:1rem!important; }
+        .lav-layout-editorial-spread .relative.z-10.px-6.pb-8 > :nth-child(2) h1 { font-size:2.4rem; line-height:.98; letter-spacing:-.06em; }
+        .lav-layout-editorial-spread .relative.z-10.px-6.pb-8 > :nth-child(2) { border-bottom:1px solid currentColor; padding-bottom:1rem; }
+        .lav-layout-overlapping-depth .relative.z-10.px-6.pb-8 > :first-child { transform:translateY(-1rem); }
+        .lav-layout-photo-cards .relative.z-10.px-6.pb-8 > :first-child { justify-content:center; }
+        .lav-layout-photo-cards .relative.z-10.px-6.pb-8 > :first-child img { border:8px solid white; box-shadow:0 14px 35px #0008; }
+        .lav-layout-minimal-small .relative.z-10.px-6.pb-8 { padding:2rem 2.2rem; }
+        .lav-layout-minimal-small .relative.z-10.px-6.pb-8 > :nth-child(2) { border-bottom:1px solid currentColor; padding-bottom:1rem; }
+        .lav-layout-vertical-large > div:first-of-type { height:20rem!important; }
+        .lav-layout-vertical-large .relative.z-10.px-6.pb-8 { margin-top:-4rem; }
+        .lav-layout-geometric-cut .relative.z-10.px-6.pb-8 > :first-child img { clip-path:polygon(15% 0,100% 0,100% 80%,80% 100%,0 100%,0 20%); border-radius:0!important; width:7rem!important; height:7rem!important; }
+        .lav-layout-multi-zone .relative.z-10.px-6.pb-8 > :nth-child(2) { padding:1rem; border-radius:1rem; background:linear-gradient(120deg,#ffffff22,transparent); border-left:3px solid var(--beam-color); }
+        /* Acabados premium y jerarquía tipográfica */
+        .lav-card-preview h1 { letter-spacing:-.035em; }
+        .lav-card-preview button { transition:transform .2s ease,filter .2s ease,box-shadow .2s ease; }
+        .lav-card-preview button:hover { filter:brightness(1.12); }
+        .lav-layout-noir-gold { box-shadow:inset 0 0 0 1px #d6ad6088,0 24px 60px #0009; }
+        .lav-layout-scarlet-edge { border-left:5px solid #ef233c!important; }
+        .lav-layout-cobalt-pro { box-shadow:inset 0 0 0 1px #67e8f955,0 22px 55px #020617aa; }
+        .lav-layout-violet-glass,.lav-layout-frosted-crystal { backdrop-filter:blur(22px) saturate(1.35); }
+        .lav-layout-neon-cyan,.lav-layout-magenta-pulse { box-shadow:inset 0 0 0 1px #22d3ee55,0 0 35px #22d3ee22; }
+        .lav-layout-champagne-luxe,.lav-layout-platinum-silver,.lav-layout-royal-navy { border:1px solid #d6ad6088!important; }
+        @media(max-width:480px) {
+          .lav-layout-left-photo .relative.z-10.px-6.pb-8 > :first-child,
+          .lav-layout-right-photo .relative.z-10.px-6.pb-8 > :first-child { float:none; width:100%; margin:0 0 1rem; }
+        }
+
         .lav-layout-top-large .relative.z-10.px-6.pb-8{padding-top:0}
         .lav-layout-bottom-compact .relative.z-10.px-6.pb-8{display:flex;flex-direction:column}
         .lav-layout-bottom-compact .relative.z-10.px-6.pb-8>:first-child{order:4;margin-top:1rem}
