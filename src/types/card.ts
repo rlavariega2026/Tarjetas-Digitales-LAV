@@ -221,6 +221,8 @@ export interface CardDesign {
   showVideo?: boolean;
   /** Text alignment for the personal and professional information block. */
   infoTextAlign?: 'left' | 'center' | 'right';
+  /** Independent typography settings for every editable text field. */
+  textFieldStyles?: Record<string, { fontFamily?: string; fontSize?: number; color?: string }>;
   /** Independent text colors for each editable text field. */
   businessNameColor?: string;
   nameColor?: string;
