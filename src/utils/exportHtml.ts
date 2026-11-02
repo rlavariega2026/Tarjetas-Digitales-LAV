@@ -28,7 +28,7 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
     const declarations = [
       style.fontFamily ? `font-family:'${escapeHtml(style.fontFamily)}',sans-serif` : '',
       style.fontSize ? `font-size:${Math.max(8, Math.min(64, Number(style.fontSize)))}px` : '',
-      style.color ? `color:${escapeHtml(style.color)}` : '',
+      style.color ? `color:${escapeHtml(style.color)} !important` : '',
       style.textAlign ? `text-align:${style.textAlign}` : '',
     ].filter(Boolean);
     return declarations.join(';');
