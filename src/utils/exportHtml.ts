@@ -122,12 +122,13 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
   })();
   const isGradientFinish = card.design.backgroundFinish === 'gradient' || (!card.design.backgroundFinish && ['urban-gradient','color-motion','aurora-glass','soft-gradient','bold-gradient','aurora-flow','prismatic-light','royal-velvet'].includes(theme));
   const isMetallicFinish = card.design.backgroundFinish === 'metallic' || (!card.design.backgroundFinish && ['executive-black','champagne-gold','royal-navy','black-gold','platinum-edition','liquid-metal','lawyer-elite','elegance-luxury','cyber-chrome'].includes(theme));
-  const cardBackgroundImage = card.design.backgroundFinish === 'gradient'
+  // La imagen personalizada siempre prevalece y se conserva al exportar/publicar.
+  const cardBackgroundImage = card.design.backgroundTextureUrl
+    ? `url("${card.design.backgroundTextureUrl}")`
+    : card.design.backgroundFinish === 'gradient'
     ? gradientBackground
     : card.design.backgroundFinish === 'metallic'
     ? metallicBackground
-    : card.design.backgroundTextureUrl
-    ? `url("${card.design.backgroundTextureUrl}")`
     : card.design.backgroundFinish === 'solid'
     ? patternBackground
     : isMetallicFinish
@@ -135,6 +136,17 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
     : isGradientFinish
     ? gradientBackground
     : patternBackground;
+  const safeFieldFont = (value?: string, fallback = 'Inter') => {
+    const allowed = ['Inter','Outfit','DM Sans','Montserrat','Poppins','Manrope','Plus Jakarta Sans','Urbanist','Roboto','Open Sans','Lato','Nunito Sans','Source Sans 3','Work Sans','Figtree','Lora','Merriweather','Playfair Display','Cormorant Garamond','Cinzel','DM Serif Display','Oswald','Bebas Neue','Raleway','Space Grotesk','Archivo','Barlow Condensed','Josefin Sans','Ubuntu'];
+    return value && allowed.includes(value) ? value : fallback;
+  };
+  const safeFieldColor = (value: string | undefined, fallback: string) =>
+    value && /^#[0-9a-fA-F]{6}$/.test(value) ? value : fallback;
+  const safeFieldSize = (value: number | undefined, fallback: number) =>
+    typeof value === 'number' && Number.isFinite(value) ? Math.max(8, Math.min(48, value)) : fallback;
+  const businessStyle = card.design.fieldTypography?.businessName || {};
+  const categoryStyle = card.design.fieldTypography?.category || {};
+  const jobStyle = card.design.fieldTypography?.jobTitle || {};
 
   return `<!DOCTYPE html>
 <html lang="es">
@@ -482,16 +494,26 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
       color: #ffffff;
     }
     .company-title {
-      font-size: 15px;
+      font-size: ${safeFieldSize(businessStyle.fontSize, 15)}px;
       font-weight: 600;
-      color: ${card.design.accentColor || '#38bdf8'};
+      font-family: '${safeFieldFont(businessStyle.fontFamily, card.design.fontHeadline || 'Outfit')}', sans-serif;
+      color: ${safeFieldColor(businessStyle.color, card.design.accentColor || '#38bdf8')};
       margin-bottom: 2px;
       letter-spacing: 0.5px;
     }
     .job-title {
-      font-size: 14px;
-      opacity: 0.8;
+      font-size: ${safeFieldSize(jobStyle.fontSize, 14)}px;
+      color: ${safeFieldColor(jobStyle.color, card.design.textColor || '#f8fafc')};
+      font-family: '${safeFieldFont(jobStyle.fontFamily, card.design.fontBody || 'Inter')}', sans-serif;
+      opacity: 0.95;
       margin-bottom: 14px;
+    }
+    .category-title {
+      font-size: ${safeFieldSize(categoryStyle.fontSize, 11)}px;
+      color: ${safeFieldColor(categoryStyle.color, card.design.textColor || '#f8fafc')};
+      font-family: '${safeFieldFont(categoryStyle.fontFamily, card.design.fontBody || 'Inter')}', sans-serif;
+      font-weight: 600;
+      margin: 2px 0 4px;
     }
     .bio-text {
       font-size: 14px;
@@ -752,6 +774,7 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
       </div>
 
       ${card.businessName ? `<div class="company-title headline-font card-stagger-2">${escapeHtml(card.businessName)}</div>` : ''}
+      ${card.category ? `<div class="category-title card-stagger-2">${escapeHtml(card.category)}</div>` : ''}
       <h1 class="headline-font card-stagger-2">${escapeHtml(card.name)}</h1>
       ${card.jobTitle ? `<div class="job-title card-stagger-2">${escapeHtml(card.jobTitle)}</div>` : ''}
 
