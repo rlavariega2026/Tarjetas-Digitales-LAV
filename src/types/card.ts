@@ -179,6 +179,8 @@ export interface CardDesign {
   backgroundPattern: BackgroundPattern;
   fontHeadline: FontHeadline;
   fontBody: FontBody;
+  headlineFontSize?: number;
+  bodyFontSize?: number;
   cardShape: CardShape;
   buttonStyle: ButtonStyle;
   
