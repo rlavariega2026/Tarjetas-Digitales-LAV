@@ -25,10 +25,19 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
   // Aplicar en el HTML publicado los mismos estilos independientes configurados en el editor.
   const fieldInlineStyle = (field: string): string => {
     const style = card.design.textFieldStyles?.[field] || {};
+    // Match the per-field color fallbacks used by DigitalCardView in the editor preview.
+    // The published page must not fall back to the template's hard-coded white text.
+    const fieldColorFallback: Record<string, string | undefined> = {
+      businessName: card.design.businessNameColor || card.design.accentColor || card.design.textColor,
+      category: card.design.categoryColor || card.design.textColor,
+      name: card.design.nameColor || card.design.textColor,
+      jobTitle: card.design.jobTitleColor || card.design.textColor,
+      bio: card.design.bioColor || card.design.textColor,
+    };
     const declarations = [
       style.fontFamily ? `font-family:'${escapeHtml(style.fontFamily)}',sans-serif` : '',
       style.fontSize ? `font-size:${Math.max(8, Math.min(64, Number(style.fontSize)))}px` : '',
-      style.color ? `color:${escapeHtml(style.color)} !important` : '',
+      (style.color || fieldColorFallback[field]) ? `color:${escapeHtml(style.color || fieldColorFallback[field] || '')} !important` : '',
       style.textAlign ? `text-align:${style.textAlign}` : '',
     ].filter(Boolean);
     return declarations.join(';');
