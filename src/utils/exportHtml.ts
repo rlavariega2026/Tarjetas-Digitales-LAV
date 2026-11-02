@@ -1089,9 +1089,9 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
           <div class="catalog-card" style="font-family:${font};text-align:${alignment};flex-direction:${card.design.catalogStyle?.imagePosition === 'top' ? 'column' : 'row'}">
             ${item.imageUrl ? `<img src="${escapeHtml(item.imageUrl)}" class="catalog-img" alt="${escapeHtml(item.title)}" style="width:${card.design.catalogStyle?.imageSize || 76}px;height:${card.design.catalogStyle?.imageSize || 76}px">` : ''}
             <div class="catalog-info">
-              <div style="font-weight:700;font-size:${titleSize}px;color:${titleColor} !important;text-align:${titleAlign};">${escapeHtml(item.title)}</div>
-              <div style="font-size:${descriptionSize}px;color:${descriptionColor} !important;text-align:${descriptionAlign};margin:4px 0 7px;line-height:1.5;white-space:pre-wrap;">${escapeHtml(item.description || '')}</div>
-              ${item.price ? `<div class="catalog-price" style="font-size:${priceSize}px;color:${priceColor} !important;text-align:${priceAlign};">${escapeHtml(item.price)}</div>` : ''}
+              <div class="catalog-item-title" style="${titleFont}font-weight:700;font-size:${titleSize}px;color:${titleColor} !important;text-align:${titleAlign};">${escapeHtml(item.title)}</div>
+              <div class="catalog-item-description" style="${descriptionFont}font-size:${descriptionSize}px;color:${descriptionColor} !important;text-align:${descriptionAlign};margin:4px 0 7px;line-height:1.5;white-space:pre-wrap;">${escapeHtml(item.description || '')}</div>
+              ${item.price ? `<div class="catalog-price catalog-item-price" style="${priceFont}font-size:${priceSize}px;color:${priceColor} !important;text-align:${priceAlign};">${escapeHtml(item.price)}</div>` : ''}
             </div>
             ${productUrl ? `<a href="${escapeHtml(productUrl)}" target="_blank" rel="noopener noreferrer" style="padding:8px 13px;background:linear-gradient(135deg,${escapeHtml(card.design.primaryColor || '#334155')},${escapeHtml(card.design.accentColor || '#0f172a')});border:1px solid rgba(255,255,255,.16);box-shadow:0 5px 14px rgba(0,0,0,.18);border-radius:11px;color:#fff;text-decoration:none;font-size:11px;font-weight:700;white-space:nowrap;">${escapeHtml(item.ctaLabel || 'Consultar')}</a>` : ''}
           </div>`;
