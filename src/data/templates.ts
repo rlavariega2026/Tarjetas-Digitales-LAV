@@ -1,7 +1,6 @@
 import { CardData, TemplateCollection } from '../types/card';
 import { NEW_COLLECTION_TEMPLATES } from './newCollections';
 import { TEMPLATES_22_NEW } from './templates22';
-import { REFERENCE_INSPIRED_TEMPLATES } from './referenceDesignTemplates';
 
 export interface CardTemplate {
   id: string;
@@ -1230,6 +1229,5 @@ export const INITIAL_TEMPLATES: CardTemplate[] = [
   },
   ...NEW_COLLECTION_TEMPLATES,
   ...TEMPLATES_22_NEW,
-  ...REFERENCE_INSPIRED_TEMPLATES,
 ];
 
