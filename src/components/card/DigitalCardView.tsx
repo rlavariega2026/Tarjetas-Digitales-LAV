@@ -538,7 +538,7 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
               />
               <span className="absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full bg-emerald-500 ring-2 ring-slate-950" />
             </div>
-            <div className="flex-1 min-w-0">
+            <div className="flex-1 min-w-0 w-full">
               {renderLogo('above-avatar')}
               <p className="text-[11px] font-bold uppercase tracking-wider text-indigo-400 truncate">
                 {card.businessName || 'Profesional'}
@@ -1359,7 +1359,7 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
                 {filteredItems.map((item) => (
                   <div
                     key={item.id}
-                    className="flex gap-3 p-3 rounded-2xl bg-white/[0.04] border border-white/[0.08] items-center hover:bg-white/[0.07] transition" style={{ fontFamily: catalogStyle.fontFamily || bodyFontFamily, textAlign: catalogStyle.textAlign || 'left', flexDirection: catalogStyle.imagePosition === 'top' ? 'column' : 'row' }}
+                    className="flex gap-3 p-3 rounded-2xl bg-white/[0.04] border border-white/[0.08] items-center hover:bg-white/[0.07] transition min-w-0" style={{ fontFamily: catalogStyle.fontFamily || bodyFontFamily, textAlign: catalogStyle.textAlign || 'left', flexDirection: catalogStyle.imagePosition === 'top' ? 'column' : 'row', alignItems: catalogStyle.imagePosition === 'top' ? 'stretch' : 'center' }}
                   >
                     {item.imageUrl ? (
                       <img
@@ -1376,7 +1376,7 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
                       </div>
                     )}
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-1.5">
+                      <div className="flex items-center gap-1.5 flex-wrap w-full" style={{ justifyContent: catalogStyle.textAlign === 'center' ? 'center' : catalogStyle.textAlign === 'right' ? 'flex-end' : 'flex-start' }}>
                         <p className="font-bold text-white break-words" style={{ fontSize: catalogStyle.titleSize || 14, textAlign: catalogStyle.textAlign || 'left' }}>{item.title}</p>
                         {item.category && item.category !== 'General' && (
                           <span className="text-[9px] font-semibold px-1.5 py-0.2 rounded bg-white/10 text-slate-300">
@@ -1401,7 +1401,8 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
                         href={item.whatsappNumber ? 'https://wa.me/' + item.whatsappNumber.replace(/\D/g, '') : item.ctaLink}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="px-2.5 py-1.5 rounded-lg text-[10px] font-bold bg-white/10 hover:bg-white/20 text-white transition flex-shrink-0 shadow-sm"
+                        className="px-3 py-2 rounded-lg text-[10px] font-bold bg-white/10 hover:bg-white/20 text-white transition flex-shrink-0 shadow-sm"
+                        style={{ alignSelf: catalogStyle.imagePosition === 'top' ? (catalogStyle.textAlign === 'right' ? 'flex-end' : catalogStyle.textAlign === 'center' ? 'center' : 'flex-start') : 'center' }}
                       >
                         {item.ctaLabel || 'Pedir'}
                       </a>
