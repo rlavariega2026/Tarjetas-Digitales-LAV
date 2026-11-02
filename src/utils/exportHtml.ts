@@ -906,7 +906,7 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
       z-index: 9999;
     }
     /* El color de texto es independiente de la paleta y se aplica a la tarjeta publicada. */
-    .card-container :is(div,h1,h2,h3,h4,p,span,strong,em,label,small,li,a,button):not(.social-icon-btn) {
+    .card-container :is(div,h1,h2,h3,h4,p,span,strong,em,label,small,li,a,button):not(.social-icon-btn):not(.catalog-item-title):not(.catalog-item-description):not(.catalog-item-price) {
       color: var(--card-text-color) !important;
     }
   </style>
