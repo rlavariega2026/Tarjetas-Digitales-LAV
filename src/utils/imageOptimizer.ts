@@ -6,7 +6,8 @@ export async function optimizeImageFile(
   file: File,
   maxWidth = 800,
   maxHeight = 800,
-  quality = 0.85
+  quality = 0.85,
+  outputFormat?: 'image/webp' | 'image/jpeg'
 ): Promise<string> {
   // If SVG, read as text/dataURL directly
   if (file.type === 'image/svg+xml') {
@@ -48,10 +49,11 @@ export async function optimizeImageFile(
         // Draw scaled image
         ctx.drawImage(img, 0, 0, width, height);
 
-        // Keep PNG format for transparent images, otherwise use webp/jpeg
+        // Catalog/gallery can use WebP to reduce large originals before card storage.
+        // Existing callers retain the original PNG transparency behavior.
         const isPng = file.type === 'image/png';
-        const mimeType = isPng ? 'image/png' : 'image/jpeg';
-        const optimizedDataUrl = canvas.toDataURL(mimeType, isPng ? undefined : quality);
+        const mimeType = outputFormat || (isPng ? 'image/png' : 'image/jpeg');
+        const optimizedDataUrl = canvas.toDataURL(mimeType, mimeType === 'image/png' ? undefined : quality);
 
         resolve(optimizedDataUrl);
       };
