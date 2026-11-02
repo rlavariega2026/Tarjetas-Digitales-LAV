@@ -39,6 +39,7 @@ export const TemplatesView: React.FC<TemplatesViewProps> = ({
   const collectionOptions = [
     { id: 'all', label: 'Todas las Plantillas', icon: Sparkles },
     { id: 'new-22', label: '🌟 22 Nuevas Plantillas', icon: Sparkles },
+    { id: 'reference-designs', label: '20 Diseños de referencia', icon: Layers },
     { id: 'special-restaurant', label: '🍽️ Restaurante & Menú', icon: Utensils },
     { id: 'special-reviews', label: '⭐ Google Reviews', icon: Star },
     { id: 'special-banking', label: '🏦 Transferencias SPEI', icon: Landmark },
@@ -55,7 +56,9 @@ export const TemplatesView: React.FC<TemplatesViewProps> = ({
   const filteredTemplates = templates.filter((t) => {
     // Specialized filter conditions
     let matchesFilter = selectedFilter === 'all';
-    if (selectedFilter === 'new-22') {
+    if (selectedFilter === 'reference-designs') {
+      matchesFilter = t.id.startsWith('ref-');
+    } else if (selectedFilter === 'new-22') {
       matchesFilter = t.collection === 'new-22' || t.id.startsWith('tpl-');
     } else if (selectedFilter === 'special-restaurant') {
       matchesFilter = t.collection === 'special-restaurant' || t.id.includes('gastro') || t.category.toLowerCase().includes('restaur');
