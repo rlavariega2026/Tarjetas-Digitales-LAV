@@ -182,6 +182,16 @@ export interface CardDesign {
     fontSize?: number;
     color?: string;
   }>>;
+  /** Visual presentation shared by all catalog/service entries. */
+  catalogStyle?: {
+    imageSize?: number;
+    imagePosition?: 'left' | 'top';
+    textAlign?: 'left' | 'center' | 'right';
+    fontFamily?: string;
+    titleSize?: number;
+    descriptionSize?: number;
+    priceSize?: number;
+  };
   backgroundPattern: BackgroundPattern;
   fontHeadline: FontHeadline;
   fontBody: FontBody;
