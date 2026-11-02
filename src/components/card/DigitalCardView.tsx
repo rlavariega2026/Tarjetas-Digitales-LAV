@@ -1390,7 +1390,7 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
                       {item.price && (
                         <p
                           className="font-extrabold mt-1"
-                          style={{ color: item.textStyles?.price?.color || design.accentColor || '#38bdf8', fontSize: item.textStyles?.price?.fontSize || catalogStyle.priceSize || 13, textAlign: item.textStyles?.price?.textAlign || catalogStyle.textAlign || 'left' }}
+                          style={{ fontFamily: item.textStyles?.price?.fontFamily || catalogStyle.fontFamily || undefined, color: item.textStyles?.price?.color || design.accentColor || '#38bdf8', fontSize: item.textStyles?.price?.fontSize || catalogStyle.priceSize || 13, textAlign: item.textStyles?.price?.textAlign || catalogStyle.textAlign || 'left' }}
                         >
                           {item.price}
                         </p>
