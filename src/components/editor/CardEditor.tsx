@@ -925,6 +925,76 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                         placeholder="Ej. Cirujano Dentista & Especialista"
                       />
                     </div>
+                    <div className="rounded-xl border border-indigo-500/30 bg-slate-900/70 p-3 space-y-3">
+                      <div>
+                        <h4 className="text-xs font-bold text-white">Formato independiente de textos</h4>
+                        <p className="text-[10px] text-slate-400 mt-1">Estos ajustes se conservan al guardar, exportar y publicar la tarjeta.</p>
+                      </div>
+                      {([
+                        { key: 'businessName', label: 'Empresa / Negocio' },
+                        { key: 'category', label: 'Giro / Categoría' },
+                        { key: 'jobTitle', label: 'Cargo o Profesión' },
+                      ] as const).map(({ key, label }) => {
+                        const style = card.design.fieldTypography?.[key] || {};
+                        return (
+                          <div key={key} className="rounded-lg border border-slate-700 bg-slate-800/70 p-2.5 space-y-2">
+                            <label className="block text-[11px] font-semibold text-slate-200">{label}</label>
+                            <select
+                              value={style.fontFamily || 'Inter'}
+                              onChange={(e) => setCard((prev) => ({
+                                ...prev,
+                                design: {
+                                  ...prev.design,
+                                  fieldTypography: {
+                                    ...prev.design.fieldTypography,
+                                    [key]: { ...prev.design.fieldTypography?.[key], fontFamily: e.target.value },
+                                  },
+                                },
+                              }))}
+                              className="w-full px-2 py-2 rounded-lg bg-slate-900 border border-slate-700 text-white text-xs"
+                            >
+                              {['Inter','Outfit','DM Sans','Montserrat','Poppins','Manrope','Plus Jakarta Sans','Urbanist','Roboto','Open Sans','Lato','Nunito Sans','Source Sans 3','Work Sans','Figtree','Lora','Merriweather','Playfair Display','Cormorant Garamond','Cinzel','DM Serif Display','Oswald','Bebas Neue','Raleway','Space Grotesk','Archivo','Barlow Condensed','Josefin Sans','Ubuntu'].map((font) => <option key={font} value={font}>{font}</option>)}
+                            </select>
+                            <div className="grid grid-cols-2 gap-2">
+                              <label className="text-[10px] text-slate-400">Tamaño (px)
+                                <input
+                                  type="number" min="8" max="48"
+                                  value={style.fontSize ?? (key === 'businessName' ? 15 : key === 'category' ? 11 : 14)}
+                                  onChange={(e) => setCard((prev) => ({
+                                    ...prev,
+                                    design: {
+                                      ...prev.design,
+                                      fieldTypography: {
+                                        ...prev.design.fieldTypography,
+                                        [key]: { ...prev.design.fieldTypography?.[key], fontSize: Math.max(8, Math.min(48, Number(e.target.value) || 8)) },
+                                      },
+                                    },
+                                  }))}
+                                  className="mt-1 w-full px-2 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-white text-xs"
+                                />
+                              </label>
+                              <label className="text-[10px] text-slate-400">Color
+                                <input
+                                  type="color"
+                                  value={/^#[0-9a-fA-F]{6}$/.test(style.color || '') ? style.color : (key === 'businessName' ? (card.design.accentColor || '#38bdf8') : '#f8fafc')}
+                                  onChange={(e) => setCard((prev) => ({
+                                    ...prev,
+                                    design: {
+                                      ...prev.design,
+                                      fieldTypography: {
+                                        ...prev.design.fieldTypography,
+                                        [key]: { ...prev.design.fieldTypography?.[key], color: e.target.value },
+                                      },
+                                    },
+                                  }))}
+                                  className="mt-1 block w-full h-8 rounded-lg bg-slate-900 border border-slate-700"
+                                />
+                              </label>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
                     <div>
                       <div className="flex items-center justify-between mb-1">
                         <label className="text-xs font-medium text-slate-400">Descripción Breve / Bio</label>
@@ -1771,7 +1841,6 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                               }
                             : {}),
                           bannerUrl: preservedBanner,
-                          backgroundTextureUrl: undefined,
                           textColor: prev.design.textColor,
                           photoComposition: prev.design.photoComposition,
                         },
