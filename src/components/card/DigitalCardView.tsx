@@ -459,24 +459,8 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
         ]),
   ].filter(Boolean);
 
-  // Business logo renderer with 12 animations and positions
+  // El logotipo se representa en una capa independiente y se posiciona con logoX/logoY.
   const renderLogo = (_targetPosition: 'card-top' | 'center-banner' | 'top-right' | 'above-avatar' | 'floating' | 'header') => null;
-
-    const animClass = design.logoAnimation && design.logoAnimation !== 'none'
-      ? `anim-logo-${design.logoAnimation} anim-speed-${design.logoAnimationSpeed || 'normal'}`
-      : '';
-
-    return (
-      <div className={`inline-flex items-center justify-center ${animClass}`}>
-        <img
-          src={design.logoUrl}
-          alt={card.businessName || 'Logo'}
-          style={{ width: `${design.logoWidth || 100}px`, maxHeight: `${Math.max(36, Math.round((design.logoWidth || 100) * 0.72))}px` }}
-          className="object-contain filter drop-shadow-md"
-        />
-      </div>
-    );
-  };
 
   // 20 Distinct Photo Composition Variants
   const renderPhotoComposition = () => {
