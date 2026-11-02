@@ -238,7 +238,7 @@ export const CardEditor: React.FC<CardEditorProps> = ({
         ...item,
         textStyles: {
           ...(item.textStyles || {}),
-          [field]: { ...(item.textStyles?.[field] || {}), [property]: value },
+          [field]: { ...(item.textStyles?.[field] || {}), [property]: value as any },
         },
       } : item),
     }));
