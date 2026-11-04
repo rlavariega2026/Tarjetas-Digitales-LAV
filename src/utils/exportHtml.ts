@@ -819,6 +819,23 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
       cursor: pointer;
       font-size: 11px;
     }
+    .wifi-card {
+      background: rgba(14, 165, 233, 0.08);
+      border: 1px solid rgba(14, 165, 233, 0.3);
+      border-radius: 20px;
+      padding: 18px;
+      margin-bottom: 22px;
+    }
+    .wifi-copy-btn {
+      background: #0284c7;
+      border: none;
+      color: #fff;
+      padding: 7px 12px;
+      border-radius: 9px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 700;
+    }
     .reviews-card {
       background: rgba(255,255,255,0.05);
       border: 1px solid rgba(255,255,255,0.1);
@@ -995,6 +1012,24 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
         <a href="${card.googleReviews.placeUrl || card.googleReviews.url || 'https://search.google.com/local/writereview'}" target="_blank" style="display:inline-block; padding:10px 20px; background:#fff; color:#0f172a; border-radius:12px; font-weight:700; font-size:13px; text-decoration:none;">
           ${escapeHtml(card.googleReviews.buttonText || 'Calificar en Google')}
         </a>
+      </div>` : ''}
+
+      <!-- WiFi Password Module -->
+      ${card.wifi?.enabled && card.wifi.password ? `
+      <div class="wifi-card">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+          <div style="display:flex;align-items:center;gap:9px;min-width:0;">
+            <span style="display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:9px;background:rgba(14,165,233,0.2);font-size:18px;">📶</span>
+            <div>
+              <div style="font-weight:800;font-size:14px;color:#fff;">Clave de WiFi</div>
+              <div style="font-size:10px;font-weight:600;color:#7dd3fc;">Conéctate a nuestra red</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;min-width:0;">
+            <span style="color:#fff;font-size:12px;font-weight:700;overflow-wrap:anywhere;text-align:right;">${escapeHtml(card.wifi.password)}</span>
+            <button type="button" class="wifi-copy-btn" onclick="copyText(${JSON.stringify(card.wifi.password)}, 'Clave WiFi')">Copiar</button>
+          </div>
+        </div>
       </div>` : ''}
 
       <!-- Bank Transfer SPEI Module -->
