@@ -129,7 +129,7 @@ export const HostingerExportModal: React.FC<HostingerExportModalProps> = ({ card
         <div className="p-5 border-b border-slate-800 flex items-center justify-between bg-slate-950/60">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center border border-purple-500/30"><Globe className="w-5 h-5" /></div>
-            <div><h2 className="text-base font-bold">Publicar en Hostinger • lavdigitalmkt.com</h2><p className="text-xs text-slate-400">Tarjeta: <span className="text-white font-semibold">{card.name}</span> ({card.businessName || 'Empresa'})</p></div>
+            <div><h2 className="text-base font-bold">Publicar en Hostinger • lavdigitalmkt.com</h2><p className="text-xs text-slate-400">Tarjeta: <span className="text-white font-semibold">{card.cardTitle || card.name}</span> ({card.businessName || 'Empresa'})</p></div>
           </div>
           <button onClick={onClose} className="p-1.5 rounded-lg bg-slate-800 text-slate-400 hover:text-white transition"><X className="w-4 h-4" /></button>
         </div>
