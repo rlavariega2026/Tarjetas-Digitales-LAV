@@ -1449,6 +1449,35 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
           </div>
         )}
 
+        {/* WiFi Password Module */}
+        {card.wifi?.enabled && card.wifi.password && (
+          <div className="mb-5 p-4 rounded-2xl bg-gradient-to-br from-slate-900/90 to-slate-850/90 border border-sky-500/30 shadow-xl relative overflow-hidden">
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex min-w-0 items-center gap-2">
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-sky-500/20 text-sky-300">
+                  <Wifi className="h-4 w-4" />
+                </div>
+                <div className="min-w-0">
+                  <h3 className="text-xs font-extrabold text-white" style={{ fontFamily: headlineFontFamily }}>Clave de WiFi</h3>
+                  <p className="text-[10px] font-semibold text-sky-300">Conéctate a nuestra red</p>
+                </div>
+              </div>
+              <div className="flex min-w-0 items-center gap-2">
+                <span className="break-all text-right text-xs font-bold text-white">{card.wifi.password}</span>
+                <button
+                  type="button"
+                  onClick={() => handleCopyBankField('Clave WiFi', card.wifi?.password)}
+                  className="flex shrink-0 items-center gap-1.5 rounded-lg bg-sky-600 px-3 py-2 text-xs font-bold text-white transition hover:bg-sky-500"
+                  title="Copiar clave de WiFi"
+                >
+                  <Copy className="h-3.5 w-3.5" />
+                  Copiar
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Bank Transfer / SPEI Module */}
         {card.bankTransfer?.enabled && (
           <div className="mb-5 p-4 rounded-2xl bg-gradient-to-br from-slate-900/90 to-slate-850/90 border border-emerald-500/30 shadow-xl relative overflow-hidden">
