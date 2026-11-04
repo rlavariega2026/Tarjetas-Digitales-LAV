@@ -541,6 +541,7 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
     .content-body {
       padding: 0 24px 28px 24px;
       position: relative;
+      display: flow-root;
     }
     .avatar-wrapper {
       margin-top: -55px;
@@ -954,10 +955,10 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
     <div class="content-body">
       ${photoCompositionHtml}
 
-      <div class="info-block" style="text-align:${card.design.infoTextAlign || 'left'};">
+      <div class="info-block" style="text-align:${card.design.infoTextAlign || 'left'};position:relative;z-index:3;padding-top:8px;">
         ${card.businessName ? `<div class="company-title headline-font card-stagger-2"${fieldStyleAttribute('businessName')}>${escapeHtml(card.businessName)}</div>` : ''}
         ${card.category ? `<div class="category-title card-stagger-2"${fieldStyleAttribute('category')}>${escapeHtml(card.category)}</div>` : ''}
-        <h1 class="headline-font card-stagger-2"${fieldStyleAttribute('name')}>${escapeHtml(card.name)}</h1>
+        <h1 class="headline-font card-stagger-2"${fieldStyleAttribute('name')}>${card.name?.trim() ? escapeHtml(card.name.trim()) : ''}</h1>
         ${card.jobTitle ? `<div class="job-title card-stagger-2"${fieldStyleAttribute('jobTitle')}>${escapeHtml(card.jobTitle)}</div>` : ''}
         ${card.bio ? `<div class="bio-text card-stagger-2"${fieldStyleAttribute('bio')}>${escapeHtml(card.bio)}</div>` : ''}
       </div>
