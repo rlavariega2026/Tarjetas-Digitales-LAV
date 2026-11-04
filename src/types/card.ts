@@ -277,6 +277,8 @@ export interface CardData {
   id: string;
   slug: string;
   name: string;
+  /** Internal label used to identify the saved card; independent from the visible personal name. */
+  cardTitle?: string;
   businessName: string;
   jobTitle: string;
   bio: string;
