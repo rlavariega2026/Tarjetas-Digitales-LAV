@@ -177,12 +177,12 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                         card.design.avatarUrl ||
                         'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200'
                       }
-                      alt={card.name}
+                      alt={card.cardTitle || card.name || 'Tarjeta digital'}
                       className="w-12 h-12 rounded-xl object-cover bg-slate-800 shadow"
                     />
                     <div>
                       <h3 className="font-bold text-sm text-white group-hover:text-indigo-300 transition line-clamp-1">
-                        {card.name}
+                        {card.cardTitle || card.name}
                       </h3>
                       <p className="text-xs text-slate-400 line-clamp-1">{card.businessName || card.jobTitle}</p>
                     </div>
