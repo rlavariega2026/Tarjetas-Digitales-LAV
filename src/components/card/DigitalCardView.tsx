@@ -1108,7 +1108,7 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
             className="text-2xl font-extrabold tracking-tight text-white leading-tight"
             style={fieldTextStyle('name', { fontFamily: headlineFontFamily, fontSize: `${design.headlineFontSize || 26}px`, color: design.nameColor || design.textColor || '#FFFFFF' })}
           >
-            {card.name || 'Nombre Completo'}
+            {card.name?.trim() ? card.name : ''}
           </h1>
           {card.jobTitle && (
             <p className="text-sm font-medium opacity-80 mt-0.5" style={fieldTextStyle('jobTitle', { color: design.jobTitleColor || design.textColor || '#FFFFFF' })}>{card.jobTitle}</p>
