@@ -48,7 +48,7 @@ export const MyCardsView: React.FC<MyCardsViewProps> = ({
 
   const filteredCards = cards.filter((card) => {
     const matchesSearch =
-      card.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (card.cardTitle || card.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
       card.businessName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       card.jobTitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
       card.slug.toLowerCase().includes(searchTerm.toLowerCase());
@@ -178,7 +178,7 @@ export const MyCardsView: React.FC<MyCardsViewProps> = ({
                         card.design.avatarUrl ||
                         'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200'
                       }
-                      alt={card.name}
+                      alt={card.cardTitle || card.name || 'Tarjeta digital'}
                       className="w-12 h-12 rounded-xl object-cover bg-slate-800 ring-2 ring-slate-900 shadow-md"
                     />
                     {card.design.logoUrl && (
@@ -191,7 +191,7 @@ export const MyCardsView: React.FC<MyCardsViewProps> = ({
                   </div>
 
                   <h3 className="font-extrabold text-base text-white group-hover:text-indigo-300 transition line-clamp-1">
-                    {card.name}
+                    {card.cardTitle || card.name}
                   </h3>
                   <p className="text-xs text-indigo-400 font-semibold line-clamp-1">
                     {card.businessName || 'Sin empresa asignada'}
@@ -296,7 +296,7 @@ export const MyCardsView: React.FC<MyCardsViewProps> = ({
           <div className="w-full max-w-sm rounded-3xl bg-slate-900 border border-slate-700 p-6 text-white shadow-2xl space-y-4">
             <h3 className="font-bold text-base text-rose-400">¿Eliminar tarjeta?</h3>
             <p className="text-xs text-slate-300 leading-relaxed">
-              ¿Estás seguro de que deseas eliminar permanentemente la tarjeta de <strong>"{cardToDelete.name}"</strong>? Esta acción no se puede deshacer.
+              ¿Estás seguro de que deseas eliminar permanentemente la tarjeta de <strong>"{cardToDelete.cardTitle || cardToDelete.name}"</strong>? Esta acción no se puede deshacer.
             </p>
             <div className="flex gap-2 pt-2">
               <button
