@@ -15,6 +15,7 @@ import {
   LogoAnimation,
   GoogleReviewsConfig,
   BankTransferConfig,
+  WifiConfig,
   PayPalConfig,
 } from '../../types/card';
 import { DigitalCardView, getEmbedVideoUrl, formatSocialUrl, GoogleGIcon, PayPalIcon } from '../card/DigitalCardView';
@@ -55,6 +56,7 @@ import {
   Camera,
   Star,
   Landmark,
+  Wifi,
   Utensils,
   Building2,
 } from 'lucide-react';
@@ -278,6 +280,17 @@ export const CardEditor: React.FC<CardEditorProps> = ({
       bankTransfer: {
         enabled: false,
         ...prev.bankTransfer,
+        [field]: value,
+      },
+    }));
+  };
+
+  const updateWifi = <K extends keyof WifiConfig>(field: K, value: WifiConfig[K]) => {
+    setCard((prev) => ({
+      ...prev,
+      wifi: {
+        enabled: false,
+        ...prev.wifi,
         [field]: value,
       },
     }));
@@ -2389,6 +2402,27 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                     <button type="button" onClick={() => setActiveTab('reviews')} className="w-full text-left text-[11px] text-amber-300 hover:text-amber-200 px-2 pb-3">
                       Configurar enlace, título y calificación de Google →
                     </button>
+                    <label className="flex items-center justify-between gap-3 p-2 rounded-xl bg-sky-950/30 border border-sky-900/40 text-xs mb-2">
+                      <span className="flex items-center gap-2"><Wifi className="w-4 h-4 text-sky-300" /> Clave de WiFi</span>
+                      <input
+                        type="checkbox"
+                        checked={card.wifi?.enabled ?? false}
+                        onChange={(e) => updateWifi('enabled', e.target.checked)}
+                        className="rounded border-slate-700 text-sky-500 focus:ring-sky-500"
+                      />
+                    </label>
+                    {card.wifi?.enabled && (
+                      <div className="mb-3 rounded-xl border border-sky-900/40 bg-sky-950/20 p-3">
+                        <label className="mb-2 block text-[11px] font-semibold text-sky-200">Clave de WiFi</label>
+                        <input
+                          type="text"
+                          value={card.wifi.password || ''}
+                          onChange={(e) => updateWifi('password', e.target.value)}
+                          placeholder="Escribe la clave de WiFi"
+                          className="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-xs text-white outline-none focus:border-sky-500"
+                        />
+                      </div>
+                    )}
                     <label className="flex items-center justify-between gap-3 p-2 rounded-xl bg-emerald-950/30 border border-emerald-900/40 text-xs mb-2">
                       <span>Pago por transferencia bancaria</span>
                       <input
