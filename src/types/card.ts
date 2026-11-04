@@ -162,6 +162,11 @@ export interface BankTransferConfig {
   title?: string;
 }
 
+export interface WifiConfig {
+  enabled: boolean;
+  password?: string;
+}
+
 export interface PayPalConfig {
   enabled: boolean;
   mode?: 'link' | 'sdk';
@@ -325,6 +330,9 @@ export interface CardData {
 
   // Bank Transfers Module (Copiar individual, Copiar todo, WhatsApp)
   bankTransfer?: BankTransferConfig;
+
+  // WiFi password module
+  wifi?: WifiConfig;
 
   // Real PayPal Integration
   paypal?: PayPalConfig;
