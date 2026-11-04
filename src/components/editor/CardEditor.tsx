@@ -181,7 +181,7 @@ export const CardEditor: React.FC<CardEditorProps> = ({
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [showSaveNameDialog, setShowSaveNameDialog] = useState(false);
-  const [saveName, setSaveName] = useState(initialCard.name || '');
+  const [saveName, setSaveName] = useState(initialCard.cardTitle || initialCard.name || '');
   const [aiLoading, setAiLoading] = useState(false);
   const [aiError, setAiError] = useState('');
   const [aiPromptCategory, setAiPromptCategory] = useState(card.category || '');
@@ -412,7 +412,7 @@ export const CardEditor: React.FC<CardEditorProps> = ({
 
   // Abrir confirmación de nombre antes de guardar.
   const handleSave = () => {
-    setSaveName(card.name || '');
+    setSaveName(card.cardTitle || card.name || '');
     setShowSaveNameDialog(true);
   };
 
@@ -420,7 +420,7 @@ export const CardEditor: React.FC<CardEditorProps> = ({
     // App.tsx centraliza la persistencia y refresca el listado.
     onSave(cardToSave);
     setCard(cardToSave);
-    setSaveName(cardToSave.name || '');
+    setSaveName(cardToSave.cardTitle || cardToSave.name || '');
     setShowSaveNameDialog(false);
     setSaveSuccess(true);
     confetti({ particleCount: 35, spread: 60, origin: { y: 0.7 } });
@@ -429,7 +429,7 @@ export const CardEditor: React.FC<CardEditorProps> = ({
 
   const buildCardForSave = (name: string): CardData => ({
     ...card,
-    name,
+    cardTitle: name,
     design: {
       ...card.design,
       bannerUrl:
@@ -483,7 +483,7 @@ export const CardEditor: React.FC<CardEditorProps> = ({
         ...deepCopy,
         id: newId,
         slug: newSlug ? `${newSlug}-${newId.slice(0, 6)}` : newId,
-        name: cleanName,
+        cardTitle: cleanName,
         viewsCount: 0,
         contactClicks: 0,
         contactBreakdown: { whatsapp: 0, call: 0, email: 0, saveContact: 0, map: 0, total: 0 },
