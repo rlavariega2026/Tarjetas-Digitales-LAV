@@ -2413,6 +2413,14 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                     </label>
                     {card.wifi?.enabled && (
                       <div className="mb-3 rounded-xl border border-sky-900/40 bg-sky-950/20 p-3">
+                        <label className="mb-2 block text-[11px] font-semibold text-sky-200">Nombre de la red WiFi</label>
+                        <input
+                          type="text"
+                          value={card.wifi.ssid || ''}
+                          onChange={(e) => updateWifi('ssid', e.target.value)}
+                          placeholder="Escribe el nombre de la red"
+                          className="mb-3 w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-xs text-white outline-none focus:border-sky-500"
+                        />
                         <label className="mb-2 block text-[11px] font-semibold text-sky-200">Clave de WiFi</label>
                         <input
                           type="text"
