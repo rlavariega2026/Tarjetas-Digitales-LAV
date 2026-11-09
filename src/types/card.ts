@@ -164,6 +164,7 @@ export interface BankTransferConfig {
 
 export interface WifiConfig {
   enabled: boolean;
+  ssid?: string;
   password?: string;
 }
 
