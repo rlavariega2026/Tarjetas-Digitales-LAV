@@ -1450,20 +1450,26 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
         )}
 
         {/* WiFi Password Module */}
-        {card.wifi?.enabled && card.wifi.password && (
+        {card.wifi?.enabled && (card.wifi.ssid || card.wifi.password) && (
           <div className="mb-5 p-4 rounded-2xl bg-gradient-to-br from-slate-900/90 to-slate-850/90 border border-sky-500/30 shadow-xl relative overflow-hidden">
-            <div className="flex items-center justify-between gap-3">
-              <div className="flex min-w-0 items-center gap-2">
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-sky-500/20 text-sky-300">
-                  <Wifi className="h-4 w-4" />
-                </div>
-                <div className="min-w-0">
-                  <h3 className="text-xs font-extrabold text-white" style={{ fontFamily: headlineFontFamily }}>Clave de WiFi</h3>
-                  <p className="text-[10px] font-semibold text-sky-300">Conéctate a nuestra red</p>
-                </div>
+            <div className="flex items-center gap-3">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-sky-500/20 text-sky-300">
+                <Wifi className="h-4 w-4" />
               </div>
-              <div className="flex min-w-0 items-center gap-2">
-                <span className="break-all text-right text-xs font-bold text-white">{card.wifi.password}</span>
+              <div className="min-w-0">
+                <h3 className="text-xs font-extrabold text-white" style={{ fontFamily: headlineFontFamily }}>Clave de WiFi</h3>
+                <p className="text-[10px] font-semibold text-sky-300">Conéctate a nuestra red</p>
+              </div>
+            </div>
+            {card.wifi.ssid && (
+              <div className="mt-3 border-t border-white/10 pt-3">
+                <p className="text-[10px] font-semibold text-sky-300">Nombre de la red</p>
+                <p className="mt-1 break-all text-sm font-bold text-white">{card.wifi.ssid}</p>
+              </div>
+            )}
+            {card.wifi.password && (
+              <div className="mt-3 flex min-w-0 items-center justify-between gap-2 border-t border-white/10 pt-3">
+                <span className="min-w-0 break-all text-xs font-bold text-white">{card.wifi.password}</span>
                 <button
                   type="button"
                   onClick={() => handleCopyBankField('Clave WiFi', card.wifi?.password)}
@@ -1474,7 +1480,7 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
                   Copiar
                 </button>
               </div>
-            </div>
+            )}
           </div>
         )}
 
