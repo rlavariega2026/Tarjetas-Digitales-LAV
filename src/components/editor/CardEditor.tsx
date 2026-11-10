@@ -59,6 +59,7 @@ import {
   Wifi,
   Utensils,
   Building2,
+  Facebook,
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
@@ -1080,6 +1081,16 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                         />
                         {renderTextFieldStyle('website', 'Sitio web')}
                       </div>
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-slate-400 mb-1"><span className="inline-flex items-center gap-1.5"><Facebook className="w-3.5 h-3.5 text-blue-400" /> Facebook (botón de contacto)</span></label>
+                      <input
+                        type="url"
+                        value={card.facebookUrl || ''}
+                        onChange={(e) => updateCardField('facebookUrl', e.target.value)}
+                        className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                        placeholder="https://facebook.com/tu-pagina"
+                      />
                     </div>
                     <div>
                       <label className="block text-xs font-medium text-slate-400 mb-1">Dirección Física</label>
