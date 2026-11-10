@@ -95,7 +95,8 @@ export const ClientsView: React.FC<ClientsViewProps> = ({
   };
 
   const handleFileUploadForClient = async (e: React.ChangeEvent<HTMLInputElement>, client: Client) => {
-    const file = e.target.files?.[0];
+    const input = e.currentTarget;
+    const file = input.files?.[0];
     if (!file) return;
 
     try {
@@ -122,7 +123,7 @@ export const ClientsView: React.FC<ClientsViewProps> = ({
       console.error('Error uploading original client image:', err);
       window.alert(err instanceof Error ? err.message : 'No se pudo subir la imagen original.');
     } finally {
-      e.currentTarget.value = '';
+      input.value = '';
     }
   };
 
