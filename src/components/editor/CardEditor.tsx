@@ -2290,6 +2290,7 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                       className="rounded border-slate-700 text-indigo-600 focus:ring-indigo-500"
                     />
                   </label>
+                  {card.design.showSaveContactButton && renderTextFieldStyle('saveContactButton', 'Compartir contacto')}
                   <label className="flex items-center justify-between p-2 rounded-xl bg-slate-800/60 text-xs">
                     <span>Icono de Código QR Dinámico</span>
                     <input
