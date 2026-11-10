@@ -1187,9 +1187,9 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
             </a>
           )}
 
-          {design.showMapButton && (card.googleMapsUrl || card.address) && (
+          {design.showMapButton && card.googleMapsUrl?.trim() && (
             <a
-              href={card.googleMapsUrl || `https://maps.google.com/?q=${encodeURIComponent(card.address)}`}
+              href={card.googleMapsUrl.trim()}
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => recordCardContactClick(card.id, 'map')}
@@ -1208,6 +1208,19 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
             >
               <Globe className="w-5 h-5 mb-1 group-hover:scale-110 transition-transform" />
               <span className="text-[10px] font-semibold">Página web</span>
+            </a>
+          )}
+          {card.facebookUrl?.trim() && (
+            <a
+              href={formatSocialUrl('facebook', card.facebookUrl)}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Facebook"
+              title="Facebook"
+              className="flex flex-col items-center justify-center py-2.5 px-1 rounded-2xl bg-white/[0.08] hover:bg-blue-500/15 transition text-white group active:scale-95 border border-white/[0.08] text-center"
+            >
+              <Facebook className="w-5 h-5 mb-1 text-blue-300 group-hover:scale-110 transition-transform" />
+              <span className="text-[10px] font-semibold">Facebook</span>
             </a>
           )}
         </div>
