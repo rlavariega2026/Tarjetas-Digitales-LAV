@@ -46,6 +46,16 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
     const value = fieldInlineStyle(field);
     return value ? ` style="${value}"` : '';
   };
+  const saveContactStyle = card.design.textFieldStyles?.saveContactButton || {};
+  const saveContactAlignment = saveContactStyle.textAlign || 'center';
+  const saveContactInlineStyle = [
+    saveContactStyle.fontFamily ? \`font-family:'\${escapeHtml(saveContactStyle.fontFamily)}',sans-serif\` : '',
+    saveContactStyle.fontSize ? \`font-size:\${Math.max(8, Math.min(64, Number(saveContactStyle.fontSize)))}px\` : '',
+    saveContactStyle.color ? \`color:\${escapeHtml(saveContactStyle.color)} !important\` : '',
+    \`justify-content:\${saveContactAlignment === 'left' ? 'flex-start' : saveContactAlignment === 'right' ? 'flex-end' : 'center'}\`,
+    \`text-align:\${saveContactAlignment}\`,
+  ].filter(Boolean).join(';');
+
 
   // Parse embed video
   let embedVideoUrl = '';
@@ -290,6 +300,10 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
     }
     .card-container {
       color: var(--card-text-color) !important;
+      height: auto !important;
+      min-height: 100vh;
+      max-height: none !important;
+      flex: 0 0 auto;
       width: 100%;
       max-width: 440px;
       background-color: ${card.design.backgroundColor};
@@ -648,6 +662,22 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
       background: ${card.design.primaryColor};
       border-color: ${card.design.primaryColor};
     }
+    .address-card {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      margin: 0 0 20px;
+      padding: 13px 14px;
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 15px;
+      background: rgba(255,255,255,.04);
+      font-size: 12px;
+      line-height: 1.55;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+    .address-label { flex: 0 0 auto; font-weight: 700; }
+    .address-value { min-width: 0; opacity: .86; }
     .save-contact-btn {
       display: flex;
       align-items: center;
@@ -976,10 +1006,17 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
 
       <!-- Compartir contacto (Apertura directa en app de Contactos) -->
       ${card.design.showSaveContactButton ? `
-      <button type="button" onclick="compartirContactoDirecto()" class="save-contact-btn headline-font" id="btnCompartirContacto">
+      <button type="button" onclick="compartirContactoDirecto()" class="save-contact-btn headline-font" id="btnCompartirContacto" style="${saveContactInlineStyle}">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:6px;"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
         <span>Compartir contacto</span>
       </button>` : ''}
+
+      <!-- Physical Address: present in preview and published HTML -->
+      ${card.address?.trim() ? `
+      <div class="address-card card-stagger-3">
+        <span class="address-label">Dirección:</span>
+        <span class="address-value"${fieldStyleAttribute('address')}>${escapeHtml(card.address)}</span>
+      </div>` : ''}
 
       <!-- Social Networks -->
       ${socialLinks.length > 0 && card.design.showSocials ? `
