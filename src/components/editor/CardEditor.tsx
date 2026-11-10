@@ -2282,7 +2282,7 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                 <div className="border-t border-slate-800 pt-4 space-y-2">
                   <h3 className="text-xs font-bold text-slate-300 uppercase tracking-wider mb-3">Módulos Visibles</h3>
                   <label className="flex items-center justify-between p-2 rounded-xl bg-slate-800/60 text-xs">
-                    <span>Botón "Guardar Contacto" (vCard 3.0)</span>
+                    <span>Mostrar botón «Compartir contacto»</span>
                     <input
                       type="checkbox"
                       checked={card.design.showSaveContactButton}
@@ -2290,7 +2290,7 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                       className="rounded border-slate-700 text-indigo-600 focus:ring-indigo-500"
                     />
                   </label>
-                  {card.design.showSaveContactButton && renderTextFieldStyle('saveContactButton', 'Compartir contacto')}
+                  {card.design.showSaveContactButton && <div className="rounded-xl border border-emerald-500/30 bg-emerald-950/20 p-3"><p className="text-[11px] font-bold text-emerald-300 mb-2">PERSONALIZAR TEXTO DE «COMPARTIR CONTACTO»</p>{renderTextFieldStyle('saveContactButton', 'Compartir contacto')}</div>}
                   <label className="flex items-center justify-between p-2 rounded-xl bg-slate-800/60 text-xs">
                     <span>Icono de Código QR Dinámico</span>
                     <input
