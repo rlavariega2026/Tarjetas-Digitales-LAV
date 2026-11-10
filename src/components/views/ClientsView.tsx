@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Client, ClientFile } from '../../types/client';
 import { CardData } from '../../types/card';
 import { saveOrUpdateClient, deleteClient } from '../../utils/storage';
-import { optimizeImageFile } from '../../utils/imageOptimizer';
+import { uploadImageOriginal } from '../../utils/imageUpload';
 import {
   Users,
   Plus,
@@ -99,13 +99,13 @@ export const ClientsView: React.FC<ClientsViewProps> = ({
     if (!file) return;
 
     try {
-      const optimizedDataUrl = await optimizeImageFile(file, 600, 600, 0.88);
+      const originalImageUrl = await uploadImageOriginal(file, 'clients', client.id);
       const newFile: ClientFile = {
         id: `file-${Date.now()}`,
         name: file.name,
         type: file.name.toLowerCase().includes('logo') ? 'logo' : 'photo',
-        url: optimizedDataUrl,
-        size: `${Math.round(file.size / 1024)} KB`,
+        url: originalImageUrl,
+        size: `${(file.size / (1024 * 1024)).toFixed(2)} MB · original`,
         uploadedAt: new Date().toISOString(),
       };
 
@@ -119,7 +119,10 @@ export const ClientsView: React.FC<ClientsViewProps> = ({
       onClientsChange();
       confetti({ particleCount: 20, spread: 50, origin: { y: 0.7 } });
     } catch (err) {
-      console.error('Error optimizing client file:', err);
+      console.error('Error uploading original client image:', err);
+      window.alert(err instanceof Error ? err.message : 'No se pudo subir la imagen original.');
+    } finally {
+      e.currentTarget.value = '';
     }
   };
 
