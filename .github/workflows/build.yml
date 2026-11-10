@@ -34,6 +34,7 @@ jobs:
 
       - name: Validar sintaxis del publicador PHP
         run: php -l public/api/publish-card.php
+          php -l public/api/upload-image.php
 
       - name: Instalar dependencias
         run: npm install --no-audit --no-fund
