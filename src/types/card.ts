@@ -302,6 +302,8 @@ export interface CardData {
   whatsappMessage: string;
   email: string;
   website: string;
+  /** Enlace independiente para el botón rápido de Facebook; no depende de socials.facebook. */
+  facebookUrl?: string;
   address: string;
   googleMapsUrl: string;
   businessHours: string;
