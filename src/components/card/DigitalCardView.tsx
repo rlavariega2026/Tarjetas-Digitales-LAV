@@ -1210,17 +1210,6 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
               <span className="text-[10px] font-semibold">Página web</span>
             </a>
           )}
-          {card.facebookButtonUrl?.trim() && (
-            <a
-              href={/^https?:\/\//i.test(card.facebookButtonUrl.trim()) ? card.facebookButtonUrl.trim() : `https://${card.facebookButtonUrl.trim()}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex flex-col items-center justify-center py-2.5 px-1 rounded-2xl bg-white/[0.08] hover:bg-white/[0.12] transition text-white group active:scale-95 border border-white/[0.08] text-center"
-            >
-              <Facebook className="w-5 h-5 mb-1 group-hover:scale-110 transition-transform" />
-              <span className="text-[10px] font-semibold">Facebook</span>
-            </a>
-          )}
           {card.facebookUrl?.trim() && (
             <a
               href={formatSocialUrl('facebook', card.facebookUrl)}
