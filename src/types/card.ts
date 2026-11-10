@@ -240,6 +240,7 @@ export interface CardDesign {
   /** Text alignment for the personal and professional information block. */
   infoTextAlign?: 'left' | 'center' | 'right';
   /** Independent typography settings for every editable text field. */
+  /** Includes saveContactButton for the independent "Compartir contacto" CTA typography. */
   textFieldStyles?: Record<string, { fontFamily?: string; fontSize?: number; color?: string; textAlign?: 'left' | 'center' | 'right' }>;
   /** Presentación tipográfica y fotográfica del catálogo. */
   catalogStyle?: { textAlign?: 'left' | 'center' | 'right'; fontFamily?: string; titleSize?: number; descriptionSize?: number; priceSize?: number; imageSize?: number; imagePosition?: 'left' | 'top' };
