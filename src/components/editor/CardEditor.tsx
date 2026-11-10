@@ -23,7 +23,7 @@ import { HostingerExportModal } from '../card/HostingerExportModal';
 import { downloadStandaloneHtmlFile } from '../../utils/exportHtml';
 import { downloadQr } from '../../utils/qr';
 import { saveOrUpdateCard, getStoredClients } from '../../utils/storage';
-import { optimizeImageFile } from '../../utils/imageOptimizer';
+import { uploadImageOriginal } from '../../utils/imageUpload';
 import {
   Smartphone,
   Tablet,
@@ -309,7 +309,7 @@ export const CardEditor: React.FC<CardEditorProps> = ({
     }));
   };
 
-  // Image upload handling with validation, compression and visible errors
+  // Original image upload: no artificial size cap, resizing, compression, or format conversion.
   const handleFileUpload = async (
     e: React.ChangeEvent<HTMLInputElement>,
     target: 'avatar' | 'logo' | 'banner' | 'texture'
@@ -319,49 +319,21 @@ export const CardEditor: React.FC<CardEditorProps> = ({
     if (!file) return;
 
     setAiError('');
-    if (!['image/png', 'image/jpeg', 'image/webp', 'image/svg+xml'].includes(file.type)) {
-      window.alert('El archivo seleccionado no es una imagen. Elige JPG, PNG o WebP.');
-      input.value = '';
-      return;
-    }
-    const uploadLimit = target === 'texture' || target === 'banner' ? 50 * 1024 * 1024 : 5 * 1024 * 1024;
-    if (file.size > uploadLimit) {
-      window.alert(target === 'texture' || target === 'banner'
-        ? 'La imagen supera los 50 MB. Elige una imagen de menor tamaño.'
-        : 'La imagen supera los 5 MB. Elige una imagen más ligera.');
-      input.value = '';
-      return;
-    }
-
     try {
-      const maxDim = target === 'avatar' ? 800 : target === 'logo' ? 800 : target === 'texture' ? 1800 : 1800;
-      const quality = target === 'banner' || target === 'texture' ? 0.76 : 0.82;
-      const optimizedDataUrl = await optimizeImageFile(
-        file,
-        maxDim,
-        maxDim,
-        quality,
-        target === 'banner' || target === 'texture' ? 'image/webp' : undefined
-      );
-      if (!optimizedDataUrl || !optimizedDataUrl.startsWith('data:image/')) {
-        throw new Error('No se pudo procesar el archivo de imagen.');
-      }
-
-      if (target === 'avatar') updateDesignField('avatarUrl', optimizedDataUrl);
-      if (target === 'logo') updateDesignField('logoUrl', optimizedDataUrl);
-      if (target === 'banner') updateDesignField('bannerUrl', optimizedDataUrl);
-      if (target === 'texture') updateDesignField('backgroundTextureUrl', optimizedDataUrl);
-      input.value = '';
+      const imageUrl = await uploadImageOriginal(file, 'cards', card.clientId || card.id);
+      if (target === 'avatar') updateDesignField('avatarUrl', imageUrl);
+      if (target === 'logo') updateDesignField('logoUrl', imageUrl);
+      if (target === 'banner') updateDesignField('bannerUrl', imageUrl);
+      if (target === 'texture') updateDesignField('backgroundTextureUrl', imageUrl);
     } catch (err) {
-      console.error('Error al cargar la imagen:', err);
-      window.alert(target === 'texture' || target === 'banner'
-        ? 'No se pudo procesar la imagen de fondo. Prueba con JPG, PNG o WebP de menos de 50 MB.'
-        : 'No se pudo cargar esa imagen. Prueba con JPG, PNG o WebP de menos de 5 MB.');
+      console.error('Error al subir la imagen original:', err);
+      window.alert(err instanceof Error ? err.message : 'No se pudo subir la imagen original.');
+    } finally {
       input.value = '';
     }
   };
 
-  // Upload optimized images for catalog products and portfolio/gallery items.
+  // Catalog and portfolio images are stored as original files on Hostinger.
   const handleCatalogGalleryUpload = async (
     e: React.ChangeEvent<HTMLInputElement>,
     target: 'catalog' | 'gallery',
@@ -371,40 +343,24 @@ export const CardEditor: React.FC<CardEditorProps> = ({
     const file = input.files?.[0];
     if (!file) return;
 
-    if (!file.type.startsWith('image/')) {
-      window.alert('Selecciona una imagen PNG, JPG o WebP.');
-      input.value = '';
-      return;
-    }
-    // Catálogo y fotografías aceptan imágenes originales de hasta 25 MB.
-    // Se redimensionan y comprimen antes de guardarlas en la tarjeta.
-    if (file.size > 50 * 1024 * 1024) {
-      window.alert('La imagen supera el límite de 50 MB. Selecciona una imagen de menor tamaño.');
-      input.value = '';
-      return;
-    }
-
     try {
-      const optimizedDataUrl = await optimizeImageFile(file, 1800, 1800, 0.76, 'image/webp');
-      if (!optimizedDataUrl || !optimizedDataUrl.startsWith('data:image/')) {
-        throw new Error('No se pudo procesar la imagen.');
-      }
+      const imageUrl = await uploadImageOriginal(file, 'cards', card.clientId || card.id);
       setCard((prev) => target === 'catalog'
         ? {
             ...prev,
             catalog: (prev.catalog || []).map((item) =>
-              item.id === itemId ? { ...item, imageUrl: optimizedDataUrl } : item
+              item.id === itemId ? { ...item, imageUrl } : item
             ),
           }
         : {
             ...prev,
             gallery: (prev.gallery || []).map((item) =>
-              item.id === itemId ? { ...item, imageUrl: optimizedDataUrl } : item
+              item.id === itemId ? { ...item, imageUrl } : item
             ),
           });
     } catch (err) {
-      console.error('Error al cargar imagen del módulo:', err);
-      window.alert('No se pudo procesar la imagen. Prueba con JPG, PNG o WebP de menos de 50 MB.');
+      console.error('Error al subir imagen del módulo:', err);
+      window.alert(err instanceof Error ? err.message : 'No se pudo subir la imagen original.');
     } finally {
       input.value = '';
     }
