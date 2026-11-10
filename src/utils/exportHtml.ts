@@ -1011,13 +1011,6 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
         <span>Compartir contacto</span>
       </button>` : ''}
 
-      <!-- Physical Address: present in preview and published HTML -->
-      ${card.address?.trim() ? `
-      <div class="address-card card-stagger-3">
-        <span class="address-label">Dirección:</span>
-        <span class="address-value"${fieldStyleAttribute('address')}>${escapeHtml(card.address)}</span>
-      </div>` : ''}
-
       <!-- Social Networks -->
       ${socialLinks.length > 0 && card.design.showSocials ? `
       <section class="social-section" aria-labelledby="social-section-title">
@@ -1184,6 +1177,13 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
           }).join('')}
         </div>
       </details>` : `<div class="section-title">Productos &amp; Servicios</div><div style="margin-bottom:20px;padding:14px;border:1px dashed rgba(255,255,255,.2);border-radius:14px;color:#94a3b8;font-size:12px;text-align:center;">Añade productos o servicios desde la pestaña Catálogo del editor.</div>`) : ''}
+
+      <!-- Physical Address: present in preview and published HTML -->
+      ${card.address?.trim() ? `
+      <div class="address-card card-stagger-3">
+        <span class="address-label">Dirección:</span>
+        <span class="address-value"${fieldStyleAttribute('address')}>${escapeHtml(card.address)}</span>
+      </div>` : ''}
 
       <!-- Business Hours: compact native disclosure button -->
       ${card.design.showHours && ((Array.isArray(card.schedule) && card.schedule.length > 0) || card.businessHours?.trim()) ? `
