@@ -1221,7 +1221,11 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
               className="w-full py-3.5 px-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-2.5 shadow-lg active:scale-[0.98] transition duration-200 text-white cursor-pointer no-underline text-center"
               style={{
                 background: `linear-gradient(135deg, ${design.primaryColor}, ${design.accentColor || design.secondaryColor})`,
-                fontFamily: headlineFontFamily,
+                fontFamily: design.textFieldStyles?.saveContactButton?.fontFamily || headlineFontFamily,
+                fontSize: design.textFieldStyles?.saveContactButton?.fontSize || undefined,
+                color: design.textFieldStyles?.saveContactButton?.color || '#ffffff',
+                justifyContent: design.textFieldStyles?.saveContactButton?.textAlign === 'left' ? 'flex-start' : design.textFieldStyles?.saveContactButton?.textAlign === 'right' ? 'flex-end' : 'center',
+                textAlign: design.textFieldStyles?.saveContactButton?.textAlign || 'center',
               }}
             >
               <UserPlus className="w-4 h-4" />
