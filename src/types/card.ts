@@ -306,6 +306,8 @@ export interface CardData {
   facebookUrl?: string;
   address: string;
   googleMapsUrl: string;
+  /** Enlace independiente para el botón Facebook del grupo de acciones rápidas. */
+  facebookButtonUrl?: string;
   businessHours: string;
   /** Structured weekly hours; businessHours remains for backward compatibility. */
   schedule?: ScheduleDay[];
