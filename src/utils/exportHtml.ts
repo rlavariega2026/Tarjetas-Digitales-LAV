@@ -49,11 +49,11 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
   const saveContactStyle = card.design.textFieldStyles?.saveContactButton || {};
   const saveContactAlignment = saveContactStyle.textAlign || 'center';
   const saveContactInlineStyle = [
-    saveContactStyle.fontFamily ? \`font-family:'\${escapeHtml(saveContactStyle.fontFamily)}',sans-serif\` : '',
-    saveContactStyle.fontSize ? \`font-size:\${Math.max(8, Math.min(64, Number(saveContactStyle.fontSize)))}px\` : '',
-    saveContactStyle.color ? \`color:\${escapeHtml(saveContactStyle.color)} !important\` : '',
-    \`justify-content:\${saveContactAlignment === 'left' ? 'flex-start' : saveContactAlignment === 'right' ? 'flex-end' : 'center'}\`,
-    \`text-align:\${saveContactAlignment}\`,
+    saveContactStyle.fontFamily ? `font-family:'${escapeHtml(saveContactStyle.fontFamily)}',sans-serif` : '',
+    saveContactStyle.fontSize ? `font-size:${Math.max(8, Math.min(64, Number(saveContactStyle.fontSize)))}px` : '',
+    saveContactStyle.color ? `color:${escapeHtml(saveContactStyle.color)} !important` : '',
+    `justify-content:${saveContactAlignment === 'left' ? 'flex-start' : saveContactAlignment === 'right' ? 'flex-end' : 'center'}`,
+    `text-align:${saveContactAlignment}`,
   ].filter(Boolean).join(';');
 
 
