@@ -1702,7 +1702,7 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
                     </div>
                   )}
                   {g.title && (
-                    <div className="absolute inset-x-0 bottom-0 p-1.5 bg-gradient-to-t from-black/80 to-transparent text-[10px] font-medium text-white truncate">
+                    <div className="absolute inset-x-0 bottom-0 p-1.5 bg-gradient-to-t from-black/80 to-transparent text-[10px] font-medium text-white truncate pointer-events-none">
                       {g.title}
                     </div>
                   )}
