@@ -281,6 +281,49 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
     }
   };
 
+  // Copia juntos el nombre de la red y su contraseña para que puedan compartirse
+  // como un solo bloque, incluso en navegadores móviles sin Clipboard API.
+  const handleCopyWifiData = async () => {
+    const wifi = card.wifi;
+    if (!wifi) return;
+
+    const lines: string[] = [];
+    if (wifi.ssid?.trim()) lines.push(`Nombre de la red: ${wifi.ssid.trim()}`);
+    if (wifi.password?.trim()) lines.push(`Contraseña: ${wifi.password.trim()}`);
+    const textToCopy = lines.join('\\n');
+    if (!textToCopy) return;
+
+    try {
+      if (navigator.clipboard?.writeText && window.isSecureContext) {
+        await navigator.clipboard.writeText(textToCopy);
+      } else {
+        throw new Error('Clipboard API no disponible');
+      }
+      setCopyToast('¡Datos de WiFi copiados al portapapeles!');
+      setTimeout(() => setCopyToast(null), 2500);
+    } catch {
+      try {
+        const textarea = document.createElement('textarea');
+        textarea.value = textToCopy;
+        textarea.setAttribute('readonly', '');
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        textarea.style.pointerEvents = 'none';
+        document.body.appendChild(textarea);
+        textarea.select();
+        textarea.setSelectionRange(0, textarea.value.length);
+        const copied = document.execCommand('copy');
+        document.body.removeChild(textarea);
+        if (!copied) throw new Error('No fue posible copiar los datos');
+        setCopyToast('¡Datos de WiFi copiados al portapapeles!');
+        setTimeout(() => setCopyToast(null), 2500);
+      } catch {
+        setCopyToast('No se pudieron copiar los datos. Mantén presionados los datos para copiarlos.');
+        setTimeout(() => setCopyToast(null), 3500);
+      }
+    }
+  };
+
   const handleCopyAllBankData = async () => {
     const bt = card.bankTransfer;
     if (!bt) return;
@@ -1489,12 +1532,12 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
                 <span className="min-w-0 break-all text-xs font-bold text-white">{card.wifi.password}</span>
                 <button
                   type="button"
-                  onClick={() => handleCopyBankField('Clave WiFi', card.wifi?.password)}
+                  onClick={handleCopyWifiData}
                   className="flex shrink-0 items-center gap-1.5 rounded-lg bg-sky-600 px-3 py-2 text-xs font-bold text-white transition hover:bg-sky-500"
-                  title="Copiar clave de WiFi"
+                  title="Copiar nombre de red y contraseña WiFi"
                 >
                   <Copy className="h-3.5 w-3.5" />
-                  Copiar
+                  Copiar datos
                 </button>
               </div>
             )}
