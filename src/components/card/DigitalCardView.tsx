@@ -1445,7 +1445,7 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
         {/* Catalog / Products, Services & Restaurant Gastro Menu */}
         {design.showCatalog && (!card.catalog || card.catalog.length === 0) ? (
           <div className="mb-5 rounded-2xl border border-dashed border-white/20 bg-white/[0.03] p-4 text-center">
-            <h2 className="text-xs font-bold uppercase tracking-wider mb-1">Catálogo & Servicios</h2>
+            <h2 className="text-xs font-bold uppercase tracking-wider mb-1">{design.catalogTitle?.trim() || (design.theme === 'gastro-menu' ? 'Menú & Carta Digital' : 'Catálogo & Servicios')}</h2>
             <p className="text-xs opacity-70">Añade productos o servicios desde la pestaña “Catálogo” del editor.</p>
           </div>
         ) : design.showCatalog && card.catalog && card.catalog.length > 0 && (() => {
@@ -1805,7 +1805,7 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
               className="text-xs font-bold uppercase tracking-wider mb-2.5 opacity-70"
               style={{ fontFamily: headlineFontFamily }}
             >
-              Portafolio & Trabajos
+              {design.galleryTitle?.trim() || 'Portafolio & Trabajos'}
             </h2>
             <div className="grid grid-cols-2 gap-2">
               {card.gallery.map((g) => (
