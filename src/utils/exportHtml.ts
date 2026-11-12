@@ -1064,7 +1064,7 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
         ${card.wifi.password ? `
         <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.1);">
           <span style="color:#fff;font-size:12px;font-weight:700;overflow-wrap:anywhere;">${escapeHtml(card.wifi.password)}</span>
-          <button type="button" class="wifi-copy-btn" onclick="copyText(${JSON.stringify(card.wifi.password)}, 'Clave WiFi')">Copiar</button>
+          <button type="button" class="wifi-copy-btn" data-wifi-password="${escapeHtml(card.wifi.password)}" onclick="copyWifiPassword(this)">Copiar clave</button>
         </div>` : ''}
       </div>` : ''}
 
@@ -1225,6 +1225,13 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
       t.innerText = msg;
       t.style.display = 'block';
       setTimeout(function() { t.style.display = 'none'; }, 2500);
+    }
+
+    // Lee la contraseña desde un atributo HTML seguro; evita romper onclick
+    // cuando la clave contiene comillas, apóstrofes, ampersand o caracteres especiales.
+    function copyWifiPassword(button) {
+      var password = button && button.getAttribute('data-wifi-password');
+      copyText(password, 'Contraseña WiFi');
     }
 
     function copyText(val, label) {
