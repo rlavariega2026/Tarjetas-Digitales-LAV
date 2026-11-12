@@ -403,10 +403,34 @@ export function exportDatabaseBackup(): string {
 export function importDatabaseBackup(jsonString: string): boolean {
   try {
     const parsed = JSON.parse(jsonString);
-    if (parsed.cards) saveCards(parsed.cards);
-    if (parsed.clients) saveClients(parsed.clients);
-    if (parsed.settings) saveAppSettings(parsed.settings);
-    if (parsed.templates) localStorage.setItem(STORAGE_KEYS.TEMPLATES, JSON.stringify(parsed.templates));
+
+    // Restore by merging IDs instead of replacing local arrays. This preserves
+    // records already on the receiving device while bringing over records
+    // created in another browser. Imported versions update matching IDs.
+    const mergeById = <T extends { id: string }>(current: T[], incoming: unknown): T[] => {
+      if (!Array.isArray(incoming)) return current;
+      const merged = new Map(current.map((item) => [item.id, item]));
+      for (const item of incoming) {
+        if (item && typeof item === 'object' && typeof item.id === 'string') {
+          merged.set(item.id, item as T);
+        }
+      }
+      return Array.from(merged.values());
+    };
+
+    if (Array.isArray(parsed.cards)) {
+      saveCards(mergeById(getStoredCards(), parsed.cards));
+    }
+    if (Array.isArray(parsed.clients)) {
+      saveClients(mergeById(getStoredClients(), parsed.clients));
+    }
+    if (Array.isArray(parsed.templates)) {
+      const mergedTemplates = mergeById(getStoredTemplates(), parsed.templates);
+      localStorage.setItem(STORAGE_KEYS.TEMPLATES, JSON.stringify(mergedTemplates));
+    }
+    if (parsed.settings && typeof parsed.settings === 'object') {
+      saveAppSettings({ ...getAppSettings(), ...parsed.settings });
+    }
     return true;
   } catch (e) {
     console.error('Failed importing backup', e);
