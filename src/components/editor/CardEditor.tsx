@@ -488,12 +488,13 @@ export const CardEditor: React.FC<CardEditorProps> = ({
     }
   };
 
-  const handleSaveAsNew = () => {
+  const handleSaveAsNew = async () => {
     const cleanName = saveName.trim();
     if (!cleanName) {
       window.alert('Escribe un nombre para la nueva tarjeta.');
       return;
     }
+
     setIsSaving(true);
     try {
       const duplicate = buildCardForSave(cleanName);
@@ -506,9 +507,36 @@ export const CardEditor: React.FC<CardEditorProps> = ({
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/^-|-$/g, '');
-      const deepCopy = typeof structuredClone === 'function'
-        ? structuredClone(duplicate)
-        : JSON.parse(JSON.stringify(duplicate)) as CardData;
+
+      // Evita duplicar imágenes Base64 dentro de localStorage al crear una copia.
+      // Se conservan originales: se alojan en Hostinger y la tarjeta guarda sus URLs.
+      const uploadedImages = new Map<string, string>();
+      const moveEmbeddedImages = async (value: any, fieldName = 'imagen'): Promise<any> => {
+        if (typeof value === 'string' && /^data:image\\//i.test(value)) {
+          const cached = uploadedImages.get(value);
+          if (cached) return cached;
+          const response = await fetch(value);
+          const blob = await response.blob();
+          const extension = (blob.type.split('/')[1] || 'png').replace(/[^a-z0-9]/gi, '');
+          const file = new File([blob], `${fieldName}.${extension}`, { type: blob.type || 'image/png' });
+          const url = await uploadImageOriginal(file, 'cards', newId);
+          uploadedImages.set(value, url);
+          return url;
+        }
+        if (Array.isArray(value)) {
+          return Promise.all(value.map((item, index) => moveEmbeddedImages(item, `${fieldName}-${index + 1}`)));
+        }
+        if (value && typeof value === 'object') {
+          const entries = await Promise.all(Object.entries(value).map(async ([key, item]) => [
+            key,
+            await moveEmbeddedImages(item, key),
+          ]));
+          return Object.fromEntries(entries);
+        }
+        return value;
+      };
+
+      const deepCopy = await moveEmbeddedImages(duplicate) as CardData;
       const cardToSave: CardData = {
         ...deepCopy,
         id: newId,
@@ -521,7 +549,9 @@ export const CardEditor: React.FC<CardEditorProps> = ({
       persistCard(cardToSave);
     } catch (err) {
       console.error('No se pudo crear la copia de la tarjeta:', err);
-      window.alert('No se pudo crear la nueva tarjeta. Inténtalo de nuevo.');
+      window.alert(err instanceof Error
+        ? `No se pudo crear la nueva tarjeta: ${err.message}`
+        : 'No se pudo crear la nueva tarjeta. Inténtalo de nuevo.');
     } finally {
       setIsSaving(false);
     }
