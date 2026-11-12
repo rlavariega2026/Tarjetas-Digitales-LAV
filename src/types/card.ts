@@ -232,6 +232,9 @@ export interface CardDesign {
   showNfcButton: boolean;
   showCatalog: boolean;
   showGallery: boolean;
+  /** User-defined headings shown in the published card. */
+  catalogTitle?: string;
+  galleryTitle?: string;
   showHours: boolean;
   showSocials: boolean;
   showCustomButtons: boolean;
