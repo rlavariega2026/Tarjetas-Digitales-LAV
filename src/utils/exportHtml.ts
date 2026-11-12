@@ -966,7 +966,15 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
     .card-container :is(div,h1,h2,h3,h4,p,span,strong,em,label,small,li,a,button):not(.social-icon-btn):not(.catalog-item-title):not(.catalog-item-description):not(.catalog-item-price) {
       color: var(--card-text-color) !important;
     }
-  </style>
+  
+    /* Lightbox de fotos para tarjetas publicadas */
+    .lav-gallery-photo:focus-visible { outline: 3px solid #fbbf24; outline-offset: 3px; }
+    #lavGalleryLightbox { position:fixed; inset:0; z-index:2147483647; display:none; align-items:center; justify-content:center; padding: max(16px, env(safe-area-inset-top)) 12px max(16px, env(safe-area-inset-bottom)); background:rgba(0,0,0,.96); touch-action:manipulation; }
+    #lavGalleryLightbox.is-open { display:flex; }
+    #lavGalleryLightbox img { display:block; max-width:100%; max-height:calc(100dvh - 80px); width:auto; height:auto; object-fit:contain; border-radius:10px; user-select:none; -webkit-user-drag:none; }
+    #lavGalleryLightbox button { position:absolute; top:max(14px, env(safe-area-inset-top)); right:14px; z-index:2; width:46px; height:46px; border:1px solid rgba(255,255,255,.25); border-radius:50%; background:rgba(255,255,255,.16); color:#fff; font:32px/1 Arial,sans-serif; cursor:pointer; }
+    #lavGalleryLightbox .lav-gallery-caption { position:absolute; bottom:max(14px, env(safe-area-inset-bottom)); left:16px; right:16px; color:rgba(255,255,255,.85); text-align:center; font:13px/1.4 Arial,sans-serif; }
+</style>
 </head>
 <body>
   <div class="card-container ${isEleganceLuxury ? 'anim-shimmer-sweep' : ''} ${isFutureTech ? 'anim-border-beam' : ''} ${isMinimalStudio ? 'anim-minimal-frame' : ''} ${isBusinessSignature ? 'anim-business-frame' : ''} ${isGlassMotion ? 'theme-glass-motion' : ''} ${isYoungCreative ? 'theme-young-creative' : ''}">
@@ -1131,7 +1139,7 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
       <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:20px;">
         ${card.gallery.map(item => `
           <figure style="margin:0;overflow:hidden;border-radius:12px;background:rgba(255,255,255,.05);">
-            ${item.imageUrl ? `<img src="${escapeHtml(item.imageUrl)}" alt="${escapeHtml(item.title || 'Foto')}" loading="lazy" style="display:block;width:100%;aspect-ratio:1/1;object-fit:cover;">` : '<div style="display:flex;align-items:center;justify-content:center;width:100%;aspect-ratio:1/1;color:#94a3b8;font-size:12px;background:rgba(255,255,255,.04);">Foto pendiente</div>'}
+            \${item.imageUrl ? \`<button type="button" class="lav-gallery-photo" onclick="openGalleryPhoto(this)" data-gallery-image="\${escapeHtml(item.imageUrl)}" data-gallery-title="\${escapeHtml(item.title || 'Foto')}" aria-label="Ampliar foto: \${escapeHtml(item.title || 'Foto')}" style="display:block;width:100%;padding:0;border:0;background:transparent;cursor:zoom-in;-webkit-tap-highlight-color:transparent;touch-action:manipulation;"><img src="\${escapeHtml(item.imageUrl)}" alt="\${escapeHtml(item.title || 'Foto')}" loading="lazy" draggable="false" style="display:block;width:100%;aspect-ratio:1/1;object-fit:cover;pointer-events:none;"></button>\` : '<div style="display:flex;align-items:center;justify-content:center;width:100%;aspect-ratio:1/1;color:#94a3b8;font-size:12px;background:rgba(255,255,255,.04);">Foto pendiente</div>'}
             ${item.title || item.caption ? `<figcaption style="padding:8px;font-size:12px;color:#fff;">${escapeHtml(item.title || '')}${item.caption ? `<div style="opacity:.75;margin-top:3px;">${escapeHtml(item.caption)}</div>` : ''}</figcaption>` : ''}
           </figure>
         `).join('')}
@@ -1207,6 +1215,36 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
   <div id="toastNotice"></div>
 
   <script>
+    function openGalleryPhoto(button) {
+      if (!button) return;
+      var src = button.getAttribute('data-gallery-image');
+      if (!src) return;
+      var title = button.getAttribute('data-gallery-title') || 'Foto';
+      var overlay = document.getElementById('lavGalleryLightbox');
+      if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.id = 'lavGalleryLightbox';
+        overlay.setAttribute('role', 'dialog');
+        overlay.setAttribute('aria-modal', 'true');
+        overlay.setAttribute('aria-label', 'Imagen ampliada');
+        overlay.innerHTML = '<button type="button" aria-label="Cerrar imagen" onclick="closeGalleryPhoto()">×</button><img alt=""><div class="lav-gallery-caption"></div>';
+        overlay.addEventListener('click', function(event) { if (event.target === overlay) closeGalleryPhoto(); });
+        document.body.appendChild(overlay);
+      }
+      var image = overlay.querySelector('img');
+      var caption = overlay.querySelector('.lav-gallery-caption');
+      image.src = src;
+      image.alt = title;
+      caption.textContent = title;
+      overlay.classList.add('is-open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeGalleryPhoto() {
+      var overlay = document.getElementById('lavGalleryLightbox');
+      if (overlay) { overlay.classList.remove('is-open'); var image = overlay.querySelector('img'); if (image) image.removeAttribute('src'); }
+      document.body.style.overflow = '';
+    }
+
     function openModuleDialog(id) { var el=document.getElementById(id); if(el) el.classList.add('open'); }
     function closeModuleDialogs() { document.querySelectorAll('.module-dialog').forEach(function(el){el.classList.remove('open');}); }
     function shareCardLink() {
