@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { CardData } from '../../types/card';
 import {
   downloadVCard,
@@ -1813,7 +1814,16 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
                   {g.imageUrl ? (
                     <button
                       type="button"
-                      onClick={() => setZoomedGalleryPhoto({ url: g.imageUrl, title: g.title || 'Foto' })}
+                      onPointerUp={(event) => {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        setZoomedGalleryPhoto({ url: g.imageUrl, title: g.title || 'Foto' });
+                      }}
+                      onClick={(event) => {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        setZoomedGalleryPhoto({ url: g.imageUrl, title: g.title || 'Foto' });
+                      }}
                       aria-label={`Ampliar foto: ${g.title || 'Foto'}`}
                       className="absolute inset-0 z-10 w-full h-full cursor-zoom-in touch-manipulation select-none focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
                     >
@@ -1940,7 +1950,7 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
       )}
 
       {/* Gallery photo zoom */}
-      {zoomedGalleryPhoto && (
+      {zoomedGalleryPhoto && typeof document !== 'undefined' && createPortal((
         <div
           className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/95 backdrop-blur-sm p-3 sm:p-6 touch-manipulation"
           role="dialog"
@@ -1968,7 +1978,7 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
             </p>
           )}
         </div>
-      )}
+      ), document.body)}
 
       {/* QR Code Modal */}
       {showQrModal && (
