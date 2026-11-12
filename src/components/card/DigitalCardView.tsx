@@ -1458,7 +1458,7 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
           return (
             <details className="mb-5 rounded-2xl border border-white/10 bg-white/[0.025] overflow-hidden">
               <summary className="flex items-center justify-between gap-3 px-4 py-3 cursor-pointer list-none text-white hover:bg-white/[0.05]">
-                <span className="text-xs font-bold uppercase tracking-wider">{design.theme === 'gastro-menu' ? 'Menú & Carta Digital' : 'Catálogo & Servicios'}</span>
+                <span className="text-xs font-bold uppercase tracking-wider">{design.catalogTitle?.trim() || (design.theme === 'gastro-menu' ? 'Menú & Carta Digital' : 'Catálogo & Servicios')}</span>
                 <span className="text-[10px] text-slate-400">{filteredItems.length} opciones　⌄</span>
               </summary>
               <div className="p-3 pt-1">
@@ -1793,7 +1793,7 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
 
         {design.showCatalog && (!card.catalog || card.catalog.length === 0) && !isStandalone && (
           <div className="mb-5 rounded-2xl border border-dashed border-white/20 bg-white/[0.03] p-4 text-center">
-            <h2 className="text-xs font-bold uppercase tracking-wider mb-1">Catálogo &amp; Servicios</h2>
+            <h2 className="text-xs font-bold uppercase tracking-wider mb-1">{design.catalogTitle?.trim() || (design.theme === 'gastro-menu' ? 'Menú & Carta Digital' : 'Catálogo & Servicios')}</h2>
             <p className="text-xs opacity-70">Activa el catálogo y añade productos o servicios desde la pestaña “Catálogo” del editor.</p>
           </div>
         )}
@@ -1815,7 +1815,7 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
                       type="button"
                       onClick={() => setZoomedGalleryPhoto({ url: g.imageUrl, title: g.title || 'Foto' })}
                       aria-label={`Ampliar foto: ${g.title || 'Foto'}`}
-                      className="absolute inset-0 w-full h-full cursor-zoom-in focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+                      className="absolute inset-0 z-10 w-full h-full cursor-zoom-in touch-manipulation select-none focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
                     >
                       <img
                         src={g.imageUrl}
@@ -1841,7 +1841,7 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
 
         {design.showGallery && (!card.gallery || card.gallery.length === 0) && !isStandalone && (
           <div className="mb-5 rounded-2xl border border-dashed border-white/20 bg-white/[0.03] p-4 text-center">
-            <h2 className="text-xs font-bold uppercase tracking-wider mb-1">Portafolio &amp; Galería de Fotos</h2>
+            <h2 className="text-xs font-bold uppercase tracking-wider mb-1">{design.galleryTitle?.trim() || 'Galería de Fotos'}</h2>
             <p className="text-xs opacity-70">Activa la galería y añade fotos desde la pestaña “Galería” del editor.</p>
           </div>
         )}
@@ -1942,7 +1942,7 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
       {/* Gallery photo zoom */}
       {zoomedGalleryPhoto && (
         <div
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 backdrop-blur-sm p-3 sm:p-6"
+          className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/95 backdrop-blur-sm p-3 sm:p-6 touch-manipulation"
           role="dialog"
           aria-modal="true"
           aria-label={zoomedGalleryPhoto.title}
@@ -1959,7 +1959,7 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
           <img
             src={zoomedGalleryPhoto.url}
             alt={zoomedGalleryPhoto.title}
-            className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl"
+            className="max-w-full max-h-[calc(100dvh-5rem)] sm:max-h-[90vh] object-contain rounded-lg shadow-2xl select-none"
             onClick={(event) => event.stopPropagation()}
           />
           {zoomedGalleryPhoto.title && (
