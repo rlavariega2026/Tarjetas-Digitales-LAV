@@ -274,10 +274,27 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
     if (!value) return;
     try {
       await navigator.clipboard.writeText(value);
-      setCopyToast(`¡${label} copiado con éxito!`);
+      setCopyToast('¡' + label + ' copiado con éxito!');
       setTimeout(() => setCopyToast(null), 2500);
     } catch {
-      // fallback
+      try {
+        const textarea = document.createElement('textarea');
+        textarea.value = value;
+        textarea.setAttribute('readonly', '');
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+        textarea.setSelectionRange(0, textarea.value.length);
+        const copied = document.execCommand('copy');
+        document.body.removeChild(textarea);
+        if (!copied) throw new Error('No se pudo copiar');
+        setCopyToast('¡' + label + ' copiado con éxito!');
+        setTimeout(() => setCopyToast(null), 2500);
+      } catch {
+        setCopyToast('No se pudo copiar. Mantén presionada la clave para copiarla.');
+        setTimeout(() => setCopyToast(null), 3000);
+      }
     }
   };
 
@@ -1532,12 +1549,12 @@ export const DigitalCardView: React.FC<DigitalCardViewProps> = ({
                 <span className="min-w-0 break-all text-xs font-bold text-white">{card.wifi.password}</span>
                 <button
                   type="button"
-                  onClick={handleCopyWifiData}
+                  onClick={() => handleCopyBankField('Clave WiFi', card.wifi?.password)}
                   className="flex shrink-0 items-center gap-1.5 rounded-lg bg-sky-600 px-3 py-2 text-xs font-bold text-white transition hover:bg-sky-500"
-                  title="Copiar nombre de red y contraseña WiFi"
+                  title="Copiar clave de WiFi"
                 >
                   <Copy className="h-3.5 w-3.5" />
-                  Copiar datos
+                  Copiar clave
                 </button>
               </div>
             )}
