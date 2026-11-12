@@ -2891,6 +2891,11 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                   </button>
                 </div>
 
+                <div className="rounded-2xl bg-slate-800/80 border border-slate-700 p-3 space-y-2">
+                  <label className="block text-xs font-bold text-slate-200" htmlFor="catalog-section-title">Nombre de esta sección</label>
+                  <input id="catalog-section-title" type="text" maxLength={80} value={card.design.catalogTitle || ''} onChange={(event) => updateDesignField('catalogTitle', event.target.value)} placeholder={card.design.theme === 'gastro-menu' ? 'Menú & Carta Digital' : 'Catálogo & Servicios'} className="w-full rounded-lg bg-slate-900 border border-slate-600 px-3 py-2 text-sm text-white placeholder:text-slate-500" />
+                  <p className="text-[10px] text-slate-400">Escribe el título que quieras mostrar en la tarjeta publicada.</p>
+                </div>
                 <div className="p-3 rounded-2xl bg-slate-800/80 border border-slate-700 flex items-center justify-between">
                   <div>
                     <p className="text-xs font-bold text-slate-200">Mostrar Catálogo en la Tarjeta</p>
@@ -3090,6 +3095,12 @@ export const CardEditor: React.FC<CardEditorProps> = ({
                     <Plus className="w-3.5 h-3.5" />
                     <span>Añadir Foto</span>
                   </button>
+                </div>
+
+                <div className="rounded-2xl bg-slate-800/80 border border-slate-700 p-3 space-y-2">
+                  <label className="block text-xs font-bold text-slate-200" htmlFor="gallery-section-title">Nombre de esta sección</label>
+                  <input id="gallery-section-title" type="text" maxLength={80} value={card.design.galleryTitle || ''} onChange={(event) => updateDesignField('galleryTitle', event.target.value)} placeholder="Galería de fotos" className="w-full rounded-lg bg-slate-900 border border-slate-600 px-3 py-2 text-sm text-white placeholder:text-slate-500" />
+                  <p className="text-[10px] text-slate-400">Escribe el título que quieras mostrar en la tarjeta publicada.</p>
                 </div>
 
                 {/* Show Gallery Toggle */}
