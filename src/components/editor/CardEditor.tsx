@@ -22,7 +22,8 @@ import { DigitalCardView, getEmbedVideoUrl, formatSocialUrl, GoogleGIcon, PayPal
 import { HostingerExportModal } from '../card/HostingerExportModal';
 import { downloadStandaloneHtmlFile } from '../../utils/exportHtml';
 import { downloadQr } from '../../utils/qr';
-import { saveOrUpdateCard, getStoredClients } from '../../utils/storage';
+import { saveOrUpdateCard, getStoredClients, saveCustomTemplate } from '../../utils/storage';
+import { CardTemplate } from '../../data/templates';
 import { uploadImageOriginal } from '../../utils/imageUpload';
 import {
   Smartphone,
@@ -410,6 +411,78 @@ export const CardEditor: React.FC<CardEditorProps> = ({
     } catch (err) {
       console.error('No se pudo guardar la tarjeta:', err);
       window.alert('No se pudieron guardar los cambios. Si agregaste muchas fotos, reduce su tamaño e inténtalo de nuevo.');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleSaveAsTemplate = async () => {
+    const cleanName = saveName.trim();
+    if (!cleanName) {
+      window.alert('Escribe un nombre para la plantilla.');
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      const templateId = `tpl-custom-${Date.now()}`;
+      const ownerId = templateId;
+      const source = buildCardForSave(cleanName);
+
+      // Las imágenes antiguas incrustadas como Base64 se alojan primero en
+      // Hostinger. Así la plantilla guarda URLs y no duplica megabytes en localStorage.
+      const uploadedImages = new Map<string, string>();
+      const moveEmbeddedImages = async (value: any, fieldName = 'imagen'): Promise<any> => {
+        if (typeof value === 'string' && /^data:image\//i.test(value)) {
+          const cached = uploadedImages.get(value);
+          if (cached) return cached;
+          const response = await fetch(value);
+          const blob = await response.blob();
+          const extension = (blob.type.split('/')[1] || 'png').replace(/[^a-z0-9]/gi, '');
+          const file = new File([blob], `${fieldName}.${extension}`, { type: blob.type || 'image/png' });
+          const url = await uploadImageOriginal(file, 'cards', ownerId);
+          uploadedImages.set(value, url);
+          return url;
+        }
+        if (Array.isArray(value)) {
+          return Promise.all(value.map((item, index) => moveEmbeddedImages(item, `${fieldName}-${index + 1}`)));
+        }
+        if (value && typeof value === 'object') {
+          const entries = await Promise.all(Object.entries(value).map(async ([key, item]) => [
+            key,
+            await moveEmbeddedImages(item, key),
+          ]));
+          return Object.fromEntries(entries);
+        }
+        return value;
+      };
+
+      const templateCard = await moveEmbeddedImages(source) as CardData;
+      const template: CardTemplate = {
+        id: templateId,
+        name: cleanName,
+        category: templateCard.category || 'Personalizadas',
+        description: `Plantilla personalizada creada a partir de ${templateCard.businessName || templateCard.name || 'una tarjeta'}.`,
+        thumbnailGradient: 'from-indigo-600 to-violet-600',
+        cardData: {
+          ...templateCard,
+          id: `template-card-${Date.now()}`,
+          slug: `plantilla-${Date.now()}`,
+          cardTitle: cleanName,
+          viewsCount: 0,
+          contactClicks: 0,
+          contactBreakdown: { whatsapp: 0, call: 0, email: 0, saveContact: 0, map: 0, total: 0 },
+        },
+      };
+
+      saveCustomTemplate(template);
+      setShowSaveNameDialog(false);
+      setSaveSuccess(true);
+      window.alert('Plantilla guardada. Ya aparece en la biblioteca de plantillas.');
+      window.setTimeout(() => setSaveSuccess(false), 2500);
+    } catch (err) {
+      console.error('No se pudo guardar la plantilla:', err);
+      window.alert(err instanceof Error ? err.message : 'No se pudo guardar la plantilla. Inténtalo de nuevo.');
     } finally {
       setIsSaving(false);
     }
@@ -3853,6 +3926,7 @@ export const CardEditor: React.FC<CardEditorProps> = ({
             <input id="save-card-name" autoFocus type="text" value={saveName} onChange={(e) => setSaveName(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') handleConfirmSave(); }} maxLength={100} className="mt-1 w-full rounded-xl border border-slate-700 bg-slate-800 px-3 py-2.5 text-sm text-white outline-none focus:border-indigo-500" placeholder="Ej. Tarjeta de Raúl Aguilar" />
             <div className="mt-5 flex justify-end gap-2">
               <button type="button" onClick={() => setShowSaveNameDialog(false)} className="rounded-xl border border-slate-700 px-4 py-2 text-xs font-semibold text-slate-300 hover:bg-slate-800">Cancelar</button>
+              <button type="button" onClick={handleSaveAsTemplate} disabled={isSaving || !saveName.trim()} className="rounded-xl border border-violet-500 px-4 py-2 text-xs font-bold text-violet-200 hover:bg-violet-950 disabled:cursor-not-allowed disabled:opacity-50">{isSaving ? "Guardando…" : "Guardar como plantilla"}</button>
               <button type="button" onClick={handleSaveAsNew} disabled={isSaving || !saveName.trim()} className="rounded-xl border border-indigo-500 px-4 py-2 text-xs font-bold text-indigo-200 hover:bg-indigo-950 disabled:cursor-not-allowed disabled:opacity-50">Guardar como nueva</button>
               <button type="button" onClick={handleConfirmSave} disabled={isSaving || !saveName.trim()} className="rounded-xl bg-indigo-600 px-4 py-2 text-xs font-bold text-white hover:bg-indigo-500 disabled:cursor-not-allowed disabled:opacity-50">{isSaving ? 'Guardando…' : 'Guardar cambios'}</button>
             </div>
