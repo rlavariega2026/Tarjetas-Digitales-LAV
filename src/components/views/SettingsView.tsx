@@ -239,7 +239,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onRefreshData }) => 
         <div>
           <h2 className="text-base font-bold text-white">Copias de Seguridad & Respaldo</h2>
           <p className="text-xs text-slate-400">
-            Descarga todas tus tarjetas, clientes y configuraciones en un archivo JSON o restáuralos cuando lo necesites.
+            Descarga tus tarjetas, clientes y plantillas para trasladarlos a otro dispositivo. Al restaurar, los registros se integran con los que ya existen; no se borran los diseños locales.
           </p>
         </div>
 
