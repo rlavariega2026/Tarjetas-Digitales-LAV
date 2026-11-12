@@ -503,7 +503,7 @@ export const CardEditor: React.FC<CardEditorProps> = ({
         : `card-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
       const newSlug = cleanName
         .normalize('NFD')
-        .replace(/[\\u0300-\\u036f]/g, '')
+        .replace(/[\u0300-\u036f]/g, '')
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/^-|-$/g, '');
@@ -512,7 +512,7 @@ export const CardEditor: React.FC<CardEditorProps> = ({
       // Se conservan originales: se alojan en Hostinger y la tarjeta guarda sus URLs.
       const uploadedImages = new Map<string, string>();
       const moveEmbeddedImages = async (value: any, fieldName = 'imagen'): Promise<any> => {
-        if (typeof value === 'string' && /^data:image\\//i.test(value)) {
+        if (typeof value === 'string' && /^data:image\//i.test(value)) {
           const cached = uploadedImages.get(value);
           if (cached) return cached;
           const response = await fetch(value);
