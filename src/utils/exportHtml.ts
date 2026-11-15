@@ -4,7 +4,21 @@ import { generateVCardString } from './vcard';
 /**
  * Generates a self-contained, standalone HTML page ready to host on lavdigitalmkt.com or any server
  */
-export function generateStandaloneHtml(card: CardData, publishedUrl?: string): string {
+export function generateStandaloneHtml(card: CardData, publishedUrl?: string, isDemo = false): string {
+  // Only published DEMO HTML receives the overlay; the editor and final export remain unchanged.
+  const demoWatermark = isDemo ? `
+  <style id="lav-demo-watermark-style">
+    #lav-demo-watermark{position:fixed;inset:0;z-index:9996;pointer-events:none;display:flex;align-items:center;justify-content:center;overflow:hidden}
+    #lav-demo-watermark .lav-demo-mark{width:min(74vw,360px);opacity:.24;transform:rotate(-17deg);text-align:center;filter:drop-shadow(0 1px 2px rgba(0,0,0,.45))}
+    #lav-demo-watermark svg{width:100%;height:auto;display:block}
+    #lav-demo-watermark .lav-demo-word{font:900 clamp(55px,16vw,110px)/1 Arial,sans-serif;letter-spacing:.07em;background:linear-gradient(110deg,#72d9ff,#818cf8,#a855f7);-webkit-background-clip:text;background-clip:text;color:transparent}
+    #lav-demo-watermark .lav-demo-note{font:700 clamp(9px,2.3vw,13px)/1.4 Arial,sans-serif;color:#d7c7ff;letter-spacing:.03em;margin-top:10px}
+    @media(min-width:769px){#lav-demo-watermark .lav-demo-mark{width:340px}}
+  </style>
+  <div id="lav-demo-watermark" aria-hidden="true"><div class="lav-demo-mark">
+    <svg viewBox="0 0 450 220" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="lavDemoGradient" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#77d8ff"/><stop offset=".5" stop-color="#8489ff"/><stop offset="1" stop-color="#a020ed"/></linearGradient></defs><path d="M22 29 L94 29 L151 151 Q162 173 180 138 L223 55 Q252 7 303 44 L320 67 Q291 52 275 80 L222 170 Q171 256 115 179 Z M254 94 L301 94 L343 165 Q353 182 367 154 L415 29 L447 29 L393 174 Q360 250 314 181 Z" fill="url(#lavDemoGradient)"/></svg>
+    <div class="lav-demo-word">DEMO</div><div class="lav-demo-note">Versión de demostración · LAV Digital MKT</div>
+  </div></div>` : '';
   const vcardEncoded = encodeURIComponent(generateVCardString(card));
   const safeFolder = (value: string) => (value || '')
     .normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
@@ -1374,6 +1388,7 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
   <div id="lavInstallDialog" role="dialog" aria-modal="true" aria-labelledby="lavInstallTitle">
     <div id="lavInstallPanel"><button id="lavInstallClose" type="button" aria-label="Cerrar">×</button><h2 id="lavInstallTitle">Usa esta tarjeta como una app</h2><p id="lavInstallInstructions">Agrega esta tarjeta a la pantalla de inicio para abrirla sin la barra del navegador.</p></div>
   </div>
+  ${demoWatermark}
   <script id="lav-first-interaction-fullscreen">
     (function () {
       var attempted = false;
