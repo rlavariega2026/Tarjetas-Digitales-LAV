@@ -262,6 +262,7 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="./manifest.json">
   <meta name="apple-mobile-web-app-title" content="${escapeHtml(card.name)}">
   <title>${escapeHtml(card.name)} — ${escapeHtml(card.businessName || 'Tarjeta Digital')}</title>
   <meta name="description" content="${escapeHtml(card.bio || `${card.name} - ${card.jobTitle}`)}">
