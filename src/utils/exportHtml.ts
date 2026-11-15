@@ -286,7 +286,7 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700;800&family=Space+Grotesk:wght@600;700&family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700;800&family=Lora:wght@400;500;600;700&family=Cormorant+Garamond:wght@500;600;700&family=Oswald:wght@400;500;600;700&family=Roboto+Slab:wght@400;500;600;700&family=Raleway:wght@400;500;600;700&family=Bebas+Neue&family=Merriweather:wght@400;700&family=Roboto:wght@400;500;700&family=Lato:wght@400;700&family=Open+Sans:wght@400;600;700&family=Nunito+Sans:wght@400;600;700&family=Source+Sans+3:wght@400;600;700&family=Archivo:wght@400;500;600;700&family=Barlow+Condensed:wght@400;500;600;700&family=DM+Serif+Display&family=Figtree:wght@400;500;600;700&family=Josefin+Sans:wght@400;500;600;700&family=Libre+Baskerville:wght@400;700&family=Manrope:wght@400;500;600;700;800&family=Nunito:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&family=Ubuntu:wght@400;500;700&family=Urbanist:wght@400;500;600;700;800&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { margin: 0; padding: 0; width: 100%; overflow-x: hidden; }
+    html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow-x: hidden; background-color: ${card.design.backgroundColor}; }
     :root { --card-text-color: ${/^#[0-9a-fA-F]{6}$/.test(card.design.textColor || '') ? card.design.textColor : '#f8fafc'}; }
     body {
       background-color: ${card.design.backgroundColor};
@@ -1373,6 +1373,32 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
   <div id="lavInstallDialog" role="dialog" aria-modal="true" aria-labelledby="lavInstallTitle">
     <div id="lavInstallPanel"><button id="lavInstallClose" type="button" aria-label="Cerrar">×</button><h2 id="lavInstallTitle">Usa esta tarjeta como una app</h2><p id="lavInstallInstructions">Agrega esta tarjeta a la pantalla de inicio para abrirla sin la barra del navegador.</p></div>
   </div>
+  <script id="lav-first-interaction-fullscreen">
+    (function () {
+      var attempted = false;
+      function requestOnFirstInteraction(event) {
+        if (attempted) return;
+        attempted = true;
+        document.removeEventListener('click', requestOnFirstInteraction, true);
+        document.removeEventListener('touchend', requestOnFirstInteraction, true);
+        // No interrumpir enlaces, botones, formularios ni sus acciones existentes.
+        var target = event.target;
+        if (target && target.closest && target.closest('a, button, input, select, textarea, label, [role="button"]')) return;
+        if (document.fullscreenElement || document.webkitFullscreenElement) return;
+        var root = document.documentElement;
+        var enter = root.requestFullscreen || root.webkitRequestFullscreen || root.msRequestFullscreen;
+        if (typeof enter !== 'function') return;
+        try {
+          var result = enter.call(root);
+          if (result && typeof result.catch === 'function') result.catch(function () {});
+        } catch (error) {
+          // Los navegadores integrados o iOS pueden rechazar Fullscreen API.
+        }
+      }
+      document.addEventListener('click', requestOnFirstInteraction, true);
+      document.addEventListener('touchend', requestOnFirstInteraction, true);
+    })();
+  </script>
   <script id="lav-install-ui-js">
     (function(){
       var button=document.getElementById('lavInstallButton'),dialog=document.getElementById('lavInstallDialog'),instructions=document.getElementById('lavInstallInstructions'),close=document.getElementById('lavInstallClose'),promptEvent=null;
