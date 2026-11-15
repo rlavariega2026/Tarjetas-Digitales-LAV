@@ -5,8 +5,9 @@
   "description": "Diseña, administra y comparte tarjetas digitales profesionales.",
   "start_url": "/tarjetas-digitales/",
   "scope": "/tarjetas-digitales/",
-  "display": "standalone",
+  "display": "fullscreen",
   "display_override": [
+    "fullscreen",
     "standalone",
     "minimal-ui"
   ],
