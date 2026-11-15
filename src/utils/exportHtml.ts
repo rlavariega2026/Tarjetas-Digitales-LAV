@@ -286,6 +286,7 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700;800&family=Space+Grotesk:wght@600;700&family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700;800&family=Lora:wght@400;500;600;700&family=Cormorant+Garamond:wght@500;600;700&family=Oswald:wght@400;500;600;700&family=Roboto+Slab:wght@400;500;600;700&family=Raleway:wght@400;500;600;700&family=Bebas+Neue&family=Merriweather:wght@400;700&family=Roboto:wght@400;500;700&family=Lato:wght@400;700&family=Open+Sans:wght@400;600;700&family=Nunito+Sans:wght@400;600;700&family=Source+Sans+3:wght@400;600;700&family=Archivo:wght@400;500;600;700&family=Barlow+Condensed:wght@400;500;600;700&family=DM+Serif+Display&family=Figtree:wght@400;500;600;700&family=Josefin+Sans:wght@400;500;600;700&family=Libre+Baskerville:wght@400;700&family=Manrope:wght@400;500;600;700;800&family=Nunito:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&family=Ubuntu:wght@400;500;700&family=Urbanist:wght@400;500;600;700;800&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { margin: 0; padding: 0; width: 100%; overflow-x: hidden; }
     :root { --card-text-color: ${/^#[0-9a-fA-F]{6}$/.test(card.design.textColor || '') ? card.design.textColor : '#f8fafc'}; }
     body {
       background-color: ${card.design.backgroundColor};
@@ -296,6 +297,7 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
       justify-content: center;
       align-items: flex-start;
       padding: 16px;
+      overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
     }
     .card-container {
@@ -320,34 +322,34 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
       position: relative;
       margin-bottom: 30px;
     }
-    /* En móviles, presenta una tarjeta premium independiente, no una página a pantalla completa */
+    /* En móviles, la tarjeta publicada ocupa todo el ancho y conserva el scroll vertical natural. */
     @media (max-width: 600px) {
       html, body { width: 100%; min-height: 100%; margin: 0; }
       body {
         min-height: 100vh;
         min-height: 100dvh;
-        padding: max(18px, env(safe-area-inset-top)) 12px max(24px, env(safe-area-inset-bottom));
+        padding: 0;
         align-items: flex-start;
         justify-content: center;
         overflow-x: hidden;
-        background:
-          radial-gradient(ellipse at 50% 0%, rgba(56,189,248,.12), transparent 52%),
-          radial-gradient(ellipse at 100% 65%, rgba(129,140,248,.08), transparent 42%),
-          #070b14;
+        background: ${card.design.backgroundColor};
       }
       .card-container {
         width: 100%;
-        max-width: 420px;
-        min-height: 0;
-        border-radius: ${themeRadius};
+        max-width: none;
+        min-height: 100vh;
+        min-height: 100dvh;
+        height: auto !important;
+        max-height: none !important;
+        border-radius: 0;
         background-color: ${card.design.backgroundColor};
-        border: 1px solid rgba(255,255,255,.12);
-        box-shadow: 0 28px 75px rgba(0,0,0,.52), 0 0 0 1px rgba(255,255,255,.035);
-        margin: 0 auto;
+        border: 0;
+        box-shadow: none;
+        margin: 0;
         isolation: isolate;
         overflow: hidden;
       }
-      .cover-banner { border-radius: ${themeRadius} ${themeRadius} 0 0; }
+      .cover-banner { border-radius: 0; }
       .footer-brand { font-size: 10px; opacity: .38; }
       .social-section { margin-top: 22px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,.1); }
     .social-section-title { margin: 0 0 12px; text-align: center; color: var(--text-color, #e2e8f0); font: 700 11px/1.3 Arial,sans-serif; letter-spacing: .16em; text-transform: uppercase; opacity: .8; }
