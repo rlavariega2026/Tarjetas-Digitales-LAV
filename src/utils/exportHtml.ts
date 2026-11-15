@@ -1378,22 +1378,28 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
     (function () {
       var attempted = false;
       function requestOnFirstInteraction(event) {
-        if (attempted) return;
-        attempted = true;
-        document.removeEventListener('click', requestOnFirstInteraction, true);
-        document.removeEventListener('touchend', requestOnFirstInteraction, true);
-        // No interrumpir enlaces, botones, formularios ni sus acciones existentes.
+        if (attempted || document.fullscreenElement || document.webkitFullscreenElement) return;
+        // Los controles conservan su acción normal y no consumen el intento de fullscreen.
         var target = event.target;
         if (target && target.closest && target.closest('a, button, input, select, textarea, label, [role="button"]')) return;
-        if (document.fullscreenElement || document.webkitFullscreenElement) return;
         var root = document.documentElement;
         var enter = root.requestFullscreen || root.webkitRequestFullscreen || root.msRequestFullscreen;
         if (typeof enter !== 'function') return;
+        // Evitar un segundo intento por el click posterior al touchend.
+        attempted = true;
         try {
           var result = enter.call(root);
-          if (result && typeof result.catch === 'function') result.catch(function () {});
+          if (result && typeof result.then === 'function') {
+            result.then(function () {
+              document.removeEventListener('click', requestOnFirstInteraction, true);
+              document.removeEventListener('touchend', requestOnFirstInteraction, true);
+            }).catch(function () { attempted = false; });
+          } else {
+            document.removeEventListener('click', requestOnFirstInteraction, true);
+            document.removeEventListener('touchend', requestOnFirstInteraction, true);
+          }
         } catch (error) {
-          // Los navegadores integrados o iOS pueden rechazar Fullscreen API.
+          attempted = false;
         }
       }
       document.addEventListener('click', requestOnFirstInteraction, true);
