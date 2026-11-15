@@ -1374,31 +1374,36 @@ export function generateStandaloneHtml(card: CardData, publishedUrl?: string): s
   <div id="lavInstallDialog" role="dialog" aria-modal="true" aria-labelledby="lavInstallTitle">
     <div id="lavInstallPanel"><button id="lavInstallClose" type="button" aria-label="Cerrar">×</button><h2 id="lavInstallTitle">Usa esta tarjeta como una app</h2><p id="lavInstallInstructions">Agrega esta tarjeta a la pantalla de inicio para abrirla sin la barra del navegador.</p></div>
   </div>
-  <style id="lav-fullscreen-action-css">
-    #lavFullscreenAction{position:fixed;right:14px;bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:2147483646;display:none;align-items:center;gap:7px;border:1px solid rgba(255,255,255,.28);border-radius:999px;padding:10px 14px;background:rgba(0,0,0,.82);color:#fff;font:600 13px/1.2 system-ui,sans-serif;box-shadow:0 4px 20px rgba(0,0,0,.3);cursor:pointer}
-    #lavFullscreenAction:focus-visible{outline:2px solid #fff;outline-offset:3px}
-    @media (display-mode:fullscreen),(display-mode:standalone){#lavFullscreenAction{display:none!important}}
-  </style>
-  <button id="lavFullscreenAction" type="button" aria-label="Ver tarjeta en pantalla completa">⛶ Pantalla completa</button>
   <script id="lav-first-interaction-fullscreen">
     (function () {
-      var button=document.getElementById('lavFullscreenAction');
-      var root=document.documentElement;
-      var enter=root.requestFullscreen||root.webkitRequestFullscreen||root.msRequestFullscreen;
-      if(!button||typeof enter!=='function')return;
-      function update(){
-        var active=!!(document.fullscreenElement||document.webkitFullscreenElement);
-        button.style.display=active?'none':'inline-flex';
+      var attempted = false;
+      function requestOnFirstInteraction(event) {
+        if (attempted || document.fullscreenElement || document.webkitFullscreenElement) return;
+        // Los controles conservan su acción normal y no consumen el intento de fullscreen.
+        var target = event.target;
+        if (target && target.closest && target.closest('a, button, input, select, textarea, label, [role="button"]')) return;
+        var root = document.documentElement;
+        var enter = root.requestFullscreen || root.webkitRequestFullscreen || root.msRequestFullscreen;
+        if (typeof enter !== 'function') return;
+        // Evitar un segundo intento por el click posterior al touchend.
+        attempted = true;
+        try {
+          var result = enter.call(root);
+          if (result && typeof result.then === 'function') {
+            result.then(function () {
+              document.removeEventListener('click', requestOnFirstInteraction, true);
+              document.removeEventListener('touchend', requestOnFirstInteraction, true);
+            }).catch(function () { attempted = false; });
+          } else {
+            document.removeEventListener('click', requestOnFirstInteraction, true);
+            document.removeEventListener('touchend', requestOnFirstInteraction, true);
+          }
+        } catch (error) {
+          attempted = false;
+        }
       }
-      button.addEventListener('click',function(){
-        try{
-          var result=enter.call(root);
-          if(result&&typeof result.catch==='function')result.catch(function(){button.style.display='none';});
-        }catch(e){button.style.display='none';}
-      });
-      document.addEventListener('fullscreenchange',update);
-      document.addEventListener('webkitfullscreenchange',update);
-      update();
+      document.addEventListener('click', requestOnFirstInteraction, true);
+      document.addEventListener('touchend', requestOnFirstInteraction, true);
     })();
   </script>
   <script id="lav-install-ui-js">
