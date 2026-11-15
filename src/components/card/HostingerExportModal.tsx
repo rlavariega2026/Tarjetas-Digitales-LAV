@@ -16,6 +16,8 @@ const toSafeSlug = (value: string) =>
 
 export const HostingerExportModal: React.FC<HostingerExportModalProps> = ({ card, onClose }) => {
   const [publishing, setPublishing] = useState(false);
+  const [publishingDemo, setPublishingDemo] = useState(false);
+  const [lastPublishMode, setLastPublishMode] = useState<'demo' | 'final' | null>(null);
   const [publishError, setPublishError] = useState('');
   const [publishedUrl, setPublishedUrl] = useState('');
   const [copiedUrl, setCopiedUrl] = useState(false);
@@ -56,7 +58,7 @@ export const HostingerExportModal: React.FC<HostingerExportModalProps> = ({ card
     confetti({ particleCount: 30, spread: 60, origin: { y: 0.7 } });
   };
 
-  const handlePublish = async () => {
+  const handlePublish = async (mode: 'demo' | 'final' = 'final') => {
     const safeClientFolder = toSafeSlug(clientFolder);
     const safeCardFolder = toSafeSlug(cardFolder);
     if (!/^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$/.test(safeClientFolder) || !/^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$/.test(safeCardFolder)) {
@@ -65,12 +67,14 @@ export const HostingerExportModal: React.FC<HostingerExportModalProps> = ({ card
     }
     setClientFolder(safeClientFolder);
     setCardFolder(safeCardFolder);
-    setPublishing(true);
+    if (mode === 'demo' && lastPublishMode === 'final' && !window.confirm('Esta URL contiene una tarjeta definitiva publicada en esta sesión. ¿Quieres reemplazarla por una DEMO?')) return;
+    if (mode === 'demo') setPublishingDemo(true);
+    else setPublishing(true);
     setPublishError('');
     setPublishedUrl('');
     try {
       const targetUrl = `https://lavdigitalmkt.com/tarjetas/${encodeURIComponent(safeClientFolder)}/${encodeURIComponent(safeCardFolder)}/`;
-      const html = generateStandaloneHtml(card, targetUrl);
+      const html = generateStandaloneHtml(card, targetUrl, mode === 'demo');
       const response = await fetch('/tarjetas-digitales/api/publish-card.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json',  },
@@ -79,6 +83,7 @@ export const HostingerExportModal: React.FC<HostingerExportModalProps> = ({ card
       const result = await response.json().catch(() => ({}));
       if (!response.ok || !result.ok || !result.url) throw new Error(result.error || 'Error al publicar (' + response.status + ').');
       setPublishedUrl(result.url);
+      setLastPublishMode(mode);
       try {
         window.localStorage.setItem('lav-publish-path-' + card.id, JSON.stringify({
           clientFolder: safeClientFolder,
@@ -94,6 +99,7 @@ export const HostingerExportModal: React.FC<HostingerExportModalProps> = ({ card
       setPublishError(error instanceof Error ? error.message : 'No se pudo publicar la tarjeta.');
     } finally {
       setPublishing(false);
+      setPublishingDemo(false);
     }
   };
 
@@ -154,9 +160,10 @@ export const HostingerExportModal: React.FC<HostingerExportModalProps> = ({ card
           <div className="space-y-3">
             <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider">URL de la tarjeta</label>
             <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-between text-xs font-mono text-purple-300"><span className="break-all mr-2">{finalCardUrl}</span><button onClick={handleCopyUrl} className="flex items-center gap-1 text-[11px] bg-slate-800 text-slate-200 px-2.5 py-1 rounded-lg flex-shrink-0">{copiedUrl ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}{copiedUrl ? 'Copiada' : 'Copiar URL'}</button></div>
-            <button onClick={handlePublish} disabled={publishing} className="w-full p-4 rounded-2xl bg-purple-600 hover:bg-purple-500 disabled:opacity-60 text-white font-bold text-sm">{publishing ? 'Publicando tarjeta…' : publishedUrl ? 'Volver a publicar esta tarjeta' : 'Publicar tarjeta directamente en Hostinger'}</button>
+            <button onClick={() => handlePublish('final')} disabled={publishing || publishingDemo} className="w-full p-4 rounded-2xl bg-purple-600 hover:bg-purple-500 disabled:opacity-60 text-white font-bold text-sm">{publishing ? 'Publicando tarjeta…' : publishedUrl ? 'Volver a publicar esta tarjeta' : 'Publicar tarjeta directamente en Hostinger'}</button>
+            <button onClick={() => handlePublish('demo')} disabled={publishing || publishingDemo} className="w-full p-4 rounded-2xl bg-gradient-to-r from-sky-500 via-indigo-600 to-purple-600 hover:brightness-110 disabled:opacity-60 text-white font-bold text-sm">{publishingDemo ? 'Publicando DEMO…' : 'Publicar DEMO en Hostinger (misma URL)'}</button>
             {publishError && <p role="alert" className="text-xs text-red-300">{publishError}</p>}
-            {publishedUrl && <div className="p-3 rounded-xl bg-emerald-950/40 border border-emerald-500/30 text-xs text-emerald-300 space-y-2"><p className="font-bold">Tarjeta publicada</p><a className="underline break-all" href={publishedUrl} target="_blank" rel="noreferrer">{publishedUrl}</a><p>La URL se copió al portapapeles si el navegador lo permitió.</p></div>}
+            {publishedUrl && <div className="p-3 rounded-xl bg-emerald-950/40 border border-emerald-500/30 text-xs text-emerald-300 space-y-2"><p className="font-bold">{lastPublishMode === 'demo' ? 'DEMO publicada' : 'Tarjeta publicada'}</p><a className="underline break-all" href={publishedUrl} target="_blank" rel="noreferrer">{publishedUrl}</a><p>La URL se copió al portapapeles si el navegador lo permitió.</p></div>}
           </div>
           <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 text-xs text-slate-300 space-y-2"><p className="font-bold text-white">Respaldo manual</p><p>Descarga el HTML si necesitas guardarlo aparte.</p><button onClick={() => handleDownload('index.html')} className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-800 text-white font-bold"><Download className="w-4 h-4" /> Descargar index.html</button></div>
         </div>
