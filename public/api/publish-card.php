@@ -79,7 +79,7 @@ INSTALL_JS;
             elseif (strpos($html, 'lav-card-pwa-ready-v1') === false && stripos($html, '</head>') !== false) $html = preg_replace('/<\/head>/i', '<meta name="lav-card-pwa-ready-v1" content="1"></head>', $html, 1);
             $pwaRegister = '<script id="lav-card-sw-register-v1">if("serviceWorker" in navigator){window.addEventListener("load",function(){navigator.serviceWorker.register("./sw.js",{scope:"./"}).catch(function(e){console.warn("No se pudo registrar la tarjeta instalable",e);});});}</script>';
             if (strpos($html, 'lav-card-sw-register-v1') === false && stripos($html, '</body>') !== false) $html = preg_replace('/<\/body>/i', $pwaRegister . "\n</body>", $html, 1);
-            $manifest = ['id'=>'./','name'=>ucwords(str_replace(['-','_'],' ',$clientFolder)) . ' — Tarjeta Digital','short_name'=>substr(ucwords(str_replace(['-','_'],' ',$clientFolder)),0,20),'description'=>'Tarjeta digital profesional e interactiva','start_url'=>'./index.html','scope'=>'./','display'=>'standalone','display_override'=>['standalone','minimal-ui'],'orientation'=>'portrait','background_color'=>'#070b14','theme_color'=>'#0f172a','icons'=>[['src'=>'/tarjetas-digitales/pwa-192x192.png','sizes'=>'192x192','type'=>'image/png','purpose'=>'any'],['src'=>'/tarjetas-digitales/pwa-512x512.png','sizes'=>'512x512','type'=>'image/png','purpose'=>'any']] ];
+            $manifest = ['id'=>'./','name'=>'Tarjeta Digital','short_name'=>'Tarjeta','description'=>'Tarjeta digital profesional e interactiva','start_url'=>'./','scope'=>'./','display'=>'standalone','display_override'=>['standalone','minimal-ui'],'orientation'=>'portrait','background_color'=>'#000000','theme_color'=>'#000000','icons'=>[['src'=>'/tarjetas-digitales/pwa-192x192.png','sizes'=>'192x192','type'=>'image/png','purpose'=>'any'],['src'=>'/tarjetas-digitales/pwa-512x512.png','sizes'=>'512x512','type'=>'image/png','purpose'=>'any']] ];
             $manifestJson = json_encode($manifest, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
             if ($manifestJson !== false) { @file_put_contents($cardDir . '/manifest.json', $manifestJson, LOCK_EX); @chmod($cardDir . '/manifest.json', 0644); }
             $cachePrefix = 'lav-card-' . substr(hash('sha256', $clientFolder . '/' . $cardFolder), 0, 12) . '-shell-';
@@ -153,16 +153,16 @@ if (!$tmp || file_put_contents($tmp, $html, LOCK_EX) === false || !@chmod($tmp, 
 $displayName = ucwords(str_replace(['-', '_'], ' ', $clientFolder));
 $manifest = [
     'id' => './',
-    'name' => $displayName . ' — Tarjeta Digital',
-    'short_name' => substr($displayName, 0, 20),
+    'name' => 'Tarjeta Digital',
+    'short_name' => 'Tarjeta',
     'description' => 'Tarjeta digital profesional e interactiva',
     'start_url' => './',
     'scope' => './',
     'display' => 'standalone',
     'display_override' => ['standalone', 'minimal-ui'],
     'orientation' => 'portrait',
-    'background_color' => '#070b14',
-    'theme_color' => '#0f172a',
+    'background_color' => '#000000',
+    'theme_color' => '#000000',
     'icons' => [
         ['src' => '/tarjetas-digitales/pwa-192x192.png', 'sizes' => '192x192', 'type' => 'image/png'],
         ['src' => '/tarjetas-digitales/pwa-512x512.png', 'sizes' => '512x512', 'type' => 'image/png'],
