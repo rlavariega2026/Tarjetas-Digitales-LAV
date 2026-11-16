@@ -56,21 +56,27 @@ if (is_array($data) && ($data['action'] ?? '') === 'repairExistingCards') {
 <script id="lav-pwa-install-v1">(function(){var b=document.getElementById('pwaInstallButton'),bar=document.getElementById('pwaInstallBar'),h=document.getElementById('pwaInstallHelp'),x=document.getElementById('pwaInstallClose'),ok=document.getElementById('pwaInstallOk'),s=document.getElementById('pwaInstallSteps'),p=null,u=navigator.userAgent||'',ios=/iphone|ipad|ipod/i.test(u)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1),stand=matchMedia('(display-mode:standalone)').matches||matchMedia('(display-mode:fullscreen)').matches||navigator.standalone===true;if(stand&&bar)bar.style.display='none';addEventListener('beforeinstallprompt',function(e){e.preventDefault();p=e});addEventListener('appinstalled',function(){if(bar)bar.style.display='none';if(h)h.classList.remove('is-open')});function close(){if(h)h.classList.remove('is-open')}if(x)x.addEventListener('click',close);if(ok)ok.addEventListener('click',close);if(h)h.addEventListener('click',function(e){if(e.target===h)close()});if(b)b.addEventListener('click',async function(){if(stand){bar.style.display='none';return}if(p){p.prompt();await p.userChoice;p=null;return}if(s)s.textContent=ios?'En Safari: pulsa Compartir, elige “Añadir a pantalla de inicio”, activa “Abrir como app” si aparece y pulsa Añadir. Si abriste el enlace desde WhatsApp, primero ábrelo en Safari.':(/android/i.test(u)?'En Chrome: pulsa el menú ⋮ y elige “Instalar aplicación” o “Añadir a pantalla de inicio”. Si abriste el enlace dentro de otra app, elige Abrir en Chrome.':'Abre este enlace en Chrome o Edge y utiliza la opción Instalar aplicación del menú del navegador.');if(h)h.classList.add('is-open')})})();</script>
 INSTALL_JS;
     $appShellStyle = '<style id="lav-card-app-shell-v1">@media(max-width:600px){html,body{width:100%!important;min-height:100%!important;margin:0!important;padding:0!important}body{display:block!important;min-height:100vh!important;min-height:100dvh!important;padding:0!important;align-items:stretch!important;justify-content:flex-start!important;overflow-x:hidden!important;background:#070b14!important}.card-container{width:100%!important;max-width:none!important;min-height:100vh!important;min-height:100dvh!important;margin:0!important;border-radius:0!important;border:0!important;box-shadow:none!important}.cover-banner{border-radius:0!important}.content-body{padding-bottom:max(26px,env(safe-area-inset-bottom))!important}}@media(display-mode:standalone),(display-mode:fullscreen){html,body{margin:0!important;padding:0!important;min-height:100vh!important;min-height:100dvh!important}.card-container{width:100%!important;max-width:none!important;min-height:100vh!important;min-height:100dvh!important;margin:0!important;border-radius:0!important;box-shadow:none!important}}</style>';
-    $repaired = 0; $skipped = 0;
+    $layoutOnly = ($data['layoutOnly'] ?? false) === true;
+    $repaired = 0; $skipped = 0; $scanned = 0; $failed = 0;
     try {
         $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($cardsRoot, FilesystemIterator::SKIP_DOTS));
         foreach ($iterator as $file) {
             if (!$file->isFile() || strtolower($file->getFilename()) !== 'index.html' || $file->getSize() > 12000000) continue;
             $path = $file->getPathname();
+            if ($layoutOnly) {
+                $relative = substr($path, strlen($cardsRoot) + 1);
+                if (substr_count($relative, '/') !== 2 || $file->isLink() || realpath($path) !== realpath($cardsRoot) . '/' . $relative) continue;
+            }
+            $scanned++;
             $html = @file_get_contents($path);
-            if (!is_string($html) || stripos($html, '<html') === false) { $skipped++; continue; }
+            if (!is_string($html) || stripos($html, '<html') === false) { $skipped++; $failed++; continue; }
             $clean = removeLegacyAppShellText($html);
             if ($clean !== $html) {
-                if (!writeRepairedCardHtml($path, $clean)) { $skipped++; continue; }
-                $html = $clean;
+                if (!writeRepairedCardHtml($path, $clean)) { $skipped++; $failed++; continue; }
                 $repaired++;
                 continue;
             }
+            if ($layoutOnly) { $skipped++; continue; }
             // Give older published cards a visible social-networks heading as well.
             if (strpos($html, 'social-section-title') === false && preg_match('/<div class="social-row">(.*?)<\\/div>/s', $html, $socialMatch)) {
                 $socialSection = '<section class="social-section" aria-labelledby="social-section-title" style="margin-top:22px;padding-top:16px;border-top:1px solid rgba(255,255,255,.1)"><h2 id="social-section-title" class="social-section-title" style="margin:0 0 12px;text-align:center;color:#e2e8f0;font:700 11px/1.3 Arial,sans-serif;letter-spacing:.16em;text-transform:uppercase;opacity:.8">Redes sociales</h2><div class="social-row">' . $socialMatch[1] . '</div></section>';
@@ -140,6 +146,7 @@ INSTALL_JS;
     } catch (Throwable $e) {
         out(500, ['ok'=>false,'error'=>'No se pudo recorrer la carpeta de tarjetas publicadas.']);
     }
+    if ($layoutOnly) out(200, ['ok'=>$failed === 0,'scanned'=>$scanned,'repaired'=>$repaired,'failed'=>$failed]);
     out(200, ['ok'=>true,'repaired'=>$repaired,'skipped'=>$skipped,'message'=>'Corrección aplicada a las tarjetas existentes.']);
 }
 $cardId = (string)($data['cardId'] ?? '');
