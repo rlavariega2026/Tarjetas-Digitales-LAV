@@ -3,6 +3,21 @@ header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store');
 function out($code, $data) { http_response_code($code); echo json_encode($data); exit; }
 
+function removeLegacyAppShellText($html) {
+    $literalNewline = preg_quote('\n', '~');
+    $pattern = '~(<style id="lav-card-app-shell-v1">.*?</style>)(?:' . $literalNewline . ')+~s';
+    return preg_replace_callback($pattern, static fn($match) => $match[1] . "\n", $html, 1) ?? $html;
+}
+
+function writeRepairedCardHtml($path, $html) {
+    $tmp = tempnam(dirname($path), 'fix');
+    if ($tmp && file_put_contents($tmp, $html, LOCK_EX) === strlen($html) && @chmod($tmp, 0644) && @rename($tmp, $path)) {
+        return true;
+    }
+    if ($tmp && file_exists($tmp)) @unlink($tmp);
+    return false;
+}
+
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') out(405, ['ok'=>false,'error'=>'POST requerido']);
 
 $raw = file_get_contents('php://input');
@@ -11,6 +26,29 @@ $data = json_decode($raw, true);
 if (is_array($data) && ($data['action'] ?? '') === 'repairExistingCards') {
     $cardsRoot = dirname(__DIR__, 2) . '/tarjetas';
     if (!is_dir($cardsRoot)) out(200, ['ok'=>true,'repaired'=>0,'message'=>'No existe todavía la carpeta de tarjetas publicadas.']);
+    // A targeted repair updates only the legacy mobile-layout artifact in the named HTML.
+    if (isset($data['clientFolder']) || isset($data['cardFolder'])) {
+        $client = (string)($data['clientFolder'] ?? '');
+        $card = (string)($data['cardFolder'] ?? '');
+        $folderPattern = '/^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$/D';
+        if (!preg_match($folderPattern, $client) || !preg_match($folderPattern, $card)) {
+            out(400, ['ok'=>false,'error'=>'Carpeta de tarjeta inválida']);
+        }
+        $path = $cardsRoot . '/' . $client . '/' . $card . '/index.html';
+        $resolvedPath = realpath($path);
+        $resolvedRoot = realpath($cardsRoot);
+        if (!$resolvedRoot || $resolvedPath !== $resolvedRoot . '/' . $client . '/' . $card . '/index.html'
+            || !is_file($path) || filesize($path) > 12000000) {
+            out(404, ['ok'=>false,'error'=>'No se encontró la tarjeta publicada']);
+        }
+        $html = @file_get_contents($path);
+        if (!is_string($html)) out(500, ['ok'=>false,'error'=>'No se pudo leer la tarjeta']);
+        $clean = removeLegacyAppShellText($html);
+        if ($clean === $html) out(200, ['ok'=>true,'repaired'=>0]);
+        if (!writeRepairedCardHtml($path, $clean)) out(500, ['ok'=>false,'error'=>'No se pudo actualizar la tarjeta']);
+        out(200, ['ok'=>true,'repaired'=>1]);
+    }
+
     $style = '<style id="lav-card-repair-v2">@media(max-width:600px){html,body{width:100%!important;min-height:100%!important;margin:0!important;padding:0!important}body{min-height:100vh!important;min-height:100dvh!important;padding:0!important;display:flex!important;align-items:stretch!important;justify-content:flex-start!important;overflow-x:hidden!important}.card-container{width:100%!important;max-width:none!important;min-height:100vh!important;min-height:100dvh!important;margin:0!important;border-radius:0!important;border:0!important;box-shadow:none!important;overflow:hidden!important}.cover-banner{border-radius:0!important}}@media(display-mode:standalone){html,body{margin:0!important;padding:0!important}.card-container{max-width:none!important;margin:0!important;border-radius:0!important;box-shadow:none!important}}.photo-top-large .profile-featured-label,.photo-top-large .featured-profile,.photo-top-large [data-label="Perfil Destacado"],.photo-bottom-compact .active-card-label,.photo-bottom-compact .digital-card-active,.photo-bottom-compact [data-label="Tarjeta Digital Activa"]{display:none!important}</style><script>(function(){var labels=["Perfil Destacado","Tarjeta Digital Activa"];function clean(){document.querySelectorAll("body *").forEach(function(e){if(e.children.length>2)return;var t=(e.textContent||"").replace(/\\s+/g," ").trim();if(!t||!labels.some(function(x){return t===x||t.indexOf(x)!==-1}))return;var n=e;for(var i=0;i<3&&n.parentElement&&n.parentElement!==document.body;i++){var p=n.parentElement;if(p.children.length<=3&&p.textContent.trim().length<100)n=p;else break;}n.style.setProperty("display","none","important");});}if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",clean);else clean();})();</script>';
     $installStyle = '<style id="lav-card-pwa-install-v1">@media(display-mode:standalone),(display-mode:fullscreen){html,body{width:100%;min-height:100dvh;margin:0;padding:0}.card-container{width:100%;max-width:none!important;min-height:100dvh;border-radius:0!important;box-shadow:none!important}#pwaInstallBar,#pwaInstallHelp{display:none!important}}#pwaInstallBar{position:fixed;z-index:9997;top:max(10px,env(safe-area-inset-top));right:10px}#pwaInstallButton{border:1px solid rgba(255,255,255,.28);border-radius:999px;padding:10px 14px;background:rgba(10,15,28,.9);color:#fff!important;font:700 12px/1.2 Arial,sans-serif;box-shadow:0 6px 20px rgba(0,0,0,.25);backdrop-filter:blur(12px)}#pwaInstallHelp{position:fixed;inset:0;z-index:9998;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(0,0,0,.72);backdrop-filter:blur(8px)}#pwaInstallHelp.is-open{display:flex}#pwaInstallPanel{position:relative;width:min(100%,380px);padding:24px;border-radius:22px;background:#101827;color:#f8fafc;border:1px solid rgba(255,255,255,.14);font:14px/1.55 Arial,sans-serif}#pwaInstallPanel h2{margin:0 30px 12px 0;font-size:20px;color:#fff!important}#pwaInstallPanel p{margin:8px 0;color:#e2e8f0!important}#pwaInstallClose{position:absolute;top:10px;right:12px;border:0;background:transparent;color:#fff!important;font-size:26px}#pwaInstallOk{display:block;width:100%;margin-top:16px;padding:12px;border:0;border-radius:12px;background:#4f46e5;color:#fff!important;font-weight:700}</style>';
     $installMarkup = '<div id="pwaInstallBar"><button id="pwaInstallButton" type="button">Instalar como app</button></div><div id="pwaInstallHelp" role="dialog" aria-modal="true" aria-labelledby="pwaInstallTitle"><div id="pwaInstallPanel"><button id="pwaInstallClose" type="button" aria-label="Cerrar">×</button><h2 id="pwaInstallTitle">Abre esta tarjeta como una app</h2><p>Instala esta tarjeta en tu celular para abrirla desde un icono, sin la barra normal del navegador.</p><p id="pwaInstallSteps"></p><button id="pwaInstallOk" type="button">Entendido</button></div></div>';
@@ -26,6 +64,13 @@ INSTALL_JS;
             $path = $file->getPathname();
             $html = @file_get_contents($path);
             if (!is_string($html) || stripos($html, '<html') === false) { $skipped++; continue; }
+            $clean = removeLegacyAppShellText($html);
+            if ($clean !== $html) {
+                if (!writeRepairedCardHtml($path, $clean)) { $skipped++; continue; }
+                $html = $clean;
+                $repaired++;
+                continue;
+            }
             // Give older published cards a visible social-networks heading as well.
             if (strpos($html, 'social-section-title') === false && preg_match('/<div class="social-row">(.*?)<\\/div>/s', $html, $socialMatch)) {
                 $socialSection = '<section class="social-section" aria-labelledby="social-section-title" style="margin-top:22px;padding-top:16px;border-top:1px solid rgba(255,255,255,.1)"><h2 id="social-section-title" class="social-section-title" style="margin:0 0 12px;text-align:center;color:#e2e8f0;font:700 11px/1.3 Arial,sans-serif;letter-spacing:.16em;text-transform:uppercase;opacity:.8">Redes sociales</h2><div class="social-row">' . $socialMatch[1] . '</div></section>';
@@ -44,7 +89,7 @@ INSTALL_JS;
             }
             if (!$hadDuplicateInstallUi && strpos($html, 'lav-card-app-shell-v1') !== false && strpos($html, 'lav-card-pwa-ready-v1') !== false && file_exists($cardDir . '/manifest.json') && file_exists($cardDir . '/sw.js') && file_exists($cardDir . '/contact.vcf') && (strpos($html, 'social-section-title') !== false || strpos($html, 'class="social-row"') === false)) { $skipped++; continue; }
             if (strpos($html, 'lav-card-app-shell-v1') === false && stripos($html, '</head>') !== false) {
-                $html = preg_replace('/<\\/head>/i', $appShellStyle . "\\n</head>", $html, 1);
+                $html = preg_replace('/<\\/head>/i', $appShellStyle . "\n</head>", $html, 1);
             }
             $vcardPattern = '/vcard:\\s*("(?:\\\\.|[^"\\\\])*")/s';
             if (preg_match($vcardPattern, $html, $vcardMatch)) {
@@ -86,11 +131,9 @@ INSTALL_JS;
             $swName = $cachePrefix . 'v2';
             $sw = "const CACHE_NAME = '" . $swName . "';\nconst CACHE_PREFIX = '" . $cachePrefix . "';\nself.addEventListener('install',e=>{self.skipWaiting();e.waitUntil(caches.open(CACHE_NAME).then(c=>c.add('./index.html')))});\nself.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith(CACHE_PREFIX)&&k!==CACHE_NAME).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));\nself.addEventListener('fetch',e=>{if(e.request.method!=='GET'||new URL(e.request.url).origin!==self.location.origin)return;if(e.request.mode==='navigate')e.respondWith(fetch(e.request).then(r=>{if(r.ok){const copy=r.clone();caches.open(CACHE_NAME).then(c=>c.put('./index.html',copy))}return r}).catch(()=>caches.match('./index.html')))});";
             @file_put_contents($cardDir . '/sw.js', $sw, LOCK_EX); @chmod($cardDir . '/sw.js', 0644);
-            $tmp = tempnam(dirname($path), 'fix');
-            if ($tmp && file_put_contents($tmp, $html, LOCK_EX) !== false && @chmod($tmp, 0644) && @rename($tmp, $path)) {
+            if (writeRepairedCardHtml($path, $html)) {
                 $repaired++;
             } else {
-                if ($tmp && file_exists($tmp)) @unlink($tmp);
                 $skipped++;
             }
         }
